@@ -1,5 +1,10 @@
 import React from "react"
+import styled from "styled-components"
 import TopicListing from "./topic-listing"
+
+const Container = styled.div`
+  width: 80vw;
+`
 
 // TODO:
 // Dummy data to facilitate Storybook workflow
@@ -23,14 +28,7 @@ const notes = [
 ]
 
 const TopicList = ({ subCategoryTitle }) => (
-  <div
-    style={{
-      display: "flex",
-      flex: "1",
-      justifyContent: "space-between",
-      borderBottom: "1px solid #d1c1e0",
-    }}
-  >
+  <Container>
     <div>
       <h1>{subCategoryTitle}</h1>
       <div>Search Icon</div>
@@ -40,8 +38,12 @@ const TopicList = ({ subCategoryTitle }) => (
       tags={["Harmony", "Melody", "Random"]}
       notes={notes}
     />
-    <TopicListing title="Tempo" />
-  </div>
+    <TopicListing
+      title="Tempo"
+      tags={["Harmony", "Melody", "Random"]}
+      notes={notes}
+    />
+  </Container>
 )
 
 export default TopicList

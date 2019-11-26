@@ -7,11 +7,18 @@ import "./editor.css"
 
 const Container = styled.div`
   position: relative;
+  width: 80vw;
+  max-width: 32rem;
+  min-width: 14rem;
   min-height: 12rem;
   height: 100%;
 
   .ql-toolbar {
-    display: ${props => (props.readOnly ? `hidden` : `block`)};
+    display: ${props => (props.readOnly ? `none` : `block`)};
+  }
+
+  .ql-editor {
+    min-height: 10rem;
   }
 
   .options-btn {
@@ -77,7 +84,7 @@ const checkEditorState = quill => {
 
 const Editor = ({ noteContent }) => {
   const [showOptions, setShowOptions] = useState(false)
-  const [readOnly, setReadOnly] = useState(true)
+  const [readOnly, setReadOnly] = useState(false)
   const [quill, setQuill] = useState(null)
 
   useEffect(() => {
@@ -85,9 +92,11 @@ const Editor = ({ noteContent }) => {
       const editor = initializeQuillEditor(readOnly)
       // NOTE: For setting content retrieved from the api
       if (noteContent) {
-        quill.setContents(noteContent)
+        editor.setContents(noteContent)
       }
       setQuill(editor)
+    } else {
+      quill.readOnly = readOnly
     }
   }, [readOnly])
 

@@ -48,6 +48,9 @@ const Layout = ({ children }) => {
         ]}
       >
         <html lang="en" />
+        {/* TODO: Unpuck this situation w/ the quill editor 
+            Need that damn syntax highlighting and katex math formulas.
+        */}
         {/* <link
           rel="stylesheet"
           href="https://cdn.quilljs.com/1.3.6/quill.snow.css"

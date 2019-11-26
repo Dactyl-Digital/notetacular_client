@@ -1,6 +1,6 @@
 import React from "react"
 import { action } from "@storybook/addon-actions"
-import NoteList from "../note-list.js"
+import TopicListing from "../note-listing.js"
 
 const notes = [
   {
@@ -21,12 +21,18 @@ const notes = [
 ]
 
 export default {
-  component: NoteList,
-  title: "NoteList",
+  component: TopicListing,
+  title: "TopicListing",
 }
 
-export const emptyNoteList = () => <NoteList notes={[]}></NoteList>
-export const hydratedNoteList = () => <NoteList notes={notes}></NoteList>
+// TODO: Fix prop drilling like a mofo.
+export const topicListing = () => (
+  <TopicListing
+    title="Functional Programming"
+    tags={["HOF", "Closure"]}
+    notes={notes}
+  ></TopicListing>
+)
 
 // export const emoji = () => (
 //   <Button onClick={action("clicked")}>
