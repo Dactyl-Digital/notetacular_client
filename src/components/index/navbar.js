@@ -1,6 +1,7 @@
 import React from "react"
 import { Link } from "gatsby"
-export default () => (
+
+const Navbar = () => (
   <div
     style={{
       display: "flex",
@@ -9,13 +10,18 @@ export default () => (
       borderBottom: "1px solid #d1c1e0",
     }}
   >
-    <span>You are not logged in</span>
+    <h4>Notastical</h4>
     <nav>
-      <Link to="/">Home</Link>
+      <Link to="/about">About</Link>
       {` `}
-      <Link to="/">Profile</Link>
+      <Link to="/pricing">Pricing</Link>
       {` `}
-      <Link to="/">Logout</Link>
+      <Link to="/app/login">Login</Link>
+      <button>
+        <Link to="/app/login">Try it for Free</Link>
+      </button>
     </nav>
   </div>
 )
+
+export default Navbar

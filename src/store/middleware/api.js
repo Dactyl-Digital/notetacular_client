@@ -1,5 +1,4 @@
 import axios from "axios"
-import { API_URL } from "../../api-endpoints"
 // import { toggleLoader } from "../actions/ui"
 
 const API_REQUEST = "API_REQUEST"
@@ -18,7 +17,7 @@ const makeRequest = (
     // via the method turns out to be a pain.
     // dispatchToggleLoader(dispatch, true, { method, url })
     return axios
-      .post(`${API_URL}${url}`, payload)
+      .post(`${url}`, payload)
       .then(function(response) {
         console.log("post success response! ", response)
         // dispatchToggleLoader(dispatch, false, { method, url })
@@ -32,7 +31,7 @@ const makeRequest = (
   if (method === "GET") {
     // dispatchToggleLoader(dispatch, true, { method, url })
     return axios
-      .get(`${API_URL}${url}`, {
+      .get(`${url}`, {
         params: {
           lat: payload.lat,
           lng: payload.lng,
