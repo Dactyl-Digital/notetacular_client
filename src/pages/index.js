@@ -6,7 +6,7 @@ import Layout from "../components/layout"
 import Image from "../components/image"
 import SEO from "../components/seo"
 
-import Editor from "../components/app/topic-list/editor"
+import Navbar from "../components/index/navbar"
 
 // TODO: Add a isLoggedIn check on this page
 // to determine if redirection to /app/ is necessary
@@ -36,10 +36,7 @@ const IndexPage = () => {
   return (
     <Layout>
       <SEO title="Home" />
-      {/* <h1>Notastical</h1> */}
-      <Link to="/app/login">Login</Link>
-      <Link to="/app/signup">Try it for Free</Link>
-      <Editor></Editor>
+      <Navbar></Navbar>
     </Layout>
   )
 }

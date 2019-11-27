@@ -17,34 +17,42 @@ const makeRequest = (
     // via the method turns out to be a pain.
     // dispatchToggleLoader(dispatch, true, { method, url })
     return axios
-      .post(`${url}`, payload)
+      .post(url, payload)
       .then(function(response) {
-        console.log("post success response! ", response)
         // dispatchToggleLoader(dispatch, false, { method, url })
-        console.log("the success data: ", response.data)
-        onSuccess(response.data)
+        console.log("the response in POST")
+        console.log(response)
+        onSuccess(response)
       })
       .catch(function(error) {
-        onError({ error })
+        // DOC:
+        // Status Code 400 Err Response comes back as:
+        // error.response.data.errors = {
+        //   username: ["That username is already taken"]
+        // }
+        // Status Code 500 Err Response comes back as:
+        // error.response.data = {
+        //   message: "Oops... Something went wrong."
+        // }
+        console.log("the error in POST")
+        console.log(error)
+        onError(error)
       })
   }
   if (method === "GET") {
     // dispatchToggleLoader(dispatch, true, { method, url })
     return axios
-      .get(`${url}`, {
-        params: {
-          lat: payload.lat,
-          lng: payload.lng,
-        },
-      })
+      .get(url)
       .then(function(response) {
-        console.log("get success response! ", response)
+        console.log("the response in GET")
+        console.log(response)
         // dispatchToggleLoader(dispatch, false, { method, url })
-        console.log("the success data: ", response.data)
-        onSuccess(response.data)
+        onSuccess(response)
       })
       .catch(function(error) {
-        onError({ error })
+        console.log("the error in GET")
+        console.log(error)
+        onError(error)
       })
   }
 }

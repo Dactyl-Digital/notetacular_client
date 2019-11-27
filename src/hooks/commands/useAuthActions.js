@@ -1,7 +1,11 @@
 import { useDispatch } from "react-redux"
 import { apiRequest } from "../../store/actions/api"
-import { loginUser, setSignupError } from "../../store/actions/auth"
-import { SIGNUP_URL, LOGIN_URL } from "../../APIEndpoints"
+import {
+  loginUser,
+  setSuccessfulSignup,
+  setSignupError,
+} from "../../store/actions/auth"
+import { SIGNUP_URL, LOGIN_URL } from "../../api-endpoints"
 
 // NOTE:
 // Had to break out the action dispatcher helper functions from outside of useAuthActions
@@ -26,14 +30,12 @@ export const signupUser = dispatch => signupData => {
   )
 }
 
-export const signupSuccess = dispatch => ({ username }) => {
-  console.log("the User in signupSuccess: ", username)
-  dispatch(setUser({ username }))
+export const signupSuccess = dispatch => () => {
+  dispatch(setSuccessfulSignup())
 }
 
-const signupError = dispatch => ({ error }) => {
-  console.log("inside signupError", error)
-  dispatch(setSignupError({ error }))
+const signupError = dispatch => error => {
+  dispatch(setSignupError(error))
 }
 
 export function useAuthActions() {

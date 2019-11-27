@@ -21,11 +21,6 @@ const GlobalStyle = createGlobalStyle`
     background: ${props => (props.theme === "purple" ? "purple" : "white")};
   }
 `
-// export default ({ children }) => (
-//   <React.Fragment>
-//     <GlobalStyle theme="purple" />
-//   </React.Fragment>
-// )
 
 const Layout = ({ children }) => {
   const data = useStaticQuery(graphql`
@@ -78,7 +73,7 @@ const Layout = ({ children }) => {
         ></script>
       </Helmet>
       <GlobalStyle theme="white" />
-      <Header siteTitle={data.site.siteMetadata.title} />
+      {/* <Header siteTitle={data.site.siteMetadata.title} /> */}
       <div
         style={{
           margin: `0 auto`,

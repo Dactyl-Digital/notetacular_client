@@ -10,7 +10,7 @@ const Navbar = () => (
       borderBottom: "1px solid #d1c1e0",
     }}
   >
-    <h4>Notastical</h4>
+    {/* <h4>Notastical</h4> */}
     <nav>
       <Link to="/about">About</Link>
       {` `}
