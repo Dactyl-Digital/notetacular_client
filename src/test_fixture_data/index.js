@@ -8,6 +8,11 @@ const createAxiosErrorResponse = data => ({
   },
 })
 
+const normalizedNotebookList = {
+  "1": { id: 1, title: "Notebook1" },
+  "2": { id: 2, title: "Notebook2" },
+}
+
 export const signupData = {
   username: "testuser",
   email: "test@test.com",
@@ -25,13 +30,16 @@ export const signupSuccessResponse = createAxiosSuccessResponse({
 export const createNotebookResponse = createAxiosSuccessResponse({
   message: "Successfully created notebook!",
   data: {
-    id: 1,
-    title: "Notebook1",
+    id: 3,
+    title: "Notebook3",
   },
 })
 
 export const listNotebooksResponse = createAxiosSuccessResponse({
-  notebooks: [{ id: 1, title: "Notebook1" }, { id: 2, title: "Notebook2" }],
+  message: "Successfully listed notebooks!",
+  data: {
+    notebooks: [{ id: 1, title: "Notebook1" }, { id: 2, title: "Notebook2" }],
+  },
 })
 
 // TODO: Potential Notebook creation errors to be implemented:

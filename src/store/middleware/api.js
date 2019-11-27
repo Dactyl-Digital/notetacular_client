@@ -36,6 +36,18 @@ const makeRequest = (
         // }
         console.log("the error in POST")
         console.log(error)
+        console.dir(error)
+
+        if (
+          error.hasOwnProperty("message") &&
+          error.message === "Network Error"
+        ) {
+          return onError({
+            response: {
+              data: { message: "An error occured with the network." },
+            },
+          })
+        }
         onError(error)
       })
   }

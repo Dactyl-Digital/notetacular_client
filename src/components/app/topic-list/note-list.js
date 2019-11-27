@@ -7,7 +7,6 @@ const NoteList = ({ notes }) => {
   const [showCreateNoteModal, setShowCreateNoteModal] = useState(false)
 
   useEffect(() => {
-    console.log(`The incoming notes in NoteList: ${notes}`)
     if (listOfNotes.length === 0) {
       setListOfNotes(notes)
     }

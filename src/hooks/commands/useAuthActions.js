@@ -1,9 +1,10 @@
 import { useDispatch } from "react-redux"
 import { apiRequest } from "../../store/actions/api"
 import {
-  loginUser,
   setSuccessfulSignup,
   setSignupError,
+  setLoginUser,
+  setLoginError,
 } from "../../store/actions/auth"
 import { SIGNUP_URL, LOGIN_URL } from "../../api-endpoints"
 
@@ -18,7 +19,6 @@ import { SIGNUP_URL, LOGIN_URL } from "../../api-endpoints"
 //     3. You might have more than one copy of React in the same app
 //     See https://fb.me/react-invalid-hook-call for tips about how to debug and fix this problem.
 export const signupUser = dispatch => signupData => {
-  console.log("signupData: ", signupData)
   dispatch(
     apiRequest({
       method: "POST",
@@ -38,10 +38,31 @@ const signupError = dispatch => error => {
   dispatch(setSignupError(error))
 }
 
+export const loginUser = dispatch => loginData => {
+  dispatch(
+    apiRequest({
+      method: "POST",
+      url: LOGIN_URL,
+      payload: loginData,
+      onSuccess: loginSuccess(dispatch),
+      onError: loginError(dispatch),
+    })
+  )
+}
+
+export const loginSuccess = dispatch => () => {
+  dispatch(setLoginUser())
+}
+
+const loginError = dispatch => error => {
+  dispatch(setLoginError(error))
+}
+
 export function useAuthActions() {
   const dispatch = useDispatch()
 
   return {
     signupUser: signupUser(dispatch),
+    loginUser: loginUser(dispatch),
   }
 }

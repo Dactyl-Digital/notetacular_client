@@ -25,11 +25,14 @@ const normalizeSingle = ({ data }) => ({
 })
 
 // TODO: Move this into a helper folder.
-const normalize = key => ({ data }) =>
-  data[key].reduce((acc, resource) => {
+const normalize = key => ({ data }) => {
+  console.log("the data for list notebooks: ")
+  console.log(data)
+  return data[key].reduce((acc, resource) => {
     acc[resource.id] = resource
     return acc
   }, {})
+}
 
 const normalizeNotebooks = normalize("notebooks")
 
@@ -38,10 +41,12 @@ export default function notebookReducer(
   { type, payload }
 ) {
   if (type === SET_CREATED_NOTEBOOK) {
-    return {
+    const result = {
       ...notebookState,
       notebooks: { ...notebookState.notebooks, ...normalizeSingle(payload) },
     }
+
+    return result
   }
   if (type === SET_NOTEBOOK_LIST) {
     return notebookListNewState(notebookState, payload)

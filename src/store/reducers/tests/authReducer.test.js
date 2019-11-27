@@ -1,7 +1,7 @@
 import authReducer, { authInitialState } from "../authReducer"
 import {
-  loginUser,
-  logoutUser,
+  setLoginUser,
+  setLogoutUser,
   setSuccessfulSignup,
   setSignupError,
   setSigninError,
@@ -27,12 +27,12 @@ describe("authReducer", () => {
     })
   })
 
-  it("should set authenticated true on loginUser", () => {
-    expect(authReducer(undefined, loginUser())).toEqual(signedInState)
+  it("should set authenticated true on setLoginUser", () => {
+    expect(authReducer(undefined, setLoginUser())).toEqual(signedInState)
   })
 
-  it("should set authenticated false on logoutUser", () => {
-    expect(authReducer(signedInState, logoutUser())).toEqual({
+  it("should set authenticated false on setLogoutUser", () => {
+    expect(authReducer(signedInState, setLogoutUser())).toEqual({
       ...signedInState,
       authenticated: false,
     })

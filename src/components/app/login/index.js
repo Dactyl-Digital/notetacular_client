@@ -1,61 +1,63 @@
-import React from "react"
+import React, { useState } from "react"
 import { navigate } from "gatsby"
+import { useAuth } from "../../../hooks/queries/useAuth"
+import { useAuthActions } from "../../../hooks/commands/useAuthActions"
 // TODO: Create your necessary equivalents as this is used in the
 // /components/shared/privateRoute.js file as well to protect routes.
 // import { handleLogin, isLoggedIn } from "../services/auth"
 
-const handleLogin = state => console.log(`handleLogin => ${state}`)
-const isLoggedIn = () => false
+const Login = () => {
+  const { authenticated } = useAuth()
+  const { loginUser } = useAuthActions()
+  const [loginData, setLoginData] = useState({
+    username: "",
+    password: "",
+  })
 
-class Login extends React.Component {
-  state = {
-    username: ``,
-    password: ``,
+  if (authenticated) {
+    navigate("/app/notebooks")
   }
 
-  handleUpdate = event => {
-    this.setState({
-      [event.target.name]: event.target.value,
+  const handleChange = e => {
+    setLoginData({
+      ...loginData,
+      [e.target.id]: e.target.value,
     })
   }
 
-  handleSubmit = event => {
-    event.preventDefault()
-    handleLogin(this.state)
-  }
+  const handleLogin = loginData => loginUser(loginData)
 
-  render() {
-    if (isLoggedIn()) {
-      navigate(`/app/profile`)
-    }
-
-    return (
-      <>
-        <h1>Log in</h1>
-        <form
-          method="post"
-          onSubmit={event => {
-            this.handleSubmit(event)
-            navigate(`/app/profile`)
-          }}
-        >
-          <label>
-            Username
-            <input type="text" name="username" onChange={this.handleUpdate} />
-          </label>
-          <label>
-            Password
-            <input
-              type="password"
-              name="password"
-              onChange={this.handleUpdate}
-            />
-          </label>
-          <input type="submit" value="Log In" />
-        </form>
-      </>
-    )
-  }
+  return (
+    <>
+      <h1>Log in</h1>
+      <form
+        onSubmit={e => {
+          e.preventDefault()
+          handleLogin(loginData)
+        }}
+      >
+        <label>
+          Username
+          <input
+            id="username"
+            type="text"
+            name="username"
+            onChange={handleChange}
+          />
+        </label>
+        <label>
+          Password
+          <input
+            id="password"
+            type="password"
+            name="password"
+            onChange={handleChange}
+          />
+        </label>
+        <input type="submit" value="Log In" />
+      </form>
+    </>
+  )
 }
 
 export default Login
