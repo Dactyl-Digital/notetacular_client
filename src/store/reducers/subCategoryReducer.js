@@ -1,20 +1,20 @@
 import {
   SET_CREATED_SUB_CATEGORY,
   SET_SUB_CATEGORY_LIST,
-  LIST_SHARED_SUB_CATEGORYS,
+  LIST_SHARED_SUB_CATEGORIES,
   SET_CREATE_SUB_CATEGORY_ERROR,
   SET_SUB_CATEGORY_LIST_ERROR,
   SET_LIST_SHARED_SUB_CATEGORY_ERROR,
-} from "../actions/notebook"
+} from "../actions/subCategory"
 // import {helperFunction} from '../helpers'
 
-export const notebookInitialState = {
-  listSubcategoriesOffset: 0,
-  SubCategories: {},
-  listSharedSubCategorysOffset: 0,
+export const subCategoryInitialState = {
+  listSubCategoriesOffset: 0,
+  subCategories: {},
+  listSharedSubCategoriesOffset: 0,
   sharedSubCategories: {},
   createSubCategoryError: null,
-  SubCategoryListError: null,
+  subCategoryListError: null,
   listSharedSubCategoriesError: null,
 }
 
@@ -31,41 +31,44 @@ const normalize = key => ({ data }) =>
     return acc
   }, {})
 
-const normalizeNotebooks = normalize("notebooks")
+const normalizeSubCategories = normalize("sub_categories")
 
-export default function notebookReducer(
-  notebookState = notebookInitialState,
+export default function subCategoryReducer(
+  subCategoryState = subCategoryInitialState,
   { type, payload }
 ) {
-  if (type === SET_CREATED_NOTEBOOK) {
+  if (type === SET_CREATED_SUB_CATEGORY) {
     return {
-      ...notebookState,
-      notebooks: { ...notebookState.notebooks, ...normalizeSingle(payload) },
+      ...subCategoryState,
+      subCategories: {
+        ...subCategoryState.subCategories,
+        ...normalizeSingle(payload),
+      },
     }
   }
-  if (type === SET_NOTEBOOK_LIST) {
-    return notebookListNewState(notebookState, payload)
+  if (type === SET_SUB_CATEGORY_LIST) {
+    return subCategoryListNewState(subCategoryState, payload)
   }
-  // if (type === LIST_SHARED_NOTEBOOKS) {
-  //   return { ...notebookState, successfulSignup: true }
+  // if (type === LIST_SHARED_SUB_CATEGORIES) {
+  //   return { ...subCategoryState, successfulSignup: true }
   // }
-  if (type === SET_CREATE_NOTEBOOK_ERROR) {
-    return { ...notebookState, signupError: payload }
+  if (type === SET_CREATE_SUB_CATEGORY_ERROR) {
+    return { ...subCategoryState, createSubCategoryError: payload }
   }
-  if (type === SET_NOTEBOOK_LIST_ERROR) {
-    return { ...notebookState, notebookListError: payload }
+  if (type === SET_SUB_CATEGORY_LIST_ERROR) {
+    return { ...subCategoryState, subCategoryListError: payload }
   }
-  // if (type === SET_LIST_SHARED_NOTEBOOKS_ERROR) {
-  //   return { ...notebookState, signinError: payload.errors }
+  // if (type === SET_LIST_SHARED_subCategoryS_ERROR) {
+  //   return { ...subCategoryState, signinError: payload.errors }
   // }
-  return notebookState
+  return subCategoryState
 }
 
-const notebookListNewState = (notebookState, payload) => ({
-  ...notebookState,
-  notebooks: {
-    ...notebookState.notebooks,
-    ...normalizeNotebooks(payload),
+const subCategoryListNewState = (subCategoryState, payload) => ({
+  ...subCategoryState,
+  subCategories: {
+    ...subCategoryState.subCategories,
+    ...normalizeSubCategories(payload),
   },
-  listNotebooksOffset: notebookState.listNotebooksOffset + 20,
+  listSubCategoriesOffset: subCategoryState.listSubCategoriesOffset + 20,
 })

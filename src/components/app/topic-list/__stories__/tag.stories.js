@@ -8,6 +8,7 @@ export default {
 }
 
 export const tag = () => <Tag>Harmony</Tag>
+export const tagTwo = () => <Tag>Harmony</Tag>
 
 // export const emoji = () => (
 //   <Button onClick={action("clicked")}>

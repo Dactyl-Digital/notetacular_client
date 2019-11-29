@@ -37,21 +37,21 @@ const Signup = () => {
     <>
       <h1>Your Signup</h1>
       <form onSubmit={handleSubmit}>
-        <label for="username">Username</label>
+        <label htmlFor="username">Username</label>
         <input
           id="username"
           type="text"
           value={signupData.username}
           onChange={handleChange}
         />
-        <label for="email">Email</label>
+        <label htmlFor="email">Email</label>
         <input
           id="email"
           type="text"
           value={signupData.email}
           onChange={handleChange}
         />
-        <label for="password">Password</label>
+        <label htmlFor="password">Password</label>
         <input
           id="password"
           type="password"

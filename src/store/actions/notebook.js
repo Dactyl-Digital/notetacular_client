@@ -15,15 +15,13 @@ export const setCreatedNotebook = ({ data }) => ({
   },
 })
 
-export const setCreateNotebookError = error => {
-  return {
-    type: SET_CREATE_NOTEBOOK_ERROR,
-    payload: error,
-    meta: {
-      trigger: "Server failed to create notebook.",
-    },
-  }
-}
+export const setCreateNotebookError = error => ({
+  type: SET_CREATE_NOTEBOOK_ERROR,
+  payload: error,
+  meta: {
+    trigger: "Server failed to create notebook.",
+  },
+})
 
 export const setNotebookList = ({ data }) => ({
   type: SET_NOTEBOOK_LIST,
@@ -35,12 +33,10 @@ export const setNotebookList = ({ data }) => ({
   },
 })
 
-export const setNotebookListError = ({ response: { data } }) => {
-  return {
-    type: SET_NOTEBOOK_LIST_ERROR,
-    payload: data,
-    meta: {
-      trigger: "Server failed to list notebooks.",
-    },
-  }
-}
+export const setNotebookListError = ({ response: { data } }) => ({
+  type: SET_NOTEBOOK_LIST_ERROR,
+  payload: data,
+  meta: {
+    trigger: "Server failed to list notebooks.",
+  },
+})

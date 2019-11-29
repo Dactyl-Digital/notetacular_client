@@ -30,20 +30,6 @@ const mockStore = configureStore(middlewares)
 
 jest.mock("axios")
 
-// const logoutUserAction = {
-//   meta: {
-//     trigger: "Clear the username from state and reset authenticated to false",
-//   },
-//   payload: {},
-//   type: "LOGOUT_USER",
-// }
-
-// const signupErrorAction = {
-//   meta: { trigger: "Something went wrong while signing up the user" },
-//   payload: { error: ["That username is taken"] },
-//   type: "SET_SIGNUP_ERROR",
-// }
-
 // TODO: Should probably break this test file up to live within
 //       the hooks folder for each respective useAuthActions, useNotebookActions, etc.
 // useAuthActions Hook Commands

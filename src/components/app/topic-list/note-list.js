@@ -37,7 +37,7 @@ const NoteList = ({ notes }) => {
       <button onClick={toggleShowCreateNoteModal}>Create New Note</button>
       {showCreateNoteModal ? (
         <form onSubmit={handleCreateNewNote}>
-          <label for="title">Title</label>
+          <label htmlFor="title">Title</label>
           <input
             id="title"
             type="text"

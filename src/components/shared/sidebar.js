@@ -13,6 +13,13 @@ const Sidebar = () => (
     <h4>Notastical</h4>
     <div>More Options</div>
     <CircleScrollNav />
+    <button
+      onClick={() => {
+        localStorage.removeItem("authenticated")
+      }}
+    >
+      Log Out
+    </button>
   </div>
 )
 

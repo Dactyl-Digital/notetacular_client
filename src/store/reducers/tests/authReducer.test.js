@@ -4,7 +4,7 @@ import {
   setLogoutUser,
   setSuccessfulSignup,
   setSignupError,
-  setSigninError,
+  setLoginError,
 } from "../../actions/auth"
 import { signupErrorResponse } from "../../../test_fixture_data"
 
@@ -38,7 +38,7 @@ describe("authReducer", () => {
     })
   })
 
-  it("should set signupError to errors received from unsuccessful signup", () => {
+  it("should set signupError to errors received from unsuccessful signup on setSignupError", () => {
     expect(authReducer(undefined, setSignupError(signupErrorResponse))).toEqual(
       { ...authInitialState, signupError: signupErrorResponse.response.data }
     )

@@ -10,9 +10,9 @@ import PropTypes from "prop-types"
 import { useStaticQuery, graphql } from "gatsby"
 import Helmet from "react-helmet"
 import axios from "axios"
+import { createGlobalStyle } from "styled-components"
 import { Provider } from "react-redux"
 import { store } from "../store"
-import { createGlobalStyle } from "styled-components"
 
 import Header from "./header"
 import "./layout.css"
@@ -90,6 +90,16 @@ const Layout = ({ children }) => {
           © {new Date().getFullYear()}, Built with
           {` `}
           <a href="https://www.gatsbyjs.org">Gatsby</a>
+          <button
+            onClick={() => {
+              // TODO: Implement useAuthAction -> logoutUser
+              // and handle localStorage.removeItem("authenticated") inside
+              // of the store.subscribe handleChange function
+              localStorage.removeItem("authenticated")
+            }}
+          >
+            Log Out
+          </button>
         </footer>
       </div>
     </Provider>

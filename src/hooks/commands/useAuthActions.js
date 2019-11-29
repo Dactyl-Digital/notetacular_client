@@ -64,5 +64,6 @@ export function useAuthActions() {
   return {
     signupUser: signupUser(dispatch),
     loginUser: loginUser(dispatch),
+    loginSuccess: loginSuccess(dispatch),
   }
 }

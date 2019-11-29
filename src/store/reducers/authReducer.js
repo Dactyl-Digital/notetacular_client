@@ -3,12 +3,14 @@ import {
   LOGOUT_USER,
   SIGN_UP_SUCCESS,
   SET_SIGNUP_ERROR,
-  SET_SIGNIN_ERROR,
+  SET_LOGIN_ERROR,
 } from "../actions/auth"
 // import {helperFunction} from '../helpers'
 
+const authenticated = localStorage.getItem("authenticated")
+
 export const authInitialState = {
-  authenticated: false,
+  authenticated: authenticated ? true : false,
   successfulSignup: false,
   signupError: null,
   signinError: null,
@@ -30,7 +32,7 @@ export default function authReducer(
   if (type === SET_SIGNUP_ERROR) {
     return { ...authState, signupError: payload }
   }
-  if (type === SET_SIGNIN_ERROR) {
+  if (type === SET_LOGIN_ERROR) {
     return { ...authState, signinError: payload }
   }
   return authState

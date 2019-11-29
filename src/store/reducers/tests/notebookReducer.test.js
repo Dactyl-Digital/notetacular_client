@@ -24,8 +24,8 @@ describe("notebookReducer", () => {
       listNotebooksOffset: 20,
       // NOTE: Strangeness... Test would fail if I replace the below with normalizedNotebookList imported from test_fixture_data.
       notebooks: {
-        "1": { id: 1, title: "Notebook1" },
-        "2": { id: 2, title: "Notebook2" },
+        "1": { id: 1, title: "Notebook1", sub_category_id_list: [1, 2] },
+        "2": { id: 2, title: "Notebook2", sub_category_id_list: [] },
       },
       listSharedNotebooksOffset: 0,
       sharedNotebooks: {},
@@ -49,9 +49,9 @@ describe("notebookReducer", () => {
       listNotebooksOffset: 20,
       // NOTE: Strangeness... Test would fail if I replace the below with normalizedNotebookList imported from test_fixture_data.
       notebooks: {
-        "1": { id: 1, title: "Notebook1" },
-        "2": { id: 2, title: "Notebook2" },
-        "3": { id: 3, title: "Notebook3" },
+        "1": { id: 1, title: "Notebook1", sub_category_id_list: [1, 2] },
+        "2": { id: 2, title: "Notebook2", sub_category_id_list: [] },
+        "3": { id: 3, title: "Notebook3", sub_category_id_list: [] },
       },
       listSharedNotebooksOffset: 0,
       sharedNotebooks: {},
