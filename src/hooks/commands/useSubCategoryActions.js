@@ -5,7 +5,7 @@ import {
   setCreateSubCategoryError,
   setSubCategoryList,
   setSubCategoryListError,
-} from "../../store/actions/notebook"
+} from "../../store/actions/subCategory"
 import {
   CREATE_SUB_CATEGORY_URL,
   LIST_SUB_CATEGORIES_URL,

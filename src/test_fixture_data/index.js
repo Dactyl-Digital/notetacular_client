@@ -20,7 +20,23 @@ export const signupData = {
 }
 
 export const createNotebookData = {
-  title: "Notebook1",
+  title: "Notebook3",
+  sub_category_id_list: [],
+}
+
+export const createSubCategoryData = {
+  title: "SubCategory3",
+  topic_id_list: [],
+}
+
+export const createTopicData = {
+  title: "Topic3",
+  note_id_list: [],
+}
+
+export const createNoteData = {
+  title: "Note3",
+  note_timer_id_list: [],
 }
 
 export const signupSuccessResponse = createAxiosSuccessResponse({

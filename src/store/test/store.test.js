@@ -4,17 +4,38 @@ import { rootReducer } from "../reducers"
 import { apiMiddleware } from "../middleware/api"
 import { setSuccessfulSignup, setSignupError } from "../actions/auth"
 import { setCreatedNotebook, setNotebookList } from "../actions/notebook"
+import {
+  setCreatedSubCategory,
+  setSubCategoryList,
+} from "../actions/subCategory"
+import { setCreatedTopic, setTopicList } from "../actions/topic"
+import { setCreatedNote, setNoteList } from "../actions/note"
 import { signupUser } from "../../hooks/commands/useAuthActions"
 import {
   createNotebook,
   listNotebooks,
 } from "../../hooks/commands/useNotebookActions"
 import {
+  createSubCategory,
+  listSubCategories,
+} from "../../hooks/commands/useSubCategoryActions"
+import { createTopic, listTopics } from "../../hooks/commands/useTopicActions"
+import { createNote, listNotes } from "../../hooks/commands/useNoteActions"
+import {
   signupData,
+  signupErrorResponse,
   createNotebookData,
   createNotebookResponse,
-  signupErrorResponse,
   listNotebooksResponse,
+  createSubCategoryData,
+  createSubCategoryResponse,
+  listSubCategoriesResponse,
+  createTopicData,
+  createTopicResponse,
+  listTopicsResponse,
+  createNoteData,
+  createNoteResponse,
+  listNotesResponse,
 } from "../../test_fixture_data"
 
 const middlewares = [apiMiddleware]
@@ -52,10 +73,6 @@ test("Store receives SET_SIGNUP_ERROR action type when POST /api/signup responds
   signupUser(store.dispatch)({ ...signupData, fail: true })
   setTimeout(() => {
     const actions = store.getActions()
-    console.log("SET_SIGNUP_ERROR actions[0]")
-    console.log(actions[0])
-    console.log("setSignupError(signupErrorResponse)")
-    console.log(setSignupError(signupErrorResponse))
     expect(actions[0]).toEqual(setSignupError(signupErrorResponse))
     done()
   }, 0)
@@ -108,6 +125,78 @@ test("Store receives SET_NOTEBOOK_LIST action type when GET /api/notebook is a s
     // console.log("setCreatedNotebook(createNotebookResponse)")
     // console.log(setNotebookList(listNotebooksResponse))
     expect(actions[0]).toEqual(setNotebookList(listNotebooksResponse))
+    done()
+  }, 0)
+})
+
+// useSubCategoryActions Hook Commands
+test("Store receives SET_CREATED_SUB_CATEGORY action type when POST /api/sub-category is a success", done => {
+  const store = mockStore(rootReducer)
+  createSubCategory(store.dispatch)(createSubCategoryData)
+  setTimeout(() => {
+    const actions = store.getActions()
+    expect(actions[0]).toEqual(setCreatedSubCategory(createSubCategoryResponse))
+    done()
+  }, 0)
+})
+
+test("Store receives SET_SUB_CATEGORY_LIST action type when GET /api/sub-category is a success", done => {
+  const store = mockStore(rootReducer)
+  listSubCategories(store.dispatch)({
+    offset: 0,
+    sub_categories_id_list: [1, 2],
+  })
+  setTimeout(() => {
+    const actions = store.getActions()
+    expect(actions[0]).toEqual(setSubCategoryList(listSubCategoriesResponse))
+    done()
+  }, 0)
+})
+
+// useTopicActions Hook Commands
+test("Store receives SET_CREATED_SUB_CATEGORY action type when POST /api/topic is a success", done => {
+  const store = mockStore(rootReducer)
+  createTopic(store.dispatch)(createTopicData)
+  setTimeout(() => {
+    const actions = store.getActions()
+    expect(actions[0]).toEqual(setCreatedTopic(createTopicResponse))
+    done()
+  }, 0)
+})
+
+test("Store receives SET_TOPIC_LIST action type when GET /api/topic is a success", done => {
+  const store = mockStore(rootReducer)
+  listTopics(store.dispatch)({
+    offset: 0,
+    topic_id_list: [1, 2],
+  })
+  setTimeout(() => {
+    const actions = store.getActions()
+    expect(actions[0]).toEqual(setTopicList(listTopicsResponse))
+    done()
+  }, 0)
+})
+
+// useNoteActions Hook Commands
+test("Store receives SET_CREATED_NOT action type when POST /api/note is a success", done => {
+  const store = mockStore(rootReducer)
+  createNote(store.dispatch)(createNoteData)
+  setTimeout(() => {
+    const actions = store.getActions()
+    expect(actions[0]).toEqual(setCreatedNote(createNoteResponse))
+    done()
+  }, 0)
+})
+
+test("Store receives SET_NOTE_LIST action type when GET /api/note is a success", done => {
+  const store = mockStore(rootReducer)
+  listNotes(store.dispatch)({
+    offset: 0,
+    note_id_list: [1, 2],
+  })
+  setTimeout(() => {
+    const actions = store.getActions()
+    expect(actions[0]).toEqual(setNoteList(listNotesResponse))
     done()
   }, 0)
 })
