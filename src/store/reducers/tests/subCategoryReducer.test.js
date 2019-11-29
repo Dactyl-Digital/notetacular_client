@@ -18,7 +18,7 @@ describe("subCategoryReducer", () => {
     )
   })
 
-  it("setNotebookList should set a normalized list of notebooks to the subCategoryState and increments the corresponding offset by 20", () => {
+  it("setSubCategoryList should set a normalized list of sub categories to the subCategoryState and increments the corresponding offset by 20", () => {
     expect(
       subCategoryReducer(
         undefined,
@@ -38,7 +38,7 @@ describe("subCategoryReducer", () => {
     })
   })
 
-  it("setCreatedNotebook should append a newly created sub category to the normalized sub categories", () => {
+  it("setCreatedSubCategory should append a newly created sub category to the normalized sub categories", () => {
     const stateWithSubCategories = subCategoryReducer(
       undefined,
       setSubCategoryList(listSubCategoriesResponse)

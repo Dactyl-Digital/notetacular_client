@@ -5,7 +5,7 @@ import {
   SET_CREATE_TOPIC_ERROR,
   SET_TOPIC_LIST_ERROR,
   SET_LIST_SHARED_TOPIC_ERROR,
-} from "../actions/subCategory"
+} from "../actions/topic"
 // import {helperFunction} from '../helpers'
 
 export const topicInitialState = {
@@ -13,7 +13,7 @@ export const topicInitialState = {
   topics: {},
   listSharedTopicsOffset: 0,
   sharedTopics: {},
-  createtopicError: null,
+  createTopicError: null,
   topicListError: null,
   listSharedTopicsError: null,
 }

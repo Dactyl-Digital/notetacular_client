@@ -83,16 +83,35 @@ export const createTopicResponse = createAxiosSuccessResponse({
   data: {
     id: 3,
     title: "Topic3",
-    topic_id_list: [],
+    note_id_list: [],
   },
 })
 
 export const listTopicsResponse = createAxiosSuccessResponse({
-  message: "Successfully listed notes!",
+  message: "Successfully listed topics!",
   data: {
     topics: [
       { id: 1, title: "Topic1", note_id_list: [1, 2] },
       { id: 2, title: "Topic2", note_id_list: [] },
+    ],
+  },
+})
+
+export const createNoteResponse = createAxiosSuccessResponse({
+  message: "Successfully created note!",
+  data: {
+    id: 3,
+    title: "Note3",
+    note_timer_id_list: [],
+  },
+})
+
+export const listNotesResponse = createAxiosSuccessResponse({
+  message: "Successfully listed notes!",
+  data: {
+    notes: [
+      { id: 1, title: "Note1", note_timer_id_list: [1, 2] },
+      { id: 2, title: "Note2", note_timer_id_list: [] },
     ],
   },
 })

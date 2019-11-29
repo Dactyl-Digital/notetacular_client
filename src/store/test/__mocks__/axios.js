@@ -8,6 +8,12 @@ import {
   signupErrorResponse,
   createNotebookResponse,
   listNotebooksResponse,
+  createSubCategoryResponse,
+  listSubCategoriesResponse,
+  createTopicResponse,
+  listTopicsResponse,
+  createNoteResponse,
+  listNotesResponse,
 } from "../../../test_fixture_data"
 
 const mockAxios = {
@@ -15,6 +21,15 @@ const mockAxios = {
   get: (url, params) => {
     if (url === "http://localhost:4000/api/notebook?limit=20&offset=0") {
       return Promise.resolve(listNotebooksResponse)
+    }
+    if (url === "http://localhost:4000/api/sub-category?limit=20&offset=0") {
+      return Promise.resolve(listSubCategoriesResponse)
+    }
+    if (url === "http://localhost:4000/api/topic?limit=20&offset=0") {
+      return Promise.resolve(listTopicsResponse)
+    }
+    if (url === "http://localhost:4000/api/note?limit=20&offset=0") {
+      return Promise.resolve(listNotesResponse)
     }
   },
   post: (url, params) => {
@@ -36,6 +51,15 @@ const mockAxios = {
     }
     if (url === "http://localhost:4000/api/notebook") {
       return Promise.resolve(createNotebookResponse)
+    }
+    if (url === "http://localhost:4000/api/sub-category") {
+      return Promise.resolve(createSubCategoryResponse)
+    }
+    if (url === "http://localhost:4000/api/topic") {
+      return Promise.resolve(createTopicResponse)
+    }
+    if (url === "http://localhost:4000/api/note") {
+      return Promise.resolve(createNoteResponse)
     }
   },
   noPost: url => {
