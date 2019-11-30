@@ -17,7 +17,10 @@ const App = () => (
       <PrivateRoute path="/app/" component={RecentlyUpdatedNotebooks} />
       {/* TODO: Utilize path params for dynamic linking */}
       <PrivateRoute path="/app/notebooks" component={NotebookList} />
-      <PrivateRoute path="/app/sub-categories" component={SubCategoryList} />
+      <PrivateRoute
+        path="/app/notebook/:notebookId/sub-categories"
+        component={SubCategoryList}
+      />
       <PrivateRoute path="/app/topics" component={TopicList} />
     </Router>
   </Layout>

@@ -52,9 +52,11 @@ const makeRequest = (
       })
   }
   if (method === "GET") {
-    // dispatchToggleLoader(dispatch, true, { method, url })
-    return axios
-      .get(url)
+    axios({
+      method: "get",
+      url: url,
+      params: payload,
+    })
       .then(function(response) {
         console.log("the response in GET")
         console.log(response)
@@ -67,6 +69,23 @@ const makeRequest = (
         onError(error)
       })
   }
+
+  // if (method === "GET") {
+  //   // dispatchToggleLoader(dispatch, true, { method, url })
+  //   return axios
+  //     .get(url)
+  //     .then(function(response) {
+  //       console.log("the response in GET")
+  //       console.log(response)
+  //       // dispatchToggleLoader(dispatch, false, { method, url })
+  //       onSuccess(response)
+  //     })
+  //     .catch(function(error) {
+  //       console.log("the error in GET")
+  //       console.log(error)
+  //       onError(error)
+  //     })
+  // }
 }
 
 export const apiMiddleware = ({ dispatch }) => next => action => {

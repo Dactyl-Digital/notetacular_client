@@ -1,6 +1,6 @@
 import React from "react"
-
-const ResourceListing = ({ title }) => (
+import { Link } from "gatsby"
+const ResourceListing = ({ title, link }) => (
   <div
     style={{
       display: "flex",
@@ -9,7 +9,9 @@ const ResourceListing = ({ title }) => (
       borderBottom: "1px solid #d1c1e0",
     }}
   >
-    <h3>{title}</h3>
+    <Link to={`/app/${link}`}>
+      <h3>{title}</h3>
+    </Link>
   </div>
 )
 
