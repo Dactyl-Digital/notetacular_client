@@ -46,6 +46,10 @@ const Layout = ({ children }) => {
         ]}
       >
         <html lang="en" />
+        <link
+          href="https://fonts.googleapis.com/css?family=Blinker&display=swap"
+          rel="stylesheet"
+        ></link>
         {/* TODO: Unpuck this situation w/ the quill editor 
             Need that damn syntax highlighting and katex math formulas.
         */}
