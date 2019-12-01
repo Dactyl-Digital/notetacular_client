@@ -5,7 +5,7 @@ import { useNotebookActions } from "../../../hooks/commands/useNotebookActions"
 import Heading from "../../shared/heading"
 import Sidebar from "../../shared/sidebar"
 import ResourceListing from "../../shared/resource-listing"
-import Modal from "../../shared/modal"
+import CreateNotebookModal from "./create-notebook-modal"
 
 const Container = styled.div`
   display: flex;
@@ -20,8 +20,7 @@ const Container = styled.div`
 
 const NotebookList = () => {
   const { notebooks, listNotebooksOffset } = useNotebook()
-  const { createNotebook, listNotebooks } = useNotebookActions()
-  const [title, setTitle] = useState(false)
+  const { listNotebooks } = useNotebookActions()
 
   useEffect(() => {
     // if (listNotebooksOffset === 0) {
@@ -30,11 +29,6 @@ const NotebookList = () => {
   }, [])
 
   const loadMoreNotebooks = () => listNotebooks(listNotebooksOffset)
-
-  const handleCreateNewNotebook = () => {
-    createNotebook({ title })
-    setTitle("")
-  }
 
   // TODO: Implement navigating to the list of sub categories for a given
   //       notebook onClick.
@@ -48,6 +42,7 @@ const NotebookList = () => {
       <Sidebar />
       <div id="main-content">
         <Heading title="Notebooks" />
+        <CreateNotebookModal />
         {Object.keys(notebooks).map(key => (
           <ResourceListing
             key={notebooks[key].id.toString()}
@@ -62,27 +57,6 @@ const NotebookList = () => {
         then // there are no more pages to retrieve. */}
         <button onClick={loadMoreNotebooks}>Load More</button>
         {/* TODO: Create a CreateNotebookModal component */}
-        <Modal resource="Notebook">
-          {toggleShowModal => (
-            <form
-              onSubmit={e => {
-                e.preventDefault()
-                handleCreateNewNotebook()
-                toggleShowModal(false)
-              }}
-            >
-              <button onClick={toggleShowModal}>Close</button>
-              <label htmlFor="title">Title</label>
-              <input
-                id="title"
-                type="text"
-                value={title}
-                onChange={e => setTitle(e.target.value)}
-              />
-              <button>Submit!</button>
-            </form>
-          )}
-        </Modal>
       </div>
     </Container>
   )

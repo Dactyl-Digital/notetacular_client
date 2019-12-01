@@ -1,6 +1,6 @@
 import React from "react"
 import { action } from "@storybook/addon-actions"
-import Editor from "../editor.js"
+import Editor from "../editor"
 
 const delta = {
   ops: [

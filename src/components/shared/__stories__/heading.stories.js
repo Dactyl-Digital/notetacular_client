@@ -1,6 +1,6 @@
 import React from "react"
 import { action } from "@storybook/addon-actions"
-import Heading from "../heading.js"
+import Heading from "../heading"
 
 export default {
   component: Heading,

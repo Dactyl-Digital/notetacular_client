@@ -1,6 +1,6 @@
 import React from "react"
 import { action } from "@storybook/addon-actions"
-import Tags from "../tags.js"
+import Tags from "../tags"
 
 export default {
   component: Tags,

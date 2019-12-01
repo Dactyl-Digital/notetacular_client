@@ -26,4 +26,4 @@ const Heading = ({ title }) => {
 
 export default Heading
 
-// The Grey: 656565
+// The Grey: #656565

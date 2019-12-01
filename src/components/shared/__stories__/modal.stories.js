@@ -1,6 +1,6 @@
 import React from "react"
 import { action } from "@storybook/addon-actions"
-import Modal from "../modal.js"
+import Modal from "../modal"
 
 export default {
   component: Modal,

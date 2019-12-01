@@ -1,6 +1,6 @@
 import React from "react"
 import { action } from "@storybook/addon-actions"
-import NoteListing from "../note-listing.js"
+import NoteListing from "../note-listing"
 
 const noteData = {
   title: "Note1",

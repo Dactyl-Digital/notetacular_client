@@ -1,6 +1,6 @@
 import React from "react"
 import { action } from "@storybook/addon-actions"
-import TopicListing from "../note-listing.js"
+import TopicListing from "../note-listing"
 
 // const notes = [
 //   {
