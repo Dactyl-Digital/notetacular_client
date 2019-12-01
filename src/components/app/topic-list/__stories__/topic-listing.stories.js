@@ -2,6 +2,25 @@ import React from "react"
 import { action } from "@storybook/addon-actions"
 import TopicListing from "../note-listing.js"
 
+// const notes = [
+//   {
+//     title: "Note1 Title",
+//     tags: ["Harmony", "Melody", "Random"],
+//     noteContent:
+//       "Lorem ipsum dolor sit amet, consectetur adpiscing elit \
+//                   Proin faucibus dapibus elit ut varius. Aenean consequat \
+//                   ornare condimentum. Vivamus mauris lorem...",
+//   },
+//   {
+//     title: "Note2 Title",
+//     tags: ["Harmony", "Melody", "Random"],
+//     noteContent:
+//       "Lorem ipsum dolor sit amet, consectetur adpiscing elit \
+//                   Proin faucibus dapibus elit ut varius. Aenean consequat \
+//                   ornare condimentum. Vivamus mauris lorem...",
+//   },
+// ]
+
 const notes = [
   {
     title: "Note1",

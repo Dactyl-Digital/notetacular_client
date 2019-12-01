@@ -1,6 +1,18 @@
 import React, { useState, useEffect } from "react"
 import ReactDOM from "react-dom"
-import Button from "./button.js"
+import styled from "styled-components"
+import Button from "./button"
+
+const Overlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 9001;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: rgba(17, 238, 246, 70%);
+`
 
 // Use a ternary operator to make sure that the document object is defined
 const portalRoot =
@@ -20,15 +32,15 @@ const Modal = ({ children, resource }) => {
     if (portalRoot) {
       portalRoot.appendChild(div)
 
-      return () => {
-        portalRoot.removeChild(el)
+      if (el) {
+        return () => {
+          portalRoot.removeChild(el)
+        }
       }
     }
   }, [])
 
   // Check that this.el is not null before using ReactDOM.createPortal
-  console.log("What is el...")
-  console.log(el)
   if (el) {
     return (
       <div>
@@ -37,7 +49,10 @@ const Modal = ({ children, resource }) => {
         </Button>
         {/* {showModal ? children(toggleShowModal) : null} */}
         {showModal
-          ? ReactDOM.createPortal(children(toggleShowModal), el)
+          ? ReactDOM.createPortal(
+              <Overlay>{children(toggleShowModal)}</Overlay>,
+              el
+            )
           : null}
       </div>
     )

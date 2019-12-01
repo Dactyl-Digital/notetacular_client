@@ -1,48 +1,36 @@
 import React from "react"
 import styled from "styled-components"
 import TopicListing from "./topic-listing"
+import Heading from "../../shared/heading"
+import Sidebar from "../../shared/sidebar"
 
 const Container = styled.div`
-  width: 80vw;
+  display: flex;
+
+  #main-content {
+    /* TODO: For now this at least looks good on large screens... */
+    padding: 0 8vw;
+    padding-top: 2rem;
+    width: 100%;
+  }
 `
 
-// TODO:
-// Dummy data to facilitate Storybook workflow
-const notes = [
-  {
-    title: "Note1 Title",
-    tags: ["Harmony", "Melody", "Random"],
-    noteContent:
-      "Lorem ipsum dolor sit amet, consectetur adpiscing elit \
-                  Proin faucibus dapibus elit ut varius. Aenean consequat \
-                  ornare condimentum. Vivamus mauris lorem...",
-  },
-  {
-    title: "Note2 Title",
-    tags: ["Harmony", "Melody", "Random"],
-    noteContent:
-      "Lorem ipsum dolor sit amet, consectetur adpiscing elit \
-                  Proin faucibus dapibus elit ut varius. Aenean consequat \
-                  ornare condimentum. Vivamus mauris lorem...",
-  },
-]
-
-const TopicList = ({ subCategoryTitle }) => (
+const TopicList = () => (
   <Container>
-    <div>
-      <h1>{subCategoryTitle}</h1>
-      <div>Search Icon</div>
+    <Sidebar />
+    <div id="main-content">
+      <Heading title="Sub Categories" />
+      <TopicListing
+        title="Rhythm"
+        tags={["Harmony", "Melody", "Random"]}
+        // notes={notes}
+      />
+      <TopicListing
+        title="Tempo"
+        tags={["Harmony", "Melody", "Random"]}
+        // notes={notes}
+      />
     </div>
-    <TopicListing
-      title="Rhythm"
-      tags={["Harmony", "Melody", "Random"]}
-      notes={notes}
-    />
-    <TopicListing
-      title="Tempo"
-      tags={["Harmony", "Melody", "Random"]}
-      notes={notes}
-    />
   </Container>
 )
 

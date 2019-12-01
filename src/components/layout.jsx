@@ -47,9 +47,9 @@ const Layout = ({ children }) => {
       >
         <html lang="en" />
         <link
-          href="https://fonts.googleapis.com/css?family=Blinker&display=swap"
+          href="https://fonts.googleapis.com/css?family=Blinker:400,800|Lexend+Exa&display=swap"
           rel="stylesheet"
-        ></link>
+        />
         {/* TODO: Unpuck this situation w/ the quill editor 
             Need that damn syntax highlighting and katex math formulas.
         */}
@@ -81,31 +81,12 @@ const Layout = ({ children }) => {
       </Helmet>
       <GlobalStyle theme="white" />
       {/* <Header siteTitle={data.site.siteMetadata.title} /> */}
-      <div
-        style={{
-          margin: `0 auto`,
-          maxWidth: 960,
-          padding: `0px 1.0875rem 1.45rem`,
-          paddingTop: 0,
-        }}
-      >
-        <main>{children}</main>
-        <footer>
-          © {new Date().getFullYear()}, Built with
-          {` `}
-          <a href="https://www.gatsbyjs.org">Gatsby</a>
-          <button
-            onClick={() => {
-              // TODO: Implement useAuthAction -> logoutUser
-              // and handle localStorage.removeItem("authenticated") inside
-              // of the store.subscribe handleChange function
-              localStorage.removeItem("authenticated")
-            }}
-          >
-            Log Out
-          </button>
-        </footer>
-      </div>
+      <main>{children}</main>
+      {/* <footer>
+        © {new Date().getFullYear()}, Built with
+        {` `}
+        <a href="https://www.gatsbyjs.org">Gatsby</a>
+      </footer> */}
     </Provider>
   )
 }

@@ -1,9 +1,22 @@
 import React, { useState, useEffect } from "react"
+import styled from "styled-components"
 import { useNotebook } from "../../../hooks/queries/useNotebook"
 import { useNotebookActions } from "../../../hooks/commands/useNotebookActions"
 import Heading from "../../shared/heading"
+import Sidebar from "../../shared/sidebar"
 import ResourceListing from "../../shared/resource-listing"
 import Modal from "../../shared/modal"
+
+const Container = styled.div`
+  display: flex;
+
+  #main-content {
+    /* TODO: For now this at least looks good on large screens... */
+    padding: 0 8vw;
+    padding-top: 2rem;
+    width: 100%;
+  }
+`
 
 const NotebookList = () => {
   const { notebooks, listNotebooksOffset } = useNotebook()
@@ -31,15 +44,9 @@ const NotebookList = () => {
   //       request to the backend upon initial mount.
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flex: "1",
-        justifyContent: "space-between",
-        borderBottom: "1px solid #d1c1e0",
-      }}
-    >
-      <div>
+    <Container>
+      <Sidebar />
+      <div id="main-content">
         <Heading title="Notebooks" />
         {Object.keys(notebooks).map(key => (
           <ResourceListing
@@ -54,6 +61,7 @@ const NotebookList = () => {
         whether the most recent // page fetch retrieved 20 elements, if less,
         then // there are no more pages to retrieve. */}
         <button onClick={loadMoreNotebooks}>Load More</button>
+        {/* TODO: Create a CreateNotebookModal component */}
         <Modal resource="Notebook">
           {toggleShowModal => (
             <form
@@ -63,6 +71,7 @@ const NotebookList = () => {
                 toggleShowModal(false)
               }}
             >
+              <button onClick={toggleShowModal}>Close</button>
               <label htmlFor="title">Title</label>
               <input
                 id="title"
@@ -75,7 +84,7 @@ const NotebookList = () => {
           )}
         </Modal>
       </div>
-    </div>
+    </Container>
   )
 }
 
