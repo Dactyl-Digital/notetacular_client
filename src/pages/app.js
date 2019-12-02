@@ -21,7 +21,10 @@ const App = () => (
         path="/app/notebook/:notebookId/sub-categories"
         component={SubCategoryList}
       />
-      <PrivateRoute path="/app/topics" component={TopicList} />
+      <PrivateRoute
+        path="/app/sub-category/:subCategoryId/topics"
+        component={TopicList}
+      />
     </Router>
   </Layout>
 )

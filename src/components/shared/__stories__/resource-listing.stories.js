@@ -4,7 +4,7 @@ import { action } from "@storybook/addon-actions"
 import ResourceListing from "../resource-listing"
 
 const Container = styled.div`
-  width: 40rem;
+  width: 43rem;
 `
 
 export default {

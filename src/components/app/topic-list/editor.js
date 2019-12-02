@@ -7,11 +7,9 @@ import "./editor.css"
 
 const Container = styled.div`
   position: relative;
-  width: 80vw;
-  max-width: 32rem;
-  min-width: 14rem;
-  min-height: 12rem;
+  width: 100%;
   height: 100%;
+  min-height: 12rem;
 
   .ql-toolbar {
     display: ${props => (props.readOnly ? `none` : `block`)};

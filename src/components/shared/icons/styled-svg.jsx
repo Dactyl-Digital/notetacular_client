@@ -10,6 +10,8 @@ const StyledSvg = styled.svg`
     fill: #f78764;
     cursor: pointer;
   }
+
+  transform: ${props => (props.type === "ARROW" ? `rotateZ(90deg)` : null)};
 `
 
 export default StyledSvg

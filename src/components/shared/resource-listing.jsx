@@ -11,11 +11,11 @@ const Container = styled.div`
   justify-content: space-between;
   align-items: center;
   position: relative;
-  width: 100%;
+  width: 40rem;
   height: 4.6rem;
   border-radius: 5px;
   transition: box-shadow 0.4s, transform 0.4s ease-in-out;
-  margin-bottom: 2rem;
+  margin-top: 2rem;
   padding: 0 1.8rem;
 
   &:hover {
@@ -56,11 +56,22 @@ const Container = styled.div`
 
   #icons {
     display: flex;
+
+    svg {
+      margin-left: 1rem;
+    }
   }
 `
 
-const ResourceListing = ({ type, title, link, tags, handleDelete }) => (
-  <Container>
+const ResourceListing = ({
+  type,
+  title,
+  link,
+  tags,
+  handleDelete,
+  handleArrowClick,
+}) => (
+  <Container id={title}>
     <div id="title-and-tags">
       {type === "NOTE" ? (
         <h3>{title}</h3>
@@ -74,7 +85,11 @@ const ResourceListing = ({ type, title, link, tags, handleDelete }) => (
     <div id="icons">
       {/* TODO: Implement delete capability */}
       <TrashIcon />
-      {type === "TOPIC" || type === "NOTE" ? <ArrowIcon /> : null}
+      {type === "TOPIC" || type === "NOTE" ? (
+        <div onClick={handleArrowClick}>
+          <ArrowIcon />
+        </div>
+      ) : null}
     </div>
   </Container>
 )

@@ -15,10 +15,8 @@ const Container = styled.div`
     padding: 0 8vw;
     padding-top: 2rem;
     width: 100%;
-  }
-
-  #notebook-list {
-    margin-top: 2rem;
+    height: 100vh;
+    overflow-y: scroll;
   }
 `
 
@@ -41,14 +39,16 @@ const NotebookList = () => {
   //       the redux state, obtain the sub_category_id_list, and make the API
   //       request to the backend upon initial mount.
 
+  const keys = Object.keys(notebooks)
+
   return (
     <Container>
-      <Sidebar />
+      <Sidebar keys={keys} resourceList={notebooks} />
       <div id="main-content">
         <Heading title="Notebooks" />
         <CreateNotebookModal />
         <div id="notebook-list">
-          {Object.keys(notebooks).map(key => (
+          {keys.map(key => (
             <ResourceListing
               key={notebooks[key].id.toString()}
               title={notebooks[key].title}

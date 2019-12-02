@@ -12,6 +12,7 @@ const Container = styled.div`
   height: 100vh;
   padding-top: 1.2rem;
   background: #11eef6;
+  overflow-y: scroll;
 
   h4 {
     font-size: 1.4rem;
@@ -21,13 +22,12 @@ const Container = styled.div`
   }
 `
 
-const Sidebar = () => (
+const Sidebar = ({ keys, resourceList }) => (
   <Container>
     {/* <h4>Notastical</h4> */}
     <nav>
       <Options />
-      {/* TODO: How  will this be feasible to implement... */}
-      {/* <CircleScrollNav /> */}
+      <CircleScrollNav keys={keys} resourceList={resourceList} />
       <button
         onClick={() => {
           // TODO: Implement useAuthAction -> logoutUser

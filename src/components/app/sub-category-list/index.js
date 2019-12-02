@@ -7,6 +7,7 @@ import Heading from "../../shared/heading"
 import Sidebar from "../../shared/sidebar"
 import ResourceListing from "../../shared/resource-listing"
 import Modal from "../../shared/modal"
+import CreateSubCategoryModal from "./create-sub-category-modal"
 
 const Container = styled.div`
   display: flex;
@@ -16,14 +17,15 @@ const Container = styled.div`
     padding: 0 8vw;
     padding-top: 2rem;
     width: 100%;
+    height: 100vh;
+    overflow-y: scroll;
   }
 `
 
 const SubCategoryList = ({ notebookId }) => {
   const { notebooks } = useNotebook()
   const { subCategories, listSubCategoriesOffset } = useSubCategory()
-  const { createSubCategory, listSubCategories } = useSubCategoryActions()
-  const [title, setTitle] = useState(false)
+  const { listSubCategories } = useSubCategoryActions()
 
   useEffect(() => {
     const subCategoryIdList = notebooks[notebookId].sub_categories
@@ -35,43 +37,21 @@ const SubCategoryList = ({ notebookId }) => {
     }
   }, [])
 
-  const handleCreateNewSubCategory = e => {
-    createSubCategory({ title, notebook_id: Number(notebookId) })
-    setTitle("")
-  }
-
   return (
     <Container>
       <Sidebar />
       <div id="main-content">
         <Heading title="Sub Categories" />
-        {Object.keys(subCategories).map(key => (
-          <ResourceListing
-            key={subCategories[key].id.toString()}
-            title={subCategories[key].title}
-            link={`sub-category/${subCategories[key].id}/topics`}
-          />
-        ))}
-        <Modal resource="Sub Category">
-          {toggleShowModal => (
-            <form
-              onSubmit={e => {
-                e.preventDefault()
-                handleCreateNewSubCategory()
-                toggleShowModal(false)
-              }}
-            >
-              <label htmlFor="title">Title</label>
-              <input
-                id="title"
-                type="text"
-                value={title}
-                onChange={e => setTitle(e.target.value)}
-              />
-              <button>Submit!</button>
-            </form>
-          )}
-        </Modal>
+        <CreateSubCategoryModal />
+        <div id="sub-category-list">
+          {Object.keys(subCategories).map(key => (
+            <ResourceListing
+              key={subCategories[key].id.toString()}
+              title={subCategories[key].title}
+              link={`sub-category/${subCategories[key].id}/topics`}
+            />
+          ))}
+        </div>
       </div>
     </Container>
   )
