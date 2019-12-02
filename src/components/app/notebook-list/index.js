@@ -16,6 +16,10 @@ const Container = styled.div`
     padding-top: 2rem;
     width: 100%;
   }
+
+  #notebook-list {
+    margin-top: 2rem;
+  }
 `
 
 const NotebookList = () => {
@@ -43,14 +47,15 @@ const NotebookList = () => {
       <div id="main-content">
         <Heading title="Notebooks" />
         <CreateNotebookModal />
-        {Object.keys(notebooks).map(key => (
-          <ResourceListing
-            key={notebooks[key].id.toString()}
-            title={notebooks[key].title}
-            link={`notebook/${notebooks[key].id}/sub-categories`}
-          />
-        ))}
-
+        <div id="notebook-list">
+          {Object.keys(notebooks).map(key => (
+            <ResourceListing
+              key={notebooks[key].id.toString()}
+              title={notebooks[key].title}
+              link={`notebook/${notebooks[key].id}/sub-categories`}
+            />
+          ))}
+        </div>
         {/* // TODO: Implement scroll loading, and introduce some state // to keep
         track of whether there are more pages to be // retrieved -> by checking
         whether the most recent // page fetch retrieved 20 elements, if less,

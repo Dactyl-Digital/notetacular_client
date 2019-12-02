@@ -1,6 +1,10 @@
 import React from "react"
 import { Link } from "gatsby"
 import styled from "styled-components"
+// TODO: More Tags into /shared
+import Tags from "../app/topic-list/tags"
+import TrashIcon from "./icons/trash-icon"
+import ArrowIcon from "./icons/arrow-icon"
 
 const Container = styled.div`
   display: flex;
@@ -12,6 +16,7 @@ const Container = styled.div`
   border-radius: 5px;
   transition: box-shadow 0.4s, transform 0.4s ease-in-out;
   margin-bottom: 2rem;
+  padding: 0 1.8rem;
 
   &:hover {
     transform: scale(1.005);
@@ -38,16 +43,39 @@ const Container = styled.div`
     font-weight: 400;
     font-size: 1.8rem;
     color: #11eef6;
-    text-shadow: 0.13rem 0.13rem #1b7171;
-    padding-left: 1.8rem;
+    text-shadow: 0.1rem 0.1rem #1b7171;
+    margin: 0;
+  }
+
+  #title-and-tags {
+    display: flex;
+    justify-content: space-between;
+    min-width: 22.4rem;
+    max-width: 22.4rem;
+  }
+
+  #icons {
+    display: flex;
   }
 `
 
-const ResourceListing = ({ title, link }) => (
+const ResourceListing = ({ type, title, link, tags, handleDelete }) => (
   <Container>
-    <Link to={`/app/${link}`}>
-      <h3>{title}</h3>
-    </Link>
+    <div id="title-and-tags">
+      {type === "NOTE" ? (
+        <h3>{title}</h3>
+      ) : (
+        <Link to={`/app/${link}`}>
+          <h3>{title}</h3>
+        </Link>
+      )}
+      {type === "TOPIC" || type === "NOTE" ? <Tags tags={tags} /> : null}
+    </div>
+    <div id="icons">
+      {/* TODO: Implement delete capability */}
+      <TrashIcon />
+      {type === "TOPIC" || type === "NOTE" ? <ArrowIcon /> : null}
+    </div>
   </Container>
 )
 

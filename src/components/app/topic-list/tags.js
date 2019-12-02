@@ -1,7 +1,7 @@
 import React from "react"
 import styled from "styled-components"
 import Tag from "./tag"
-import addIcon from "../../../assets/icons/add.svg"
+import AddIcon from "../../shared/icons/add-icon"
 
 const Container = styled.div`
   display: flex;
@@ -10,13 +10,12 @@ const Container = styled.div`
   .tag-list {
     display: flex;
     justify-content: space-between;
-    width: 20rem;
-    overflow-x: hidden;
+    width: 14rem;
+    border-radius: 25px;
+    overflow-x: scroll;
   }
 
-  .add-icon {
-    width: 1.2rem;
-    height: 1.2rem;
+  svg {
     padding-left: 0.6rem;
   }
 `
@@ -29,9 +28,7 @@ const Tags = ({ tags }) => (
         <Tag>{tag}</Tag>
       ))}
     </div>
-    <div className="add-icon">
-      <img src={addIcon} />
-    </div>
+    <AddIcon />
   </Container>
 )
 

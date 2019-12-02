@@ -7,7 +7,9 @@ export default {
   title: "Tags",
 }
 
-export const tags = () => <Tags tags={["Rhythm", "Harmony", "Random"]}>=</Tags>
+export const tags = () => (
+  <Tags tags={["Rhythm", "Harmony", "Random", "Hippo"]}></Tags>
+)
 
 // export const emoji = () => (
 //   <Button onClick={action("clicked")}>

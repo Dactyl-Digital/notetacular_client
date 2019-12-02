@@ -12,7 +12,7 @@ export default {
   title: "ResourceListing",
 }
 
-export const resourceListing = () => (
+export const notebookListing = () => (
   <Container>
     <ResourceListing
       key="1"
