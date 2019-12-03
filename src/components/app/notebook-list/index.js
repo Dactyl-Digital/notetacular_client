@@ -7,6 +7,12 @@ import Sidebar from "../../shared/sidebar"
 import ResourceListing from "../../shared/resource-listing"
 import CreateNotebookModal from "./create-notebook-modal"
 
+export const ActiveCircleContext = React.createContext({
+  active: null,
+  activePosition: 0,
+  setActive: () => {},
+})
+
 const Container = styled.div`
   display: flex;
 
@@ -23,12 +29,21 @@ const Container = styled.div`
 const NotebookList = () => {
   const { notebooks, listNotebooksOffset } = useNotebook()
   const { listNotebooks } = useNotebookActions()
+  const [activeCircle, setActiveCircle] = useState({
+    active: null,
+    activePosition: 0,
+  })
 
   useEffect(() => {
     // if (listNotebooksOffset === 0) {
     listNotebooks(listNotebooksOffset)
     // }
   }, [])
+
+  const setActive = ({ active, activePosition }) => {
+    console.log("calling setActiveCircle")
+    setActiveCircle({ ...activeCircle, active, activePosition })
+  }
 
   const loadMoreNotebooks = () => listNotebooks(listNotebooksOffset)
 
@@ -43,26 +58,34 @@ const NotebookList = () => {
 
   return (
     <Container>
-      <Sidebar keys={keys} resourceList={notebooks} />
-      <div id="main-content">
-        <Heading title="Notebooks" />
-        <CreateNotebookModal />
-        <div id="notebook-list">
-          {keys.map(key => (
-            <ResourceListing
-              key={notebooks[key].id.toString()}
-              title={notebooks[key].title}
-              link={`notebook/${notebooks[key].id}/sub-categories`}
-            />
-          ))}
-        </div>
-        {/* // TODO: Implement scroll loading, and introduce some state // to keep
+      <ActiveCircleContext.Provider
+        value={{
+          ...activeCircle,
+          setActive,
+        }}
+      >
+        <Sidebar keys={keys} resourceList={notebooks} />
+        <div id="main-content">
+          <Heading title="Notebooks" />
+          <CreateNotebookModal />
+          <div id="notebook-list">
+            {keys.map(key => (
+              <ResourceListing
+                key={notebooks[key].id.toString()}
+                title={notebooks[key].title}
+                link={`notebook/${notebooks[key].id}/sub-categories`}
+                setActiveCircle={setActiveCircle}
+              />
+            ))}
+          </div>
+          {/* // TODO: Implement scroll loading, and introduce some state // to keep
         track of whether there are more pages to be // retrieved -> by checking
         whether the most recent // page fetch retrieved 20 elements, if less,
         then // there are no more pages to retrieve. */}
-        <button onClick={loadMoreNotebooks}>Load More</button>
-        {/* TODO: Create a CreateNotebookModal component */}
-      </div>
+          <button onClick={loadMoreNotebooks}>Load More</button>
+          {/* TODO: Create a CreateNotebookModal component */}
+        </div>
+      </ActiveCircleContext.Provider>
     </Container>
   )
 }

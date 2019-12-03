@@ -71,6 +71,10 @@ const ResourceListing = ({
   handleDelete,
   handleArrowClick,
 }) => (
+  // When scrolling.... the activeCircle should
+  // be set... Where should the scroll listener go.
+  // In the notebook-list, sub-category-list... etc.
+  // and pass that down as a prop to be checked against.
   <Container id={title}>
     <div id="title-and-tags">
       {type === "NOTE" ? (
