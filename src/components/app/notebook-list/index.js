@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useRef, useState, useEffect } from "react"
 import styled from "styled-components"
 import { useNotebook } from "../../../hooks/queries/useNotebook"
 import { useNotebookActions } from "../../../hooks/commands/useNotebookActions"
@@ -33,17 +33,53 @@ const NotebookList = () => {
     active: null,
     activePosition: 0,
   })
+  const [scrollTopHeight, setScrollTopHeight] = useState({
+    scrollTop: null,
+    scrollHeight: null,
+  })
+  const [currentElTop, setCurrentElTop] = useState({
+    top: null,
+    title: null,
+  })
+  const [elementTopList, setElementTopList] = useState([])
+  const listEl = useRef(null)
 
   useEffect(() => {
-    // if (listNotebooksOffset === 0) {
-    listNotebooks(listNotebooksOffset)
-    // }
-  }, [])
+    console.log("the element topList")
+    console.log(elementTopList)
+    listEl.current.addEventListener("scroll", handleScroll)
+    if (Object.keys(notebooks).length === 0) {
+      listNotebooks(listNotebooksOffset)
+    }
+    if (scrollTopHeight.scrollHeight === null) {
+      setScrollTopHeight({
+        scrollTop: listEl.current.scrollTop,
+        scrollHeight: listEl.current.scrollHeight,
+      })
+    }
+    console.log("the currentElTop")
+    console.log(currentElTop)
+    return () => {
+      listEl.current.removeEventListener("scroll", handleScroll)
+    }
+  }, [scrollTopHeight, currentElTop, elementTopList])
+
+  const handleScroll = () => {
+    console.log("listEl.current.scrollTop: ", listEl.current.scrollTop)
+    console.log("listEl.current.scrollHeight: ", listEl.current.scrollHeight)
+    setScrollTopHeight({
+      scrollTop: listEl.current.scrollTop,
+      scrollHeight: listEl.current.scrollHeight,
+    })
+  }
 
   const setActive = ({ active, activePosition }) => {
     console.log("calling setActiveCircle")
     setActiveCircle({ ...activeCircle, active, activePosition })
   }
+
+  const updateElementTopList = elementTop =>
+    setElementTopList([...elementTopList, elementTop])
 
   const loadMoreNotebooks = () => listNotebooks(listNotebooksOffset)
 
@@ -65,16 +101,21 @@ const NotebookList = () => {
         }}
       >
         <Sidebar keys={keys} resourceList={notebooks} />
-        <div id="main-content">
+        <div id="main-content" ref={listEl}>
           <Heading title="Notebooks" />
           <CreateNotebookModal />
           <div id="notebook-list">
-            {keys.map(key => (
+            {keys.map((key, i) => (
               <ResourceListing
                 key={notebooks[key].id.toString()}
                 title={notebooks[key].title}
                 link={`notebook/${notebooks[key].id}/sub-categories`}
+                index={i}
                 setActiveCircle={setActiveCircle}
+                scrollTopHeight={scrollTopHeight}
+                currentElTop={currentElTop}
+                setCurrentElTop={setCurrentElTop}
+                updateElementTopList={updateElementTopList}
               />
             ))}
           </div>

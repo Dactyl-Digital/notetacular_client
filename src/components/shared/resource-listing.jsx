@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useRef, useEffect } from "react"
 import { Link } from "gatsby"
 import styled from "styled-components"
 // TODO: More Tags into /shared
@@ -70,32 +70,75 @@ const ResourceListing = ({
   tags,
   handleDelete,
   handleArrowClick,
-}) => (
-  // When scrolling.... the activeCircle should
-  // be set... Where should the scroll listener go.
-  // In the notebook-list, sub-category-list... etc.
-  // and pass that down as a prop to be checked against.
-  <Container id={title}>
-    <div id="title-and-tags">
-      {type === "NOTE" ? (
-        <h3>{title}</h3>
-      ) : (
-        <Link to={`/app/${link}`}>
+  index,
+  setActiveCircle,
+  updateElementTopList,
+  scrollTopHeight,
+  currentElTop,
+  setCurrentElTop,
+}) => {
+  const listingEl = useRef(null)
+
+  // {top: 928.9630126953125, title: "PandaTwo!"}
+  useEffect(() => {
+    // console.log("WTF IS BOUNDING CLIENT RECT: ", title)
+    // console.log(listingEl.current.getBoundingClientRect())
+    const elTop = listingEl.current.getBoundingClientRect().top
+    if (elTop > -60 && elTop < 60) {
+      setActiveCircle({ active: title, activePosition: index })
+    }
+    // console.log("elTop: ", elTop)
+    // console.log("scrollTop: ", scrollTop)
+    // console.log("currentElTop.top: ", currentElTop.top)
+    // const scrollProgress =
+    //   scrollTopHeight.scrollHeight - scrollTopHeight.scrollTop
+    // if (currentElTop.top === null) {
+    //   setCurrentElTop({ top: elTop + scrollProgress, title: title })
+    // }
+    // if (elTop > 0) {
+    //   const elPosition = elTop + scrollProgress
+    //   const elPositionScrollDelta = elPosition - scrollProgress
+    //   const currentElPositionScrollDelta = currentElTop.top - scrollProgress
+    //   console.log("elPositionScrollDelta: ", elPositionScrollDelta)
+    //   console.log(
+    //     "currentElPositionScrollDelta: ",
+    //     currentElPositionScrollDelta
+    //   )
+    //   if (elPositionScrollDelta < currentElPositionScrollDelta) {
+    //     console.log("setting currentElTop")
+    //     console.log({ top: elTop + scrollProgress, title: title })
+    //     setCurrentElTop({ top: elTop + scrollProgress, title: title })
+    //   }
+    // }
+  })
+
+  return (
+    // When scrolling.... the activeCircle should
+    // be set... Where should the scroll listener go.
+    // In the notebook-list, sub-category-list... etc.
+    // and pass that down as a prop to be checked against.
+    <Container id={title} ref={listingEl}>
+      <div id="title-and-tags">
+        {type === "NOTE" ? (
           <h3>{title}</h3>
-        </Link>
-      )}
-      {type === "TOPIC" || type === "NOTE" ? <Tags tags={tags} /> : null}
-    </div>
-    <div id="icons">
-      {/* TODO: Implement delete capability */}
-      <TrashIcon />
-      {type === "TOPIC" || type === "NOTE" ? (
-        <div onClick={handleArrowClick}>
-          <ArrowIcon />
-        </div>
-      ) : null}
-    </div>
-  </Container>
-)
+        ) : (
+          <Link to={`/app/${link}`}>
+            <h3>{title}</h3>
+          </Link>
+        )}
+        {type === "TOPIC" || type === "NOTE" ? <Tags tags={tags} /> : null}
+      </div>
+      <div id="icons">
+        {/* TODO: Implement delete capability */}
+        <TrashIcon />
+        {type === "TOPIC" || type === "NOTE" ? (
+          <div onClick={handleArrowClick}>
+            <ArrowIcon />
+          </div>
+        ) : null}
+      </div>
+    </Container>
+  )
+}
 
 export default ResourceListing
