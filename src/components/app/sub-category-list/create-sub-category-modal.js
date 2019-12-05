@@ -32,12 +32,12 @@ const Container = styled.div`
   }
 `
 
-const CreateSubCategoryModal = () => {
+const CreateSubCategoryModal = ({ notebookId }) => {
   const { createSubCategory } = useSubCategoryActions()
   const [title, setTitle] = useState("")
 
   const handleCreateNewSubCategory = () => {
-    createSubCategory({ title })
+    createSubCategory({ title, notebook_id: notebookId })
     setTitle("")
   }
 

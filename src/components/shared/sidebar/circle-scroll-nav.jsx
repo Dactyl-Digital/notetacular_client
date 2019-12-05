@@ -62,34 +62,43 @@ const A = styled.a`
 `
 
 // Will receive the resourceList object (i.e. notebooks, subCategories, topics) from redux state and the Object.keys array as props
-const CircleScrollNav = ({ keys, resourceList }) => (
-  <ActiveCircleContext.Consumer>
-    {({ active, activePosition, setActive }) => (
-      <Nav>
-        {keys.map((key, i) => (
-          <A
-            className="scroll-link"
-            href={`#${resourceList[key].title}`}
-            onClick={() => {
-              setActive({
-                active: resourceList[key].title,
-                activePosition: i,
-              })
-            }}
-            activePosition={activePosition}
-            currentPosition={i}
-          >
-            <div
-              className={
-                i === keys.length - 1 ? `circle circle-last-child` : `circle`
-              }
-            ></div>
-            <span>{resourceList[key].title}</span>
-          </A>
-        ))}
-      </Nav>
-    )}
-  </ActiveCircleContext.Consumer>
-)
+const CircleScrollNav = props => {
+  console.log("wtf be props in CircleScrollNav")
+  console.log(props)
+  return (
+    <ActiveCircleContext.Consumer>
+      {({ active, activePosition, setActive }) => (
+        <Nav>
+          {props.keys.map((key, i) => (
+            <A
+              className="scroll-link"
+              href={`#${props.resourceList[key].title}`}
+              onClick={() => {
+                console.log("CircleScrollNav calling setActive")
+                console.log(setActive)
+                setActive({
+                  active: props.resourceList[key].title,
+                  activePosition: i,
+                  clickedNav: true,
+                })
+              }}
+              activePosition={activePosition}
+              currentPosition={i}
+            >
+              <div
+                className={
+                  i === props.keys.length - 1
+                    ? `circle circle-last-child`
+                    : `circle`
+                }
+              ></div>
+              <span>{props.resourceList[key].title}</span>
+            </A>
+          ))}
+        </Nav>
+      )}
+    </ActiveCircleContext.Consumer>
+  )
+}
 
 export default CircleScrollNav

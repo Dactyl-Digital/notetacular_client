@@ -29,57 +29,56 @@ const Container = styled.div`
 const NotebookList = () => {
   const { notebooks, listNotebooksOffset } = useNotebook()
   const { listNotebooks } = useNotebookActions()
+  // Create custom hook for all of these... would that really help anything
+  // over just copy pasting into sub-category-list & topic-list?
   const [activeCircle, setActiveCircle] = useState({
     active: null,
     activePosition: 0,
   })
-  const [scrollTopHeight, setScrollTopHeight] = useState({
-    scrollTop: null,
-    scrollHeight: null,
-  })
-  const [currentElTop, setCurrentElTop] = useState({
-    top: null,
-    title: null,
-  })
-  const [elementTopList, setElementTopList] = useState([])
+  const [setActiveDisabled, setSetActiveDisabled] = useState(false)
+  const [scrollTop, setScrollTop] = useState(0)
   const listEl = useRef(null)
 
   useEffect(() => {
-    console.log("the element topList")
-    console.log(elementTopList)
+    const hash = window.location.hash
+    if (hash && !activeCircle.active) {
+      const id = hash.slice(1, hash.length)
+      setTimeout(() => {
+        let targetResource = document.getElementById(id)
+        // NOTE: scrollIntoView worked.... AND I'm willing to settle with that for now!
+        // TODO: CLean this shiz up, uninstall gsap, and add hover style to focused element
+        // manage that state -> i.e. it should become the active div, until user scrolls
+        // then other divs will be newly selected active divs.
+        targetResource.scrollIntoView()
+      }, 5000)
+    }
     listEl.current.addEventListener("scroll", handleScroll)
     if (Object.keys(notebooks).length === 0) {
       listNotebooks(listNotebooksOffset)
     }
-    if (scrollTopHeight.scrollHeight === null) {
-      setScrollTopHeight({
-        scrollTop: listEl.current.scrollTop,
-        scrollHeight: listEl.current.scrollHeight,
-      })
-    }
-    console.log("the currentElTop")
-    console.log(currentElTop)
     return () => {
       listEl.current.removeEventListener("scroll", handleScroll)
     }
-  }, [scrollTopHeight, currentElTop, elementTopList])
+  }, [activeCircle])
 
   const handleScroll = () => {
-    console.log("listEl.current.scrollTop: ", listEl.current.scrollTop)
-    console.log("listEl.current.scrollHeight: ", listEl.current.scrollHeight)
-    setScrollTopHeight({
-      scrollTop: listEl.current.scrollTop,
-      scrollHeight: listEl.current.scrollHeight,
-    })
+    setScrollTop(listEl.current.scrollTop)
   }
 
-  const setActive = ({ active, activePosition }) => {
-    console.log("calling setActiveCircle")
-    setActiveCircle({ ...activeCircle, active, activePosition })
+  const setActive = ({ active, activePosition, clickedNav }) => {
+    if (!setActiveDisabled || clickedNav) {
+      setActiveCircle({ ...activeCircle, active, activePosition })
+      if (clickedNav) {
+        setSetActiveDisabled(clickedNav)
+      }
+      // Necessary to prevent the scroll event from being triggered
+      // and resetting a higher ResourceListing as active when scrolled to
+      // the bottom of the list. (As the clicked ResourceListing won't be
+      // at the top of the viewport and the one that is would be set to active
+      // right after the clicked ResourceListing is)
+      setTimeout(() => setSetActiveDisabled(false), 1000)
+    }
   }
-
-  const updateElementTopList = elementTop =>
-    setElementTopList([...elementTopList, elementTop])
 
   const loadMoreNotebooks = () => listNotebooks(listNotebooksOffset)
 
@@ -93,13 +92,13 @@ const NotebookList = () => {
   const keys = Object.keys(notebooks)
 
   return (
-    <Container>
-      <ActiveCircleContext.Provider
-        value={{
-          ...activeCircle,
-          setActive,
-        }}
-      >
+    <ActiveCircleContext.Provider
+      value={{
+        ...activeCircle,
+        setActive,
+      }}
+    >
+      <Container>
         <Sidebar keys={keys} resourceList={notebooks} />
         <div id="main-content" ref={listEl}>
           <Heading title="Notebooks" />
@@ -111,11 +110,10 @@ const NotebookList = () => {
                 title={notebooks[key].title}
                 link={`notebook/${notebooks[key].id}/sub-categories`}
                 index={i}
+                active={activeCircle.active === notebooks[key].title}
+                setActiveDisabled={setActiveDisabled}
+                scrollTop={scrollTop}
                 setActiveCircle={setActiveCircle}
-                scrollTopHeight={scrollTopHeight}
-                currentElTop={currentElTop}
-                setCurrentElTop={setCurrentElTop}
-                updateElementTopList={updateElementTopList}
               />
             ))}
           </div>
@@ -126,8 +124,8 @@ const NotebookList = () => {
           <button onClick={loadMoreNotebooks}>Load More</button>
           {/* TODO: Create a CreateNotebookModal component */}
         </div>
-      </ActiveCircleContext.Provider>
-    </Container>
+      </Container>
+    </ActiveCircleContext.Provider>
   )
 }
 

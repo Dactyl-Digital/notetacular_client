@@ -17,6 +17,9 @@ const Container = styled.div`
   transition: box-shadow 0.4s, transform 0.4s ease-in-out;
   margin-top: 2rem;
   padding: 0 1.8rem;
+  transform: ${props => props.active && "scale(1.005)"};
+  box-shadow: ${props =>
+    props.active && "0rem 0.1rem 1rem rgba(17, 238, 246, 30%)"};
 
   &:hover {
     transform: scale(1.005);
@@ -70,54 +73,28 @@ const ResourceListing = ({
   tags,
   handleDelete,
   handleArrowClick,
+  active,
   index,
+  setActiveDisabled,
+  scrollTop,
   setActiveCircle,
-  updateElementTopList,
-  scrollTopHeight,
-  currentElTop,
-  setCurrentElTop,
 }) => {
   const listingEl = useRef(null)
 
-  // {top: 928.9630126953125, title: "PandaTwo!"}
   useEffect(() => {
-    // console.log("WTF IS BOUNDING CLIENT RECT: ", title)
-    // console.log(listingEl.current.getBoundingClientRect())
-    const elTop = listingEl.current.getBoundingClientRect().top
-    if (elTop > -60 && elTop < 60) {
+    if (setActiveDisabled) return
+    const elementTop = listingEl.current.getBoundingClientRect().top
+    if (elementTop > -60 && elementTop < 60) {
       setActiveCircle({ active: title, activePosition: index })
     }
-    // console.log("elTop: ", elTop)
-    // console.log("scrollTop: ", scrollTop)
-    // console.log("currentElTop.top: ", currentElTop.top)
-    // const scrollProgress =
-    //   scrollTopHeight.scrollHeight - scrollTopHeight.scrollTop
-    // if (currentElTop.top === null) {
-    //   setCurrentElTop({ top: elTop + scrollProgress, title: title })
-    // }
-    // if (elTop > 0) {
-    //   const elPosition = elTop + scrollProgress
-    //   const elPositionScrollDelta = elPosition - scrollProgress
-    //   const currentElPositionScrollDelta = currentElTop.top - scrollProgress
-    //   console.log("elPositionScrollDelta: ", elPositionScrollDelta)
-    //   console.log(
-    //     "currentElPositionScrollDelta: ",
-    //     currentElPositionScrollDelta
-    //   )
-    //   if (elPositionScrollDelta < currentElPositionScrollDelta) {
-    //     console.log("setting currentElTop")
-    //     console.log({ top: elTop + scrollProgress, title: title })
-    //     setCurrentElTop({ top: elTop + scrollProgress, title: title })
-    //   }
-    // }
-  })
+  }, [scrollTop])
 
   return (
     // When scrolling.... the activeCircle should
     // be set... Where should the scroll listener go.
     // In the notebook-list, sub-category-list... etc.
     // and pass that down as a prop to be checked against.
-    <Container id={title} ref={listingEl}>
+    <Container id={title} ref={listingEl} active={active}>
       <div id="title-and-tags">
         {type === "NOTE" ? (
           <h3>{title}</h3>
