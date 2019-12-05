@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import styled from "styled-components"
 import { useSubCategory } from "../../../hooks/queries/useSubCategory"
 import { useTopic } from "../../../hooks/queries/useTopic"
@@ -7,6 +7,8 @@ import { useTopicActions } from "../../../hooks/commands/useTopicActions"
 import Heading from "../../shared/heading"
 import Sidebar from "../../shared/sidebar"
 import ResourceListing from "../../shared/resource-listing"
+import CreateResourceModal from "../../shared/create-resource-modal"
+import { ActiveCircleContext } from "../notebook-list"
 
 const Container = styled.div`
   display: flex;
@@ -24,35 +26,133 @@ const Container = styled.div`
 const TopicList = ({ subCategoryId }) => {
   const { subCategories } = useSubCategory()
   const { topics, listTopicsOffset } = useTopic()
-  const { listTopics } = useTopicActions()
+  const { createTopic, listTopics } = useTopicActions()
+  const [title, setTitle] = useState("")
 
-  // TODO: Genericize this b, make a reusable hook... as this is
-  // repeated in notebook-list and sub-category-list
+  const [activeCircle, setActiveCircle] = useState({
+    active: null,
+    activePosition: 0,
+  })
+  const [setActiveDisabled, setSetActiveDisabled] = useState(false)
+  const [scrollTop, setScrollTop] = useState(0)
+  const listEl = useRef(null)
+
+  // // TODO: Genericize this b, make a reusable hook... as this is
+  // // repeated in notebook-list and sub-category-list
+  // useEffect(() => {
+  //   const topicIdList = subCategories[subCategoryId].topics
+  //   if (topicIdList.length > 0 && Object.keys(topics).length === 0) {
+  //     listTopics({
+  //       offset: listTopicsOffset,
+  //       topic_id_list: topicIdList,
+  //     })
+  //   }
+  // }, [])
+
   useEffect(() => {
+    console.log("activeCircle state in topic-list")
+    console.log(activeCircle)
+    const hash = window.location.hash
+    if (hash && !activeCircle.active) {
+      const id = hash.slice(1, hash.length)
+      setTimeout(() => {
+        let targetResource = document.getElementById(id)
+        // NOTE: scrollIntoView worked.... AND I'm willing to settle with that for now!
+        // TODO: CLean this shiz up, uninstall gsap, and add hover style to focused element
+        // manage that state -> i.e. it should become the active div, until user scrolls
+        // then other divs will be newly selected active divs.
+        targetResource.scrollIntoView()
+      }, 5000)
+    }
+    listEl.current.addEventListener("scroll", handleScroll)
     const topicIdList = subCategories[subCategoryId].topics
-    if (topicIdList.length > 0) {
+    if (topicIdList.length > 0 && Object.keys(topics).length === 0) {
       listTopics({
         offset: listTopicsOffset,
         topic_id_list: topicIdList,
       })
     }
-  }, [])
+
+    return () => {
+      listEl.current.removeEventListener("scroll", handleScroll)
+    }
+  }, [activeCircle])
+
+  const handleScroll = () => {
+    setScrollTop(listEl.current.scrollTop)
+  }
+
+  const setActive = ({ active, activePosition, clickedNav }) => {
+    console.log("setActive called in topic-list")
+    if (!setActiveDisabled || clickedNav) {
+      setActiveCircle({ ...activeCircle, active, activePosition })
+      if (clickedNav) {
+        setSetActiveDisabled(clickedNav)
+      }
+      // Necessary to prevent the scroll event from being triggered
+      // and resetting a higher ResourceListing as active when scrolled to
+      // the bottom of the list. (As the clicked ResourceListing won't be
+      // at the top of the viewport and the one that is would be set to active
+      // right after the clicked ResourceListing is)
+      setTimeout(() => setSetActiveDisabled(false), 1000)
+    }
+  }
+
+  const handleCreateNewTopic = () => {
+    createTopic({ title, sub_category_id: subCategoryId })
+    setTitle("")
+  }
+
+  const keys = Object.keys(topics)
 
   return (
-    <Container>
-      <Sidebar />
-      <div id="main-content">
-        <Heading title="Topics" />
-        <div id="sub-category-list">
-          {Object.keys(topics).map(key => (
-            <ResourceListing
-              key={topics[key].id.toString()}
-              title={topics[key].title}
-            />
-          ))}
+    <ActiveCircleContext.Provider
+      value={{
+        ...activeCircle,
+        setActive,
+      }}
+    >
+      <Container>
+        <Sidebar keys={keys} resourceList={topics} />
+        <div id="main-content" ref={listEl}>
+          <Heading title="Topics" />
+          <CreateResourceModal resource="Topic">
+            {/* TODO: Create a separate component for this form. */}
+            {toggleShowModal => (
+              <form
+                onSubmit={e => {
+                  e.preventDefault()
+                  handleCreateNewTopic()
+                  toggleShowModal(false)
+                }}
+              >
+                <label htmlFor="title">Title</label>
+                <input
+                  id="title"
+                  type="text"
+                  value={title}
+                  onChange={e => setTitle(e.target.value)}
+                />
+                <button>Submit!</button>
+              </form>
+            )}
+          </CreateResourceModal>
+          <div id="sub-category-list">
+            {keys.map((key, i) => (
+              <ResourceListing
+                key={topics[key].id.toString()}
+                title={topics[key].title}
+                index={i}
+                active={activeCircle.active === topics[key].title}
+                setActiveDisabled={setActiveDisabled}
+                scrollTop={scrollTop}
+                setActiveCircle={setActiveCircle}
+              />
+            ))}
+          </div>
         </div>
-      </div>
-    </Container>
+      </Container>
+    </ActiveCircleContext.Provider>
   )
 }
 

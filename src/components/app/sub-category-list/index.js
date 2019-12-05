@@ -7,7 +7,8 @@ import Heading from "../../shared/heading"
 import Sidebar from "../../shared/sidebar"
 import ResourceListing from "../../shared/resource-listing"
 import Modal from "../../shared/modal"
-import CreateSubCategoryModal from "./create-sub-category-modal"
+// import CreateSubCategoryModal from "./create-sub-category-modal"
+import CreateResourceModal from "../../shared/create-resource-modal"
 // TODO: You're exporting an exact copy of this from notebook-list
 // as the CircleScrollNav needs it to use the Context Provider.
 // Need to figure out a better arrangement for this
@@ -29,7 +30,8 @@ const Container = styled.div`
 const SubCategoryList = ({ notebookId }) => {
   const { notebooks } = useNotebook()
   const { subCategories, listSubCategoriesOffset } = useSubCategory()
-  const { listSubCategories } = useSubCategoryActions()
+  const { createSubCategory, listSubCategories } = useSubCategoryActions()
+  const [title, setTitle] = useState("")
   const [activeCircle, setActiveCircle] = useState({
     active: null,
     activePosition: 0,
@@ -81,6 +83,11 @@ const SubCategoryList = ({ notebookId }) => {
     setScrollTop(listEl.current.scrollTop)
   }
 
+  const handleCreateNewSubCategory = () => {
+    createSubCategory({ title, notebook_id: notebookId })
+    setTitle("")
+  }
+
   const setActive = ({ active, activePosition, clickedNav }) => {
     if (!setActiveDisabled || clickedNav) {
       setActiveCircle({ ...activeCircle, active, activePosition })
@@ -109,7 +116,27 @@ const SubCategoryList = ({ notebookId }) => {
         <Sidebar keys={keys} resourceList={subCategories} />
         <div id="main-content" ref={listEl}>
           <Heading title="Sub Categories" />
-          <CreateSubCategoryModal notebookId={notebookId} />
+          {/* <CreateSubCategoryModal notebookId={notebookId} /> */}
+          <CreateResourceModal resource="Sub Category">
+            {toggleShowModal => (
+              <form
+                onSubmit={e => {
+                  e.preventDefault()
+                  handleCreateNewSubCategory()
+                  toggleShowModal(false)
+                }}
+              >
+                <label htmlFor="title">Title</label>
+                <input
+                  id="title"
+                  type="text"
+                  value={title}
+                  onChange={e => setTitle(e.target.value)}
+                />
+                <button>Submit!</button>
+              </form>
+            )}
+          </CreateResourceModal>
           <div id="sub-category-list">
             {keys.map((key, i) => (
               <ResourceListing

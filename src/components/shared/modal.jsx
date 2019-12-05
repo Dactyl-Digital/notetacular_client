@@ -53,7 +53,14 @@ const Modal = ({ children, resource }) => {
         {/* {showModal ? children(toggleShowModal) : null} */}
         {showModal
           ? ReactDOM.createPortal(
-              <Overlay>{children(toggleShowModal)}</Overlay>,
+              <Overlay
+                id="overlay"
+                onClick={({ target: { id } }) =>
+                  id === "overlay" && toggleShowModal()
+                }
+              >
+                {children(toggleShowModal)}
+              </Overlay>,
               el
             )
           : null}

@@ -5,7 +5,8 @@ import { useNotebookActions } from "../../../hooks/commands/useNotebookActions"
 import Heading from "../../shared/heading"
 import Sidebar from "../../shared/sidebar"
 import ResourceListing from "../../shared/resource-listing"
-import CreateNotebookModal from "./create-notebook-modal"
+// import CreateNotebookModal from "./create-notebook-modal"
+import CreateResourceModal from "../../shared/create-resource-modal"
 
 export const ActiveCircleContext = React.createContext({
   active: null,
@@ -28,7 +29,8 @@ const Container = styled.div`
 
 const NotebookList = () => {
   const { notebooks, listNotebooksOffset } = useNotebook()
-  const { listNotebooks } = useNotebookActions()
+  const { createNotebook, listNotebooks } = useNotebookActions()
+  const [title, setTitle] = useState("")
   // Create custom hook for all of these... would that really help anything
   // over just copy pasting into sub-category-list & topic-list?
   const [activeCircle, setActiveCircle] = useState({
@@ -80,6 +82,11 @@ const NotebookList = () => {
     }
   }
 
+  const handleCreateNewNotebook = () => {
+    createNotebook({ title })
+    setTitle("")
+  }
+
   const loadMoreNotebooks = () => listNotebooks(listNotebooksOffset)
 
   // TODO: Implement navigating to the list of sub categories for a given
@@ -102,7 +109,28 @@ const NotebookList = () => {
         <Sidebar keys={keys} resourceList={notebooks} />
         <div id="main-content" ref={listEl}>
           <Heading title="Notebooks" />
-          <CreateNotebookModal />
+          {/* <CreateNotebookModal /> */}
+          <CreateResourceModal resource="Notebook">
+            {/* TODO: Create a separate component for this form. */}
+            {toggleShowModal => (
+              <form
+                onSubmit={e => {
+                  e.preventDefault()
+                  handleCreateNewNotebook()
+                  toggleShowModal(false)
+                }}
+              >
+                <label htmlFor="title">Title</label>
+                <input
+                  id="title"
+                  type="text"
+                  value={title}
+                  onChange={e => setTitle(e.target.value)}
+                />
+                <button>Submit!</button>
+              </form>
+            )}
+          </CreateResourceModal>
           <div id="notebook-list">
             {keys.map((key, i) => (
               <ResourceListing

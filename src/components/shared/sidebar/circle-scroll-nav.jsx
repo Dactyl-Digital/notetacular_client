@@ -72,6 +72,7 @@ const CircleScrollNav = props => {
           {props.keys.map((key, i) => (
             <A
               className="scroll-link"
+              key={`#${props.resourceList[key].title}`}
               href={`#${props.resourceList[key].title}`}
               onClick={() => {
                 console.log("CircleScrollNav calling setActive")
