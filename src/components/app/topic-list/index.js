@@ -50,8 +50,6 @@ const TopicList = ({ subCategoryId }) => {
   // }, [])
 
   useEffect(() => {
-    console.log("activeCircle state in topic-list")
-    console.log(activeCircle)
     const hash = window.location.hash
     if (hash && !activeCircle.active) {
       const id = hash.slice(1, hash.length)
@@ -137,12 +135,17 @@ const TopicList = ({ subCategoryId }) => {
               </form>
             )}
           </CreateResourceModal>
-          <div id="sub-category-list">
+          <div id="topic-list">
             {keys.map((key, i) => (
               <ResourceListing
                 key={topics[key].id.toString()}
                 title={topics[key].title}
                 index={i}
+                type="TOPIC"
+                // TODO: Need to setup list_topics domain business logic to
+                // actually retrieve tags...
+                // tags={topics[key].tags}
+                topicId={topics[key].id}
                 active={activeCircle.active === topics[key].title}
                 setActiveDisabled={setActiveDisabled}
                 scrollTop={scrollTop}

@@ -9,6 +9,7 @@ const Container = styled.div`
   /* min-width: 14rem; */
   /* max-width: 40rem; */
   /* height: 100%; */
+  width: 100%;
   padding: 0;
   margin: 0;
   /* min-height: 5rem; */

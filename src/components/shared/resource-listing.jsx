@@ -1,8 +1,9 @@
-import React, { useRef, useEffect } from "react"
+import React, { useRef, useState, useEffect } from "react"
 import { Link } from "gatsby"
 import styled from "styled-components"
 // TODO: More Tags into /shared
 import Tags from "../app/topic-list/tags"
+import NoteList from "../app/topic-list/note-list"
 import TrashIcon from "./icons/trash-icon"
 import ArrowIcon from "./icons/arrow-icon"
 
@@ -11,7 +12,8 @@ const Container = styled.div`
   justify-content: space-between;
   align-items: center;
   position: relative;
-  width: 40rem;
+  /* width: 40rem; */
+  width: 100%;
   height: 4.6rem;
   border-radius: 5px;
   transition: box-shadow 0.4s, transform 0.4s ease-in-out;
@@ -20,10 +22,12 @@ const Container = styled.div`
   transform: ${props => props.active && "scale(1.005)"};
   box-shadow: ${props =>
     props.active && "0rem 0.1rem 1rem rgba(17, 238, 246, 30%)"};
+  background: ${props => props.type === "NOTE" && "#11EEF6"};
 
   &:hover {
-    transform: scale(1.005);
-    box-shadow: 0rem 0.1rem 1rem rgba(17, 238, 246, 30%);
+    transform: ${props => props.type !== "NOTE" && `scale(1.005)`};
+    box-shadow: ${props =>
+      props.type !== "NOTE" && ` 0rem 0.1rem 1rem rgba(17, 238, 246, 30%)`};
   }
 
   &:before {
@@ -45,7 +49,11 @@ const Container = styled.div`
     font-family: "Blinker", sans-serif;
     font-weight: 400;
     font-size: 1.8rem;
-    color: #11eef6;
+    color: ${props => (props.type === "NOTE" ? "#fcfcfc" : "#11eef6")};
+    color: ${props =>
+      props.type === "NOTE"
+        ? `0.1rem 0.1rem #1b7171`
+        : `0.1rem 0.1rem #1b7171`};
     text-shadow: 0.1rem 0.1rem #1b7171;
     margin: 0;
   }
@@ -71,6 +79,7 @@ const ResourceListing = ({
   title,
   link,
   tags,
+  topicId,
   handleDelete,
   handleArrowClick,
   active,
@@ -79,6 +88,7 @@ const ResourceListing = ({
   scrollTop,
   setActiveCircle,
 }) => {
+  const [showNotes, setShowNotes] = useState(false)
   const listingEl = useRef(null)
 
   useEffect(() => {
@@ -94,27 +104,37 @@ const ResourceListing = ({
     // be set... Where should the scroll listener go.
     // In the notebook-list, sub-category-list... etc.
     // and pass that down as a prop to be checked against.
-    <Container id={title} ref={listingEl} active={active}>
-      <div id="title-and-tags">
-        {type === "NOTE" ? (
-          <h3>{title}</h3>
-        ) : (
-          <Link to={`/app/${link}`}>
+    <>
+      <Container id={title} ref={listingEl} type={type} active={active}>
+        <div id="title-and-tags">
+          {type === "NOTE" ? (
             <h3>{title}</h3>
-          </Link>
-        )}
-        {type === "TOPIC" || type === "NOTE" ? <Tags tags={tags} /> : null}
-      </div>
-      <div id="icons">
-        {/* TODO: Implement delete capability */}
-        <TrashIcon />
-        {type === "TOPIC" || type === "NOTE" ? (
-          <div onClick={handleArrowClick}>
-            <ArrowIcon />
-          </div>
-        ) : null}
-      </div>
-    </Container>
+          ) : (
+            <Link to={`/app/${link}`}>
+              <h3>{title}</h3>
+            </Link>
+          )}
+          {/* {type === "TOPIC" || type === "NOTE" && <Tags tags={tags} />} */}
+        </div>
+        <div id="icons">
+          {/* TODO: Implement delete capability */}
+          <TrashIcon />
+          {type === "TOPIC" || type === "NOTE" ? (
+            <div
+              // TODO: fix, because this is messy
+              onClick={
+                handleArrowClick
+                  ? handleArrowClick
+                  : () => setShowNotes(!showNotes)
+              }
+            >
+              <ArrowIcon />
+            </div>
+          ) : null}
+        </div>
+      </Container>
+      {type === "TOPIC" && showNotes && <NoteList topicId={topicId} />}
+    </>
   )
 }
 

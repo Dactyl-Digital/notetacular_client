@@ -18,16 +18,31 @@ export const noteInitialState = {
   listSharedNotesError: null,
 }
 
-const normalizeSingle = ({ data }) => ({
-  [data.id]: {
-    ...data,
+const normalizeSingle = (noteState, { data }) => ({
+  [data.topic_id]: {
+    ...noteState.notes[data.topic_id],
+    [data.id]: data,
   },
 })
 
 // TODO: Move this into a helper folder.
 const normalize = key => ({ data }) =>
   data[key].reduce((acc, resource) => {
-    acc[resource.id] = resource
+    if (acc[resource.topic_id]) {
+      // Updating a current topic's notes
+      acc = {
+        ...acc,
+        [resource.topic_id]: {
+          ...acc[resource.topic_id],
+          [resource.id]: resource,
+        },
+      }
+    } else {
+      // Creating a new entry for a topic's notes
+      acc[resource.topic_id] = {
+        [resource.id]: resource,
+      }
+    }
     return acc
   }, {})
 
@@ -38,11 +53,13 @@ export default function noteReducer(
   { type, payload }
 ) {
   if (type === SET_CREATED_NOTE) {
+    console.log("Da payload in create note is:")
+    console.log(payload)
     return {
       ...noteState,
       notes: {
         ...noteState.notes,
-        ...normalizeSingle(payload),
+        ...normalizeSingle(noteState, payload),
       },
     }
   }
@@ -58,17 +75,33 @@ export default function noteReducer(
   if (type === SET_NOTE_LIST_ERROR) {
     return { ...noteState, noteListError: payload }
   }
-  // if (type === SET_LIST_SHARED_noteS_ERROR) {
+  // if (type === SET_LIST_SHARED_NOTES_ERROR) {
   //   return { ...noteState, signinError: payload.errors }
   // }
   return noteState
 }
 
-const noteListNewState = (noteState, payload) => ({
-  ...noteState,
-  notes: {
-    ...noteState.notes,
-    ...normalizeNotes(payload),
-  },
-  listNotesOffset: noteState.listNotesOffset + 20,
-})
+const noteListNewState = (noteState, payload) => {
+  console.log("the payload in list new note state:")
+  console.log(payload)
+  return {
+    ...noteState,
+    notes: {
+      ...noteState.notes,
+      ...normalizeNotes(payload),
+    },
+    // NOTE: w/ the new state shape of:
+    // {
+    //   [topic1_id]: {
+    //     [note1_id]: {},
+    //     [note2_id]: {},
+    //   },
+    //   [topic2_id]: {
+    //     [note3_id]: {},
+    //     [note4_id]: {},
+    //   },
+    // }
+    // You'll need to manage an offset for each individual topic's notes...
+    // listNotesOffset: noteState.listNotesOffset + 20,
+  }
+}

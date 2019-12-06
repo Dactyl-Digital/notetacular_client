@@ -7,12 +7,14 @@ const Container = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  padding-right: 1.8rem;
 
   h1 {
     font-family: "Blinker", sans-serif;
     font-weight: 400;
     color: #11eef6;
     text-shadow: 0.13rem 0.13rem #1b7171;
+    margin-bottom: 0;
   }
 `
 

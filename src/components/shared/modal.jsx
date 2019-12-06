@@ -3,6 +3,10 @@ import ReactDOM from "react-dom"
 import styled from "styled-components"
 import Button from "./button"
 
+const Container = styled.div`
+  margin-top: 1.6rem;
+`
+
 const Overlay = styled.div`
   display: flex;
   justify-content: center;
@@ -46,7 +50,7 @@ const Modal = ({ children, resource }) => {
   // Check that this.el is not null before using ReactDOM.createPortal
   if (el) {
     return (
-      <div>
+      <Container>
         <Button type="CREATE" handleClick={toggleShowModal}>
           Create {resource}
         </Button>
@@ -64,7 +68,7 @@ const Modal = ({ children, resource }) => {
               el
             )
           : null}
-      </div>
+      </Container>
     )
   } else {
     return null

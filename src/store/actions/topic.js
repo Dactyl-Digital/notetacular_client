@@ -4,6 +4,7 @@ export const LIST_SHARED_TOPICS = "LIST_SHARED_TOPICS"
 export const SET_CREATE_TOPIC_ERROR = "SET_CREATE_TOPIC_ERROR"
 export const SET_TOPIC_LIST_ERROR = "SET_TOPIC_LIST_ERROR"
 export const SET_LIST_SHARED_TOPIC_ERROR = "SET_LIST_SHARED_TOPIC_ERROR"
+export const UPDATE_TOPIC_NOTE_ID_LIST = "UPDATE_TOPIC_NOTE_ID_LIST"
 
 export const setCreatedTopic = ({ data }) => ({
   type: SET_CREATED_TOPIC,
@@ -38,5 +39,15 @@ export const setTopicListError = ({ response: { data } }) => ({
   payload: data,
   meta: {
     trigger: "Server failed to list topics.",
+  },
+})
+
+export const updateTopicNoteIdList = ({ id, topic_id }) => ({
+  type: UPDATE_TOPIC_NOTE_ID_LIST,
+  payload: { note_id: id, topic_id },
+  meta: {
+    trigger:
+      "A note associated with this topic was successfully created, and it is \
+        necessary to update the topic's noteIdList otherwise all hell of errors will break loose.",
   },
 })

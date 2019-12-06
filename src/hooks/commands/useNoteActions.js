@@ -6,6 +6,7 @@ import {
   setNoteList,
   setNoteListError,
 } from "../../store/actions/note"
+import { updateTopicNoteIdList } from "../../store/actions/topic"
 import { CREATE_NOTE_URL, LIST_NOTES_URL } from "../../api-endpoints"
 
 export const createNote = dispatch => createNoteData => {
@@ -21,6 +22,7 @@ export const createNote = dispatch => createNoteData => {
 }
 
 const createNoteSuccess = dispatch => response => {
+  dispatch(updateTopicNoteIdList(response.data.data))
   dispatch(setCreatedNote(response))
 }
 

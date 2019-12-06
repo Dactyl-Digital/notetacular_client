@@ -1,53 +1,93 @@
 import React, { useState, useEffect } from "react"
 import NoteListing from "./note-listing"
+import { useTopic } from "../../../hooks/queries/useTopic"
+import { useNote } from "../../../hooks/queries/useNote"
+import { useNoteActions } from "../../../hooks/commands/useNoteActions"
+import CreateResourceModal from "../../shared/create-resource-modal"
 
-const NoteList = ({ notes }) => {
-  const [listOfNotes, setListOfNotes] = useState([])
+// IMMEDIATE TODO:
+// Newly created note's aren't automatically being rendered after successful completion...
+// probably not re-rendering upon redux state update... because it's a nested update within a topic of
+// the noteReducer's note object?
+// Also... The editor renders funky when opening multiple note's dropdowns from top to bottom WTF!
+const NoteList = ({ topicId }) => {
+  const { topics } = useTopic()
+  const { notes, listNotesOffset } = useNote()
+  const { createNote, listNotes } = useNoteActions()
   const [title, setTitle] = useState("")
-  const [showCreateNoteModal, setShowCreateNoteModal] = useState(false)
+
+  // const topicNotesKeyList = Object.keys(notes)
+  const noteIdList = topics[topicId].notes
+  console.log(`noteIdList for topicId-${topicId}`)
+  console.log(noteIdList)
 
   useEffect(() => {
-    if (listOfNotes.length === 0) {
-      setListOfNotes(notes)
+    // console.log("the topics:")
+    // console.log(topics)
+    if (noteIdList.length > 0) {
+      listNotes({
+        offset: listNotesOffset,
+        note_id_list: noteIdList,
+      })
     }
-  }, [listOfNotes])
+  }, [])
 
-  const toggleShowCreateNoteModal = () =>
-    setShowCreateNoteModal(!showCreateNoteModal)
-
-  const handleCreateNewNote = e => {
-    e.preventDefault()
-    setListOfNotes([
-      ...listOfNotes,
-      {
-        title: title,
-        tags: [],
-        noteContent: null,
-      },
-    ])
+  const handleCreateNewNote = () => {
+    createNote({ title, order: noteIdList.length, topic_id: topicId })
     setTitle("")
-    setShowCreateNoteModal(!showCreateNoteModal)
   }
 
+  // console.log("the notes before render!")
+  // console.log(notes)
+  // console.log("the topicNotesKeyList before render")
+  // console.log(topicNotesKeyList)
+  // console.log("noteIdList before render")
+  // console.log(noteIdList)
+  console.log(`the notes for topicId-${topicId}:`)
+  console.log(notes)
   return (
-    <div>
-      {listOfNotes.length > 0
-        ? listOfNotes.map(note => <NoteListing note={note} />)
-        : null}
-      <button onClick={toggleShowCreateNoteModal}>Create New Note</button>
-      {showCreateNoteModal ? (
-        <form onSubmit={handleCreateNewNote}>
-          <label htmlFor="title">Title</label>
-          <input
-            id="title"
-            type="text"
-            value={title}
-            onChange={e => setTitle(e.target.value)}
-          />
-          <button>Submit!</button>
-        </form>
-      ) : null}
-    </div>
+    <>
+      <div id="note-list">
+        {notes.hasOwnProperty(topicId) &&
+          noteIdList.map(noteId => {
+            console.log("what do I get accessing: notes[key]")
+            console.log(notes[topicId])
+            console.log("and what is noteIdList: ")
+            console.log(noteIdList)
+            console.log("what do I get accessing: notes[key][noteId]")
+            console.log(notes[topicId][noteId])
+            if (notes[topicId].hasOwnProperty(noteId)) {
+              return (
+                <NoteListing
+                  key={`${topicId}-${noteId}`}
+                  note={notes[topicId][noteId]}
+                />
+              )
+            }
+          })}
+      </div>
+      <CreateResourceModal resource="Note">
+        {toggleShowModal => (
+          <form
+            onSubmit={e => {
+              e.preventDefault()
+              handleCreateNewNote()
+              toggleShowModal(false)
+            }}
+          >
+            <label htmlFor="title">Title</label>
+            <input
+              id="title"
+              type="text"
+              value={title}
+              onChange={e => setTitle(e.target.value)}
+            />
+            {/* TODO: Optional Description textarea */}
+            <button>Submit!</button>
+          </form>
+        )}
+      </CreateResourceModal>
+    </>
   )
 }
 

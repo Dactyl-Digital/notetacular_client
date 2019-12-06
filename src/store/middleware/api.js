@@ -66,6 +66,16 @@ const makeRequest = (
       .catch(function(error) {
         console.log("the error in GET")
         console.log(error)
+        if (
+          error.hasOwnProperty("message") &&
+          error.message === "Network Error"
+        ) {
+          return onError({
+            response: {
+              data: { message: "An error occured with the network." },
+            },
+          })
+        }
         onError(error)
       })
   }

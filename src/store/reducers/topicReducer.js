@@ -5,6 +5,7 @@ import {
   SET_CREATE_TOPIC_ERROR,
   SET_TOPIC_LIST_ERROR,
   SET_LIST_SHARED_TOPIC_ERROR,
+  UPDATE_TOPIC_NOTE_ID_LIST,
 } from "../actions/topic"
 // import {helperFunction} from '../helpers'
 
@@ -57,6 +58,21 @@ export default function topicReducer(
   }
   if (type === SET_TOPIC_LIST_ERROR) {
     return { ...topicState, topicListError: payload }
+  }
+  if (type === UPDATE_TOPIC_NOTE_ID_LIST) {
+    return {
+      ...topicState,
+      topics: {
+        ...topicState.topics,
+        [payload.topic_id]: {
+          ...topicState.topics[payload.topic_id],
+          notes: [
+            payload.note_id,
+            ...topicState.topics[payload.topic_id].notes,
+          ],
+        },
+      },
+    }
   }
   // if (type === SET_LIST_SHARED_topicS_ERROR) {
   //   return { ...topicState, signinError: payload.errors }

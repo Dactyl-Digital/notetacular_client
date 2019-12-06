@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react"
 import styled from "styled-components"
 import Quill from "quill"
 import Options from "./options"
-import optionsIcon from "../../../assets/icons/settings.svg"
+import OptionsIcon from "../../shared/icons/options-icon"
 import "./editor.css"
 
 const Container = styled.div`
@@ -20,17 +20,26 @@ const Container = styled.div`
   }
 
   .options-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     position: absolute;
     z-index: 9001;
     top: -1rem;
     left: -1rem;
     padding: 0.6rem;
+    border: 0.1rem solid #fcfcfc;
     border-radius: 25px;
-    background: #aaa;
+    background: ${props => (props.showOptions ? `#11eef6` : `#111`)};
+    transition: transform 0.4s ease-in-out;
 
-    img {
-      width: 1.2rem;
-      height: 1.2rem;
+    svg {
+      fill: #fcfcfc;
+    }
+
+    &:hover {
+      background: #11eef6;
+      transform: scale(1.2);
     }
   }
 `
@@ -107,13 +116,13 @@ const Editor = ({ noteContent }) => {
   console.log(`readOnly: ${readOnly}`)
 
   return (
-    <Container readOnly={readOnly}>
+    <Container readOnly={readOnly} showOptions={showOptions}>
       <div>
         <button
           className="options-btn"
           onClick={() => setShowOptions(!showOptions)}
         >
-          <img src={optionsIcon} />
+          <OptionsIcon />
         </button>
       </div>
       {showOptions ? (
