@@ -19,7 +19,10 @@ const Container = styled.div`
   /* border: 2px solid #222; */
 `
 
-const NoteListing = ({ topicId, note: { id, title, tags, noteContent } }) => {
+const NoteListing = ({
+  topicId,
+  note: { id, title, tags, content_markdown },
+}) => {
   const { updateNoteContent } = useNoteActions()
   const [showEditor, setShowEditor] = useState(false)
 
@@ -46,7 +49,7 @@ const NoteListing = ({ topicId, note: { id, title, tags, noteContent } }) => {
       {/* TODO: create toggle for showing the editor */}
       {showEditor ? (
         <Editor
-          noteContent={noteContent}
+          noteContent={content_markdown}
           persistNoteContent={persistNoteContent}
           editorId={`editor-${topicId}-${id}`}
         />

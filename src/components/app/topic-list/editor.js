@@ -44,6 +44,30 @@ const Container = styled.div`
   }
 `
 
+const captureSaveEvent = quill => persistNoteContent => e => {
+  if (
+    (window.navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey) &&
+    e.keyCode == 83
+  ) {
+    e.preventDefault()
+    saveEditorContent(quill, persistNoteContent)
+  }
+}
+
+const handleConfirmLeave = e => {
+  e.preventDefault()
+  const msg = "Make sure you've saved your work before leaving!"
+  e.returnValue = msg
+  return msg
+}
+
+const saveEditorContent = (quill, persistNoteContent) => {
+  persistNoteContent({
+    content_text: quill.editor.scroll.domNode.innerText,
+    content_markdown: quill.getContents(),
+  })
+}
+
 const initializeQuillEditor = (editorId, readOnly) => {
   // Quill stuff
   const toolbarOptions = [
@@ -97,7 +121,7 @@ const Editor = ({ noteContent, persistNoteContent, editorId }) => {
   useEffect(() => {
     if (quill === null) {
       const editor = initializeQuillEditor(editorId, readOnly)
-      // NOTE: For setting content retrieved from the api
+      // For setting the content_markdown retrieved from the API
       if (noteContent) {
         editor.setContents(noteContent)
       }
@@ -106,29 +130,21 @@ const Editor = ({ noteContent, persistNoteContent, editorId }) => {
       quill.readOnly = readOnly
     }
 
+    let handleSave
+    if (quill) {
+      handleSave = captureSaveEvent(quill)(persistNoteContent)
+      quill.root.addEventListener("keydown", handleSave)
+    }
+    window.addEventListener("beforeunload", handleConfirmLeave)
+
     return () => {
-      // TODO:
-      // quill will be null upon initial mount, and then once quill is set
-      // this unmount function is invoked... Need to only invoke the unmount
-      // logic if quill wasn't previously null before.
-      // Unmount logic will consist of presisting the noteContent and noteMarkdown
-      // to the database for later hydration.
+      window.removeEventListener("beforeunload", handleConfirmLeave)
       if (quill) {
-        getEditorContents()
+        quill.root.removeEventListener("keydown", handleSave)
+        saveEditorContent(quill, persistNoteContent)
       }
     }
   }, [quill, readOnly])
-
-  const getEditorContents = () => {
-    console.log("the quill state on editor unmount")
-    console.log(quill)
-    console.log(quill.editor.scroll.domNode.innerText)
-    console.log(JSON.stringify(quill.getContents()))
-    persistNoteContent({
-      content_text: quill.editor.scroll.domNode.innerText,
-      content_markdown: quill.getContents(),
-    })
-  }
 
   const handleOptionClick = option => {
     if (option === "TOGGLE_READ_ONLY") setReadOnly(!readOnly)

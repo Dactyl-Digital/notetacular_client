@@ -81,7 +81,6 @@ const TopicList = ({ subCategoryId }) => {
   }
 
   const setActive = ({ active, activePosition, clickedNav }) => {
-    console.log("setActive called in topic-list")
     if (!setActiveDisabled || clickedNav) {
       setActiveCircle({ ...activeCircle, active, activePosition })
       if (clickedNav) {

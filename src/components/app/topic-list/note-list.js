@@ -18,8 +18,8 @@ const NoteList = ({ topicId }) => {
 
   // const topicNotesKeyList = Object.keys(notes)
   const noteIdList = topics[topicId].notes
-  console.log(`noteIdList for topicId-${topicId}`)
-  console.log(noteIdList)
+  // console.log(`noteIdList for topicId-${topicId}`)
+  // console.log(noteIdList)
 
   useEffect(() => {
     // console.log("the topics:")
@@ -50,12 +50,12 @@ const NoteList = ({ topicId }) => {
       <div id="note-list">
         {notes.hasOwnProperty(topicId) &&
           noteIdList.map(noteId => {
-            console.log("what do I get accessing: notes[key]")
-            console.log(notes[topicId])
-            console.log("and what is noteIdList: ")
-            console.log(noteIdList)
-            console.log("what do I get accessing: notes[key][noteId]")
-            console.log(notes[topicId][noteId])
+            // console.log("what do I get accessing: notes[key]")
+            // console.log(notes[topicId])
+            // console.log("and what is noteIdList: ")
+            // console.log(noteIdList)
+            // console.log("what do I get accessing: notes[key][noteId]")
+            // console.log(notes[topicId][noteId])
             if (notes[topicId].hasOwnProperty(noteId)) {
               return (
                 <NoteListing
