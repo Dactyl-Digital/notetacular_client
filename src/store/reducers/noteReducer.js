@@ -5,6 +5,8 @@ import {
   SET_CREATE_NOTE_ERROR,
   SET_NOTE_LIST_ERROR,
   SET_LIST_SHARED_NOTE_ERROR,
+  SET_UPDATE_NOTE_CONTENT,
+  SET_UPDATE_NOTE_CONTENT_ERROR,
 } from "../actions/note"
 // import {helperFunction} from '../helpers'
 
@@ -16,6 +18,7 @@ export const noteInitialState = {
   createNoteError: null,
   noteListError: null,
   listSharedNotesError: null,
+  updateNoteContentError: null,
 }
 
 const normalizeSingle = (noteState, { data }) => ({
@@ -66,6 +69,30 @@ export default function noteReducer(
   if (type === SET_NOTE_LIST) {
     return noteListNewState(noteState, payload)
   }
+  if (type === SET_UPDATE_NOTE_CONTENT) {
+    console.log("Da payload in SET_UPDATE_NOTE_CONTENT:")
+    console.log(payload)
+    const {
+      data: { data },
+      topicId,
+    } = payload
+    return {
+      ...noteState,
+      notes: {
+        ...noteState.notes,
+        // TOPIC ID ACCESSED AT THIS LEVEL!!!!!
+        //  -> Followed by the data.note_id
+        [topicId]: {
+          ...noteState.notes[topicId],
+          [data.note_id]: {
+            ...noteState.notes[topicId][data.note_id],
+            content_text: data.content_text,
+            content_markdown: data.content_markdown,
+          },
+        },
+      },
+    }
+  }
   // if (type === LIST_SHARED_SUB_CATEGORIES) {
   //   return { ...noteState, successfulSignup: true }
   // }
@@ -74,6 +101,9 @@ export default function noteReducer(
   }
   if (type === SET_NOTE_LIST_ERROR) {
     return { ...noteState, noteListError: payload }
+  }
+  if (type === SET_UPDATE_NOTE_CONTENT_ERROR) {
+    return { ...noteState, updateNoteContentError: payload }
   }
   // if (type === SET_LIST_SHARED_NOTES_ERROR) {
   //   return { ...noteState, signinError: payload.errors }

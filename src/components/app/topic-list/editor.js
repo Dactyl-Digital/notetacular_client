@@ -44,7 +44,7 @@ const Container = styled.div`
   }
 `
 
-const initializeQuillEditor = readOnly => {
+const initializeQuillEditor = (editorId, readOnly) => {
   // Quill stuff
   const toolbarOptions = [
     [{ font: [] }],
@@ -72,7 +72,7 @@ const initializeQuillEditor = readOnly => {
     readOnly: readOnly,
     theme: "snow",
   }
-  const quill = new Quill("#editor", options)
+  const quill = new Quill(`#${editorId}`, options)
   return quill
 }
 
@@ -89,14 +89,14 @@ const checkEditorState = quill => {
   console.log("Quill contents ", JSON.stringify(quill.getContents()))
 }
 
-const Editor = ({ noteContent }) => {
+const Editor = ({ noteContent, persistNoteContent, editorId }) => {
   const [showOptions, setShowOptions] = useState(false)
   const [readOnly, setReadOnly] = useState(false)
   const [quill, setQuill] = useState(null)
 
   useEffect(() => {
     if (quill === null) {
-      const editor = initializeQuillEditor(readOnly)
+      const editor = initializeQuillEditor(editorId, readOnly)
       // NOTE: For setting content retrieved from the api
       if (noteContent) {
         editor.setContents(noteContent)
@@ -105,7 +105,30 @@ const Editor = ({ noteContent }) => {
     } else {
       quill.readOnly = readOnly
     }
-  }, [readOnly])
+
+    return () => {
+      // TODO:
+      // quill will be null upon initial mount, and then once quill is set
+      // this unmount function is invoked... Need to only invoke the unmount
+      // logic if quill wasn't previously null before.
+      // Unmount logic will consist of presisting the noteContent and noteMarkdown
+      // to the database for later hydration.
+      if (quill) {
+        getEditorContents()
+      }
+    }
+  }, [quill, readOnly])
+
+  const getEditorContents = () => {
+    console.log("the quill state on editor unmount")
+    console.log(quill)
+    console.log(quill.editor.scroll.domNode.innerText)
+    console.log(JSON.stringify(quill.getContents()))
+    persistNoteContent({
+      content_text: quill.editor.scroll.domNode.innerText,
+      content_markdown: quill.getContents(),
+    })
+  }
 
   const handleOptionClick = option => {
     if (option === "TOGGLE_READ_ONLY") setReadOnly(!readOnly)
@@ -128,7 +151,7 @@ const Editor = ({ noteContent }) => {
       {showOptions ? (
         <Options readOnly={readOnly} handleOptionClick={handleOptionClick} />
       ) : null}
-      <div id="editor" />
+      <div id={editorId} />
       {/* <button onClick={() => checkEditorState(quill)}>Check State!</button> */}
     </Container>
   )

@@ -11,6 +11,34 @@ const makeRequest = (
   { payload },
   { method, url, onSuccess, onError }
 ) => {
+  if (method === "GET") {
+    axios({
+      method: "get",
+      url: url,
+      params: payload,
+    })
+      .then(function(response) {
+        console.log("the response in GET")
+        console.log(response)
+        // dispatchToggleLoader(dispatch, false, { method, url })
+        onSuccess(response)
+      })
+      .catch(function(error) {
+        console.log("the error in GET")
+        console.log(error)
+        if (
+          error.hasOwnProperty("message") &&
+          error.message === "Network Error"
+        ) {
+          return onError({
+            response: {
+              data: { message: "An error occured with the network." },
+            },
+          })
+        }
+        onError(error)
+      })
+  }
   if (method === "POST") {
     // TODO: might break these out into individual functions as
     // postRequest, getRequest, etc... if generalizing it
@@ -51,20 +79,17 @@ const makeRequest = (
         onError(error)
       })
   }
-  if (method === "GET") {
-    axios({
-      method: "get",
-      url: url,
-      params: payload,
-    })
+  if (method === "PUT") {
+    axios
+      .put(url, payload)
       .then(function(response) {
-        console.log("the response in GET")
+        console.log("the response in PUT")
         console.log(response)
         // dispatchToggleLoader(dispatch, false, { method, url })
         onSuccess(response)
       })
       .catch(function(error) {
-        console.log("the error in GET")
+        console.log("the error in PUT")
         console.log(error)
         if (
           error.hasOwnProperty("message") &&

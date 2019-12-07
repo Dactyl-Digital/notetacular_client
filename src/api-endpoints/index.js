@@ -18,3 +18,4 @@ export const LIST_TOPICS_URL = `${API_URL}/api/topic?limit=20&offset=`
 // Note Action Endpoints
 export const CREATE_NOTE_URL = `${API_URL}/api/note`
 export const LIST_NOTES_URL = `${API_URL}/api/note?limit=20&offset=`
+export const UPDATE_NOTE_CONTENT_URL = `${API_URL}/api/note/content`

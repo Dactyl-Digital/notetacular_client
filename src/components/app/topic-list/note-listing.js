@@ -1,5 +1,6 @@
 import React, { useState } from "react"
 import styled from "styled-components"
+import { useNoteActions } from "../../../hooks/commands/useNoteActions"
 import Tags from "./tags"
 import ResourceListing from "../../shared/resource-listing"
 import Editor from "./editor"
@@ -18,8 +19,18 @@ const Container = styled.div`
   /* border: 2px solid #222; */
 `
 
-const NoteListing = ({ note: { title, tags, noteContent } }) => {
+const NoteListing = ({ topicId, note: { id, title, tags, noteContent } }) => {
+  const { updateNoteContent } = useNoteActions()
   const [showEditor, setShowEditor] = useState(false)
+
+  const persistNoteContent = ({ content_text, content_markdown }) => {
+    updateNoteContent({
+      topicId,
+      note_id: id,
+      content_text,
+      content_markdown,
+    })
+  }
 
   return (
     <Container>
@@ -33,7 +44,13 @@ const NoteListing = ({ note: { title, tags, noteContent } }) => {
         handleArrowClick={() => setShowEditor(!showEditor)}
       />
       {/* TODO: create toggle for showing the editor */}
-      {showEditor ? <Editor noteContent={noteContent} /> : null}
+      {showEditor ? (
+        <Editor
+          noteContent={noteContent}
+          persistNoteContent={persistNoteContent}
+          editorId={`editor-${topicId}-${id}`}
+        />
+      ) : null}
     </Container>
   )
 }

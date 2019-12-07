@@ -61,6 +61,7 @@ const NoteList = ({ topicId }) => {
                 <NoteListing
                   key={`${topicId}-${noteId}`}
                   note={notes[topicId][noteId]}
+                  topicId={topics[topicId].id}
                 />
               )
             }
