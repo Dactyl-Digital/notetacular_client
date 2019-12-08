@@ -8,7 +8,11 @@ import {
   setCreatedSubCategory,
   setSubCategoryList,
 } from "../actions/subCategory"
-import { setCreatedTopic, setTopicList } from "../actions/topic"
+import {
+  setCreatedTopic,
+  setTopicList,
+  updateTopicNoteIdList,
+} from "../actions/topic"
 import { setCreatedNote, setNoteList } from "../actions/note"
 import { signupUser } from "../../hooks/commands/useAuthActions"
 import {
@@ -178,12 +182,17 @@ test("Store receives SET_TOPIC_LIST action type when GET /api/topic is a success
 })
 
 // useNoteActions Hook Commands
-test("Store receives SET_CREATED_NOT action type when POST /api/note is a success", done => {
+test("Store receives SET_CREATED_NOTE action type when POST /api/note is a success and \
+  the associated topic's note_id_list is updated w/ the new note's id", done => {
   const store = mockStore(rootReducer)
   createNote(store.dispatch)(createNoteData)
   setTimeout(() => {
     const actions = store.getActions()
-    expect(actions[0]).toEqual(setCreatedNote(createNoteResponse))
+
+    expect(actions[0]).toEqual(
+      updateTopicNoteIdList(createNoteResponse.data.data)
+    )
+    expect(actions[1]).toEqual(setCreatedNote(createNoteResponse))
     done()
   }, 0)
 })

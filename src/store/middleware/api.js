@@ -12,11 +12,15 @@ const makeRequest = (
   { method, url, onSuccess, onError }
 ) => {
   if (method === "GET") {
-    axios({
-      method: "get",
-      url: url,
-      params: payload,
-    })
+    // axios({
+    //   method: "get",
+    //   url: url,
+    //   params: payload,
+    // })
+    axios
+      .get(url, {
+        params: payload,
+      })
       .then(function(response) {
         console.log("the response in GET")
         console.log(response)

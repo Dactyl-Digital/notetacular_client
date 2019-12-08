@@ -16,16 +16,26 @@ describe("noteReducer", () => {
 
   it("setNoteList should set a normalized list of notes to the noteState and increments the corresponding offset by 20", () => {
     expect(noteReducer(undefined, setNoteList(listNotesResponse))).toEqual({
-      listNotesOffset: 20,
-      notes: {
-        "1": { id: 1, title: "Note1", note_timer_id_list: [1, 2] },
-        "2": { id: 2, title: "Note2", note_timer_id_list: [] },
+      parentTopicsOfNotes: {
+        "1": {
+          notes: {
+            "1": {
+              id: 1,
+              topic_id: 1,
+              title: "Note1",
+              note_timer_id_list: [1, 2],
+            },
+            "2": { id: 2, topic_id: 1, title: "Note2", note_timer_id_list: [] },
+          },
+          listOffset: 2,
+        },
       },
       listSharedNotesOffset: 0,
       sharedNotes: {},
       createNoteError: null,
       noteListError: null,
       listSharedNotesError: null,
+      updateNoteContentError: null,
     })
   })
 
@@ -37,17 +47,28 @@ describe("noteReducer", () => {
     expect(
       noteReducer(stateWithNotes, setCreatedNote(createNoteResponse))
     ).toEqual({
-      listNotesOffset: 20,
-      notes: {
-        "1": { id: 1, title: "Note1", note_timer_id_list: [1, 2] },
-        "2": { id: 2, title: "Note2", note_timer_id_list: [] },
-        "3": { id: 3, title: "Note3", note_timer_id_list: [] },
+      // NOTE: The "1" key at the top level object is the topic_id which the note list is associated with.
+      parentTopicsOfNotes: {
+        "1": {
+          notes: {
+            "1": {
+              id: 1,
+              topic_id: 1,
+              title: "Note1",
+              note_timer_id_list: [1, 2],
+            },
+            "2": { id: 2, topic_id: 1, title: "Note2", note_timer_id_list: [] },
+            "3": { id: 3, topic_id: 1, title: "Note3", note_timer_id_list: [] },
+          },
+          listOffset: 3,
+        },
       },
       listSharedNotesOffset: 0,
       sharedNotes: {},
       createNoteError: null,
       noteListError: null,
       listSharedNotesError: null,
+      updateNoteContentError: null,
     })
   })
 })

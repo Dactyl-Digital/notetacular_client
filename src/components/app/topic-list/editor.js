@@ -100,19 +100,6 @@ const initializeQuillEditor = (editorId, readOnly) => {
   return quill
 }
 
-// i.e. this is really the method that will POST editor JSON structure to server.
-const checkEditorState = quill => {
-  // console.log("Quill editor state: ", this.state.editor.getContents());
-  // NOTE:
-  // This needs to be stored as the text which will be searchable by PostgreSQL.
-  console.log("this.state.quill.editor.scroll.domNode.innerText:")
-  // TODO: Trim excessive whitespace from blocks of text that span across lines.
-  console.log(quill.editor.scroll.domNode.innerText)
-  // NOTE:
-  // This needs to be stored in the database to facilitate rehydrating the editor.
-  console.log("Quill contents ", JSON.stringify(quill.getContents()))
-}
-
 const Editor = ({ noteContent, persistNoteContent, editorId }) => {
   const [showOptions, setShowOptions] = useState(false)
   const [readOnly, setReadOnly] = useState(false)
@@ -168,7 +155,6 @@ const Editor = ({ noteContent, persistNoteContent, editorId }) => {
         <Options readOnly={readOnly} handleOptionClick={handleOptionClick} />
       ) : null}
       <div id={editorId} />
-      {/* <button onClick={() => checkEditorState(quill)}>Check State!</button> */}
     </Container>
   )
 }

@@ -10,9 +10,26 @@ import {
 } from "../actions/note"
 // import {helperFunction} from '../helpers'
 
+// NOTE: This structure is meant to facilitate rendering the notes
+// for each topic in the topicList view.
+// parentTopicsOfNotes: {
+//   "1": {
+//     notes: {
+//       "1": {
+//         id: 1,
+//         topic_id: 1,
+//         title: "Note1",
+//         note_timer_id_list: [1, 2],
+//       },
+//       "2": { id: 2, topic_id: 1, title: "Note2", note_timer_id_list: [] },
+//       "3": { id: 3, topic_id: 1, title: "Note3", note_timer_id_list: [] },
+//     },
+//     listOffset: 20,
+//   },
+// },
+
 export const noteInitialState = {
-  listNotesOffset: 0,
-  notes: {},
+  parentTopicsOfNotes: {},
   listSharedNotesOffset: 0,
   sharedNotes: {},
   createNoteError: null,
@@ -23,29 +40,66 @@ export const noteInitialState = {
 
 const normalizeSingle = (noteState, { data }) => ({
   [data.topic_id]: {
-    ...noteState.notes[data.topic_id],
-    [data.id]: data,
+    notes: {
+      ...noteState.parentTopicsOfNotes[data.topic_id].notes,
+      [data.id]: data,
+    },
+    listOffset: noteState.parentTopicsOfNotes[data.topic_id].listOffset + 1,
   },
 })
 
 // TODO: Move this into a helper folder.
-const normalize = key => ({ data }) =>
-  data[key].reduce((acc, resource) => {
-    if (acc[resource.topic_id]) {
+const normalize = key => (noteState, { data }) =>
+  data[key].reduce((acc, resource, i) => {
+    if (i === 0) {
+      // NOTE: Doing this to ensure that listOffset is only incremented once while
+      // iterating through the list of notes retrieved from the API.
+      if (acc[resource.topic_id]) {
+        // Updating a current topic's notes
+        acc = {
+          ...acc,
+          [resource.topic_id]: {
+            notes: {
+              ...acc[resource.topic_id].notes,
+              [resource.id]: resource,
+            },
+            listOffset:
+              noteState.parentTopicsOfNotes[resource.topic_id].listOffset +
+              data[key].length,
+          },
+        }
+      } else {
+        // Creating a new entry for a topic's notes
+        acc[resource.topic_id] = {
+          notes: {
+            [resource.id]: resource,
+          },
+          listOffset: data[key].length,
+        }
+      }
+    } else {
+      // TODO: THIS ELSE LOGIC IS DUPLICATED (w/ one slight modification) ABOVE!
+      // DO SOMETHING ABOUT THIS MESS
       // Updating a current topic's notes
       acc = {
         ...acc,
         [resource.topic_id]: {
           ...acc[resource.topic_id],
-          [resource.id]: resource,
+          notes: {
+            ...acc[resource.topic_id].notes,
+            [resource.id]: resource,
+          },
         },
       }
-    } else {
-      // Creating a new entry for a topic's notes
-      acc[resource.topic_id] = {
-        [resource.id]: resource,
-      }
     }
+    // else {
+    //   // Creating a new entry for a topic's notes
+    //   acc[resource.topic_id] = {
+    //     notes: {
+    //       [resource.id]: resource,
+    //     },
+    //   }
+    // }
     return acc
   }, {})
 
@@ -60,8 +114,8 @@ export default function noteReducer(
     console.log(payload)
     return {
       ...noteState,
-      notes: {
-        ...noteState.notes,
+      parentTopicsOfNotes: {
+        ...noteState.parentTopicsOfNotes,
         ...normalizeSingle(noteState, payload),
       },
     }
@@ -78,16 +132,17 @@ export default function noteReducer(
     } = payload
     return {
       ...noteState,
-      notes: {
-        ...noteState.notes,
-        // TOPIC ID ACCESSED AT THIS LEVEL!!!!!
-        //  -> Followed by the data.note_id
+      parentTopicsOfNotes: {
+        ...noteState.parentTopicsOfNotes,
         [topicId]: {
-          ...noteState.notes[topicId],
-          [data.note_id]: {
-            ...noteState.notes[topicId][data.note_id],
-            content_text: data.content_text,
-            content_markdown: data.content_markdown,
+          ...noteState.parentTopicsOfNotes[topicId],
+          notes: {
+            ...noteState.parentTopicsOfNotes[topicId].notes,
+            [data.note_id]: {
+              ...noteState.parentTopicsOfNotes[topicId].notes[data.note_id],
+              content_text: data.content_text,
+              content_markdown: data.content_markdown,
+            },
           },
         },
       },
@@ -116,22 +171,9 @@ const noteListNewState = (noteState, payload) => {
   console.log(payload)
   return {
     ...noteState,
-    notes: {
-      ...noteState.notes,
-      ...normalizeNotes(payload),
+    parentTopicsOfNotes: {
+      ...noteState.parentTopicsOfNotes,
+      ...normalizeNotes(noteState, payload),
     },
-    // NOTE: w/ the new state shape of:
-    // {
-    //   [topic1_id]: {
-    //     [note1_id]: {},
-    //     [note2_id]: {},
-    //   },
-    //   [topic2_id]: {
-    //     [note3_id]: {},
-    //     [note4_id]: {},
-    //   },
-    // }
-    // You'll need to manage an offset for each individual topic's notes...
-    // listNotesOffset: noteState.listNotesOffset + 20,
   }
 }

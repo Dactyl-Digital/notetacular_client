@@ -28,6 +28,8 @@ export const createNote = dispatch => createNoteData => {
 }
 
 const createNoteSuccess = dispatch => response => {
+  console.log("the response.data.data passed to updateTopicNoteIdList: ")
+  console.log(response.data.data)
   dispatch(updateTopicNoteIdList(response.data.data))
   dispatch(setCreatedNote(response))
 }
@@ -79,11 +81,6 @@ export const updateNoteContent = dispatch => ({
   )
 }
 
-// ({
-//   note_id,
-//   content_markdown,
-//   content_text,
-// }) =>
 const updateNoteContentSuccess = topicId => dispatch => response => {
   dispatch(setUpdateNoteContent({ ...response, topicId }))
 }

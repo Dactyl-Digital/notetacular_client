@@ -35,6 +35,7 @@ export const createTopicData = {
 }
 
 export const createNoteData = {
+  topic_id: 1,
   title: "Note3",
   note_timer_id_list: [],
 }
@@ -113,10 +114,16 @@ export const listTopicsResponse = createAxiosSuccessResponse({
   },
 })
 
+// NOTE: topicId isn't actually returned from the API
+// This is just required to be provided to the action which updates
+// the topic's note_id_list to append the newly created note_id for
+// facilitating the listNotes operation.
+// topicId: 1,
 export const createNoteResponse = createAxiosSuccessResponse({
   message: "Successfully created note!",
   data: {
     id: 3,
+    topic_id: 1,
     title: "Note3",
     note_timer_id_list: [],
   },
@@ -126,8 +133,8 @@ export const listNotesResponse = createAxiosSuccessResponse({
   message: "Successfully listed notes!",
   data: {
     notes: [
-      { id: 1, title: "Note1", note_timer_id_list: [1, 2] },
-      { id: 2, title: "Note2", note_timer_id_list: [] },
+      { id: 1, topic_id: 1, title: "Note1", note_timer_id_list: [1, 2] },
+      { id: 2, topic_id: 1, title: "Note2", note_timer_id_list: [] },
     ],
   },
 })

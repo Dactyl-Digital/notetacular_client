@@ -12,7 +12,7 @@ import CreateResourceModal from "../../shared/create-resource-modal"
 // Also... The editor renders funky when opening multiple note's dropdowns from top to bottom WTF!
 const NoteList = ({ topicId }) => {
   const { topics } = useTopic()
-  const { notes, listNotesOffset } = useNote()
+  const { parentTopicsOfNotes } = useNote()
   const { createNote, listNotes } = useNoteActions()
   const [title, setTitle] = useState("")
 
@@ -26,7 +26,7 @@ const NoteList = ({ topicId }) => {
     // console.log(topics)
     if (noteIdList.length > 0) {
       listNotes({
-        offset: listNotesOffset,
+        offset: 0,
         note_id_list: noteIdList,
       })
     }
@@ -37,30 +37,28 @@ const NoteList = ({ topicId }) => {
     setTitle("")
   }
 
-  // console.log("the notes before render!")
-  // console.log(notes)
-  // console.log("the topicNotesKeyList before render")
-  // console.log(topicNotesKeyList)
-  // console.log("noteIdList before render")
-  // console.log(noteIdList)
-  console.log(`the notes for topicId-${topicId}:`)
-  console.log(notes)
   return (
     <>
       <div id="note-list">
-        {notes.hasOwnProperty(topicId) &&
+        {parentTopicsOfNotes.hasOwnProperty(topicId) &&
           noteIdList.map(noteId => {
+            console.log("iterating through noteIdList")
+            console.log(parentTopicsOfNotes)
             // console.log("what do I get accessing: notes[key]")
             // console.log(notes[topicId])
             // console.log("and what is noteIdList: ")
             // console.log(noteIdList)
             // console.log("what do I get accessing: notes[key][noteId]")
             // console.log(notes[topicId][noteId])
-            if (notes[topicId].hasOwnProperty(noteId)) {
+            if (parentTopicsOfNotes[topicId].notes.hasOwnProperty(noteId)) {
+              console.log(
+                "THE NOTE: ",
+                parentTopicsOfNotes[topicId].notes[noteId]
+              )
               return (
                 <NoteListing
                   key={`${topicId}-${noteId}`}
-                  note={notes[topicId][noteId]}
+                  note={parentTopicsOfNotes[topicId].notes[noteId]}
                   topicId={topics[topicId].id}
                 />
               )
