@@ -135,22 +135,31 @@ const TopicList = ({ subCategoryId }) => {
             )}
           </CreateResourceModal>
           <div id="topic-list">
-            {keys.map((key, i) => (
-              <ResourceListing
-                key={topics[key].id.toString()}
-                title={topics[key].title}
-                index={i}
-                type="TOPIC"
-                // TODO: Need to setup list_topics domain business logic to
-                // actually retrieve tags...
-                // tags={topics[key].tags}
-                topicId={topics[key].id}
-                active={activeCircle.active === topics[key].title}
-                setActiveDisabled={setActiveDisabled}
-                scrollTop={scrollTop}
-                setActiveCircle={setActiveCircle}
-              />
-            ))}
+            {keys.map((key, i) => {
+              console.log("the topics: ")
+              console.log(topics)
+              console.log("the key:")
+              console.log(key)
+              console.log("the topic @ topics[keys]: ")
+              console.log(topics[keys])
+              return (
+                <ResourceListing
+                  key={topics[key].id.toString()}
+                  title={topics[key].title}
+                  tags={topics[key].tags}
+                  index={i}
+                  type="TOPIC"
+                  // TODO: Need to setup list_topics domain business logic to
+                  // actually retrieve tags...
+                  // tags={topics[key].tags}
+                  topicId={topics[key].id}
+                  active={activeCircle.active === topics[key].title}
+                  setActiveDisabled={setActiveDisabled}
+                  scrollTop={scrollTop}
+                  setActiveCircle={setActiveCircle}
+                />
+              )
+            })}
           </div>
         </div>
       </Container>

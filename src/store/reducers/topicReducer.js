@@ -60,6 +60,9 @@ export default function topicReducer(
     return { ...topicState, topicListError: payload }
   }
   if (type === UPDATE_TOPIC_NOTE_ID_LIST) {
+    const spreadPrevIfArray = ({ notes }) => (Array.isArray(notes) ? notes : [])
+    console.log("WHAT GETS RETURNED? spreadPrevIfArray")
+    console.log(spreadPrevIfArray(topicState.topics[payload.topic_id]))
     return {
       ...topicState,
       topics: {
@@ -68,12 +71,13 @@ export default function topicReducer(
           ...topicState.topics[payload.topic_id],
           notes: [
             payload.note_id,
-            ...topicState.topics[payload.topic_id].notes,
+            ...spreadPrevIfArray(topicState.topics[payload.topic_id]),
           ],
         },
       },
     }
   }
+
   // if (type === SET_LIST_SHARED_topicS_ERROR) {
   //   return { ...topicState, signinError: payload.errors }
   // }

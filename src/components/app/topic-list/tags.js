@@ -24,11 +24,12 @@ const Container = styled.div`
 const Tags = ({ tags }) => (
   <Container>
     <div className="tag-list">
-      {tags.map(tag => (
-        <Tag>{tag}</Tag>
-      ))}
+      {tags !== null && tags.map(tag => <Tag>{tag}</Tag>)}
     </div>
-    <AddIcon />
+    {/* TODO: Genericize /shared/Modal so that you can provide your own button and use that here */}
+    <div onClick={() => console.log("CREATE_TAG")}>
+      <AddIcon />
+    </div>
   </Container>
 )
 

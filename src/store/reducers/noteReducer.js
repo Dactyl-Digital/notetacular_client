@@ -38,15 +38,76 @@ export const noteInitialState = {
   updateNoteContentError: null,
 }
 
-const normalizeSingle = (noteState, { data }) => ({
-  [data.topic_id]: {
-    notes: {
-      ...noteState.parentTopicsOfNotes[data.topic_id].notes,
+// NOTE: On the next day.... Saving the old versions so the before and after can be displayed...
+// const spreadPrevNotesIfNotNull = (obj, data) => {
+//   const result =
+//     obj.hasOwnProperty(data.topic_id) &&
+//     obj.hasOwnProperty("notes") &&
+//     obj.notes !== null
+//       ? { ...obj[data.topic_id].notes, [data.id]: data }
+//       : { [data.id]: data }
+//   console.log("WTF IS THE RESULT: ", result)
+//   return result
+// }
+
+// const normalizeSingle = (noteState, { data }) => ({
+//   [data.topic_id]: {
+//     notes: {
+//       ...spreadPrevNotesIfNotNull(noteState.parentTopicsOfNotes, data),
+//       // [data.id]: data,
+//     },
+//     listOffset: noteState.parentTopicsOfNotes.hasOwnProperty(data.topic_id)
+//       ? noteState.parentTopicsOfNotes[data.topic_id].listOffset + 1
+//       : 1,
+//   },
+// })
+
+// This is necessary when there are no other notes which have already been
+// created under a particular topic.... Otherwise it'll error out.
+// NOTE: This is the refactored version of spreadPrevNotesIfNotNull & old normalizeSingle
+const checkProperty = ({ obj, property, successFn, failFn, recursiveFn }) =>
+  obj.hasOwnProperty(property)
+    ? typeof recursiveFn === "function"
+      ? recursiveFn(obj[property])
+      : successFn()
+    : failFn()
+
+const normalizeSingle = ({ parentTopicsOfNotes }, { data }) => {
+  const topic_id = data.topic_id
+  const newNotes = checkProperty({
+    obj: parentTopicsOfNotes,
+    property: topic_id,
+    failFn: () => ({
       [data.id]: data,
+    }),
+    recursiveFn: obj =>
+      checkProperty({
+        obj,
+        property: "notes",
+        successFn: () => ({
+          ...obj["notes"],
+          [data.id]: data,
+        }),
+        failFn: () => ({
+          [data.id]: data,
+        }),
+      }),
+  })
+  const newListOffset = checkProperty({
+    obj: parentTopicsOfNotes,
+    property: topic_id,
+    successFn: () => parentTopicsOfNotes[topic_id].listOffset + 1,
+    failFn: () => 1,
+  })
+  return {
+    [topic_id]: {
+      notes: {
+        ...newNotes,
+      },
+      listOffset: newListOffset,
     },
-    listOffset: noteState.parentTopicsOfNotes[data.topic_id].listOffset + 1,
-  },
-})
+  }
+}
 
 // TODO: Move this into a helper folder.
 const normalize = key => (noteState, { data }) =>
@@ -110,8 +171,6 @@ export default function noteReducer(
   { type, payload }
 ) {
   if (type === SET_CREATED_NOTE) {
-    console.log("Da payload in create note is:")
-    console.log(payload)
     return {
       ...noteState,
       parentTopicsOfNotes: {

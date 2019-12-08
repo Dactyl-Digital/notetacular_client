@@ -16,8 +16,9 @@ const NoteList = ({ topicId }) => {
   const { createNote, listNotes } = useNoteActions()
   const [title, setTitle] = useState("")
 
+  const notes = topics[topicId].notes
   // const topicNotesKeyList = Object.keys(notes)
-  const noteIdList = topics[topicId].notes
+  const noteIdList = Array.isArray(notes) ? notes : []
   // console.log(`noteIdList for topicId-${topicId}`)
   // console.log(noteIdList)
 
@@ -33,6 +34,8 @@ const NoteList = ({ topicId }) => {
   }, [])
 
   const handleCreateNewNote = () => {
+    console.log("the noteIdList: ")
+    console.log(noteIdList)
     createNote({ title, order: noteIdList.length, topic_id: topicId })
     setTitle("")
   }

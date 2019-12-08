@@ -80,6 +80,7 @@ const ResourceListing = ({
   link,
   tags,
   topicId,
+  noteId,
   handleDelete,
   handleArrowClick,
   active,
@@ -107,14 +108,14 @@ const ResourceListing = ({
     <>
       <Container id={title} ref={listingEl} type={type} active={active}>
         <div id="title-and-tags">
-          {type === "NOTE" ? (
+          {type === "TOPIC" || type === "NOTE" ? (
             <h3>{title}</h3>
           ) : (
             <Link to={`/app/${link}`}>
               <h3>{title}</h3>
             </Link>
           )}
-          {/* {type === "TOPIC" || type === "NOTE" && <Tags tags={tags} />} */}
+          {(type === "TOPIC" || type === "NOTE") && <Tags tags={tags} />}
         </div>
         <div id="icons">
           {/* TODO: Implement delete capability */}
