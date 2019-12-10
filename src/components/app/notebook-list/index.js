@@ -28,7 +28,11 @@ const Container = styled.div`
 `
 
 const NotebookList = () => {
-  const { notebooks, listNotebooksOffset } = useNotebook()
+  const {
+    notebooks,
+    notebooksPaginationEnd,
+    listNotebooksOffset,
+  } = useNotebook()
   const { createNotebook, listNotebooks } = useNotebookActions()
   const [title, setTitle] = useState("")
   // Create custom hook for all of these... would that really help anything
@@ -52,10 +56,14 @@ const NotebookList = () => {
         // manage that state -> i.e. it should become the active div, until user scrolls
         // then other divs will be newly selected active divs.
         targetResource.scrollIntoView()
-      }, 5000)
+        // NOTE: Why did I have this at 5000 before?
+      }, 1000)
     }
     listEl.current.addEventListener("scroll", handleScroll)
-    if (Object.keys(notebooks).length === 0) {
+    // TODO: Implement logic in handleScroll to check if notebooksPaginationEnd is false (when the
+    // user is at the bottom of the page),
+    // if so then make another listNotebooks request.
+    if (!notebooksPaginationEnd) {
       listNotebooks(listNotebooksOffset)
     }
     return () => {

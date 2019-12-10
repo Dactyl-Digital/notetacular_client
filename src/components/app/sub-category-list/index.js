@@ -29,7 +29,7 @@ const Container = styled.div`
 
 const SubCategoryList = ({ notebookId }) => {
   const { notebooks } = useNotebook()
-  const { subCategories, listSubCategoriesOffset } = useSubCategory()
+  const { parentNotebooksOfSubCategories } = useSubCategory()
   const { createSubCategory, listSubCategories } = useSubCategoryActions()
   const [title, setTitle] = useState("")
   const [activeCircle, setActiveCircle] = useState({
@@ -40,17 +40,8 @@ const SubCategoryList = ({ notebookId }) => {
   const [scrollTop, setScrollTop] = useState(0)
   const listEl = useRef(null)
 
-  // useEffect(() => {
-  //   const subCategoryIdList = notebooks[notebookId].sub_categories
-  //   if (subCategoryIdList.length > 0) {
-  //     listSubCategories({
-  //       offset: listSubCategoriesOffset,
-  //       sub_category_id_list: subCategoryIdList,
-  //     })
-  //   }
-  // }, [])
-
   useEffect(() => {
+    console.log("SUBCATEGORYLIST USE EFFECT RUNNING!")
     const hash = window.location.hash
     if (hash && !activeCircle.active) {
       const id = hash.slice(1, hash.length)
@@ -65,15 +56,32 @@ const SubCategoryList = ({ notebookId }) => {
     }
     listEl.current.addEventListener("scroll", handleScroll)
     const subCategoryIdList = notebooks[notebookId].sub_categories
-    if (
-      subCategoryIdList.length > 0 &&
-      Object.keys(subCategories).length === 0
-    ) {
+    // TODO: Implement the condition which will check the paginationEnd.
+    // if (subCategoryIdList.length > 0) {
+    //   listSubCategories({
+    //     offset: 0,
+    //     sub_category_id_list: subCategoryIdList,
+    //   })
+    // }
+
+    console.log("what is parentNotebooksOfSubCategories: ")
+    console.dir(parentNotebooksOfSubCategories)
+    if (parentNotebooksOfSubCategories.hasOwnProperty(notebookId)) {
+      if (
+        !parentNotebooksOfSubCategories[notebookId].subCategoriesPaginationEnd
+      ) {
+        listSubCategories({
+          offset: parentNotebooksOfSubCategories[notebookId].listOffset,
+          sub_category_id_list: subCategoryIdList,
+        })
+      }
+    } else {
       listSubCategories({
-        offset: listSubCategoriesOffset,
+        offset: 0,
         sub_category_id_list: subCategoryIdList,
       })
     }
+
     return () => {
       listEl.current.removeEventListener("scroll", handleScroll)
     }
@@ -99,12 +107,21 @@ const SubCategoryList = ({ notebookId }) => {
       // the bottom of the list. (As the clicked ResourceListing won't be
       // at the top of the viewport and the one that is would be set to active
       // right after the clicked ResourceListing is)
-      setTimeout(() => setSetActiveDisabled(false), 1000)
+      setTimeout(() => setSetActiveDisabled(false), 1500)
     }
   }
 
+  // NOTE: This fucking sucks
+  const subCategories = parentNotebooksOfSubCategories.hasOwnProperty(
+    notebookId
+  )
+    ? parentNotebooksOfSubCategories[notebookId].hasOwnProperty("subCategories")
+      ? parentNotebooksOfSubCategories[notebookId].subCategories
+      : []
+    : []
+  console.log("wtf is parentNotebooksOfSubCategories: ")
+  console.log(parentNotebooksOfSubCategories)
   const keys = Object.keys(subCategories)
-
   return (
     <ActiveCircleContext.Provider
       value={{
@@ -142,7 +159,8 @@ const SubCategoryList = ({ notebookId }) => {
               <ResourceListing
                 key={subCategories[key].id.toString()}
                 title={subCategories[key].title}
-                link={`sub-category/${subCategories[key].id}/topics`}
+                link={`notebook/${notebookId}/sub-category/${subCategories[key].id}/topics`}
+                // link={`sub-category/${subCategories[key].id}/topics`}
                 index={i}
                 active={activeCircle.active === subCategories[key].title}
                 setActiveDisabled={setActiveDisabled}

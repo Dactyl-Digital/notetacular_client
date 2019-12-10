@@ -8,9 +8,22 @@ import {
 } from "../actions/notebook"
 // import {helperFunction} from '../helpers'
 
+const listNotebooksOffset = JSON.parse(
+  localStorage.getItem("listNotebooksOffset")
+)
+const notebooks = JSON.parse(localStorage.getItem("notebooks"))
+console.log("notebooks retrieved from localStorage!")
+console.log(notebooks)
+const notebooksPaginationEnd = JSON.parse(
+  localStorage.getItem("notebooksPaginationEnd")
+)
+
 export const notebookInitialState = {
-  listNotebooksOffset: 0,
-  notebooks: {},
+  listNotebooksOffset: listNotebooksOffset ? listNotebooksOffset : 0,
+  notebooks: notebooks ? notebooks : {},
+  notebooksPaginationEnd: notebooksPaginationEnd
+    ? notebooksPaginationEnd
+    : false,
   listSharedNotebooksOffset: 0,
   sharedNotebooks: {},
   createNotebookError: null,
@@ -63,11 +76,15 @@ export default function notebookReducer(
   return notebookState
 }
 
-const notebookListNewState = (notebookState, payload) => ({
-  ...notebookState,
-  notebooks: {
-    ...notebookState.notebooks,
-    ...normalizeNotebooks(payload),
-  },
-  listNotebooksOffset: notebookState.listNotebooksOffset + 20,
-})
+const notebookListNewState = (notebookState, payload) => {
+  const notebooksPaginationEnd = payload.data.notebooks.length !== 20
+  return {
+    ...notebookState,
+    notebooks: {
+      ...notebookState.notebooks,
+      ...normalizeNotebooks(payload),
+    },
+    listNotebooksOffset: notebookState.listNotebooksOffset + 20,
+    notebooksPaginationEnd,
+  }
+}

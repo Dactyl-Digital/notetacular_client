@@ -9,6 +9,7 @@ import Sidebar from "../../shared/sidebar"
 import ResourceListing from "../../shared/resource-listing"
 import CreateResourceModal from "../../shared/create-resource-modal"
 import { ActiveCircleContext } from "../notebook-list"
+import { compareIdentifiers } from "semver"
 
 const Container = styled.div`
   display: flex;
@@ -23,9 +24,9 @@ const Container = styled.div`
   }
 `
 
-const TopicList = ({ subCategoryId }) => {
-  const { subCategories } = useSubCategory()
-  const { topics, listTopicsOffset } = useTopic()
+const TopicList = ({ notebookId, subCategoryId }) => {
+  const { parentNotebooksOfSubCategories } = useSubCategory()
+  const { parentSubCategoriesOfTopics } = useTopic()
   const { createTopic, listTopics } = useTopicActions()
   const [title, setTitle] = useState("")
 
@@ -63,10 +64,32 @@ const TopicList = ({ subCategoryId }) => {
       }, 5000)
     }
     listEl.current.addEventListener("scroll", handleScroll)
-    const topicIdList = subCategories[subCategoryId].topics
-    if (topicIdList.length > 0 && Object.keys(topics).length === 0) {
+    console.log("the notebookId")
+    console.log(notebookId)
+    const topicIdList =
+      parentNotebooksOfSubCategories[notebookId].subCategories[subCategoryId]
+        .topics
+    // if (topicIdList.length > 0) {
+    //   listTopics({
+    //     offset: 0,
+    //     topic_id_list: topicIdList,
+    //   })
+    // }
+
+    console.log("the parentSubCategoriesOfTopics in topic-list useEffect")
+    console.log(parentSubCategoriesOfTopics)
+    console.log("and the subCategoryId")
+    console.log(subCategoryId)
+    if (parentSubCategoriesOfTopics.hasOwnProperty(subCategoryId)) {
+      if (!parentSubCategoriesOfTopics[subCategoryId].topicsPaginationEnd) {
+        listTopics({
+          offset: parentSubCategoriesOfTopics[subCategoryId].listOffset,
+          topic_id_list: topicIdList,
+        })
+      }
+    } else {
       listTopics({
-        offset: listTopicsOffset,
+        offset: 0,
         topic_id_list: topicIdList,
       })
     }
@@ -100,7 +123,17 @@ const TopicList = ({ subCategoryId }) => {
     setTitle("")
   }
 
+  // NOTE: This fucking sucks
+  const topics = parentSubCategoriesOfTopics.hasOwnProperty(subCategoryId)
+    ? parentSubCategoriesOfTopics[subCategoryId].hasOwnProperty("topics")
+      ? parentSubCategoriesOfTopics[subCategoryId].topics
+      : []
+    : []
+  console.log("wtf is parentSubCategoriesOfTopics: ")
+  console.log(parentSubCategoriesOfTopics)
   const keys = Object.keys(topics)
+  console.log("the topic's keys:")
+  console.log(keys)
 
   return (
     <ActiveCircleContext.Provider
@@ -152,6 +185,7 @@ const TopicList = ({ subCategoryId }) => {
                   // TODO: Need to setup list_topics domain business logic to
                   // actually retrieve tags...
                   // tags={topics[key].tags}
+                  topics={topics}
                   topicId={topics[key].id}
                   active={activeCircle.active === topics[key].title}
                   setActiveDisabled={setActiveDisabled}

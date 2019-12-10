@@ -79,6 +79,7 @@ const ResourceListing = ({
   title,
   link,
   tags,
+  topics,
   topicId,
   noteId,
   handleDelete,
@@ -134,7 +135,9 @@ const ResourceListing = ({
           ) : null}
         </div>
       </Container>
-      {type === "TOPIC" && showNotes && <NoteList topicId={topicId} />}
+      {type === "TOPIC" && showNotes && (
+        <NoteList topics={topics} topicId={topicId} />
+      )}
     </>
   )
 }

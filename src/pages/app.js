@@ -9,6 +9,10 @@ import NotebookList from "../components/app/notebook-list"
 import SubCategoryList from "../components/app/sub-category-list"
 import TopicList from "../components/app/topic-list"
 
+import { useNotebook } from "../hooks/queries/useNotebook"
+import { useSubCategory } from "../hooks/queries/useSubCategory"
+import { useTopic } from "../hooks/queries/useTopic"
+
 const App = () => (
   <Layout>
     <Router>
@@ -22,10 +26,11 @@ const App = () => (
         component={SubCategoryList}
       />
       <PrivateRoute
-        path="/app/sub-category/:subCategoryId/topics"
+        path="/app/notebook/:notebookId/sub-category/:subCategoryId/topics"
         component={TopicList}
       />
     </Router>
   </Layout>
 )
+
 export default App

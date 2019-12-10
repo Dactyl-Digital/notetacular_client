@@ -8,7 +8,7 @@ import {
   SET_UPDATE_NOTE_CONTENT,
   SET_UPDATE_NOTE_CONTENT_ERROR,
 } from "../actions/note"
-// import {helperFunction} from '../helpers'
+import { checkProperty } from "./helpers"
 
 // NOTE: This structure is meant to facilitate rendering the notes
 // for each topic in the topicList view.
@@ -25,6 +25,7 @@ import {
 //       "3": { id: 3, topic_id: 1, title: "Note3", note_timer_id_list: [] },
 //     },
 //     listOffset: 20,
+//     notesPaginationEnd: true
 //   },
 // },
 
@@ -62,16 +63,9 @@ export const noteInitialState = {
 //   },
 // })
 
-// This is necessary when there are no other notes which have already been
+// This is necessary for when there are no other notes which have already been
 // created under a particular topic.... Otherwise it'll error out.
 // NOTE: This is the refactored version of spreadPrevNotesIfNotNull & old normalizeSingle
-const checkProperty = ({ obj, property, successFn, failFn, recursiveFn }) =>
-  obj.hasOwnProperty(property)
-    ? typeof recursiveFn === "function"
-      ? recursiveFn(obj[property])
-      : successFn()
-    : failFn()
-
 const normalizeSingle = ({ parentTopicsOfNotes }, { data }) => {
   const topic_id = data.topic_id
   const newNotes = checkProperty({
@@ -109,9 +103,36 @@ const normalizeSingle = ({ parentTopicsOfNotes }, { data }) => {
   }
 }
 
-// TODO: Move this into a helper folder.
+// If I was to genericize this...
+// I think I would use some kind of recursion/reduce over the keys of an
+// object that I pass into a function to indicate the hierarchy which needs
+// to be spread in the new object to be created.
+// Not terrible proud of this.... but this could be a possible future implementation...
+// ({
+//   1: {
+//     obj: acc,
+//     key: resource.topic_id,
+//   },
+//   2: {
+//     obj: acc[resource.topic_id],
+//     key: "notes",
+//     addNewValues: {
+//       1: {
+//         key: resource.id,
+//         value: resource,
+//       },
+//       2: {
+//         key: "listOffset",
+//         value: noteState.parentTopicsOfNotes[resource.topic_id].listOffset,
+//         incrementOnceBy: data[key].length,
+//       },
+//     },
+//   },
+// })
+
 const normalize = key => (noteState, { data }) =>
   data[key].reduce((acc, resource, i) => {
+    const notesPaginationEnd = data[key].length !== 20
     if (i === 0) {
       // NOTE: Doing this to ensure that listOffset is only incremented once while
       // iterating through the list of notes retrieved from the API.
@@ -120,6 +141,8 @@ const normalize = key => (noteState, { data }) =>
         acc = {
           ...acc,
           [resource.topic_id]: {
+            ...acc[resource.topic_id],
+            notesPaginationEnd,
             notes: {
               ...acc[resource.topic_id].notes,
               [resource.id]: resource,
@@ -132,6 +155,7 @@ const normalize = key => (noteState, { data }) =>
       } else {
         // Creating a new entry for a topic's notes
         acc[resource.topic_id] = {
+          notesPaginationEnd,
           notes: {
             [resource.id]: resource,
           },
@@ -146,6 +170,7 @@ const normalize = key => (noteState, { data }) =>
         ...acc,
         [resource.topic_id]: {
           ...acc[resource.topic_id],
+          notesPaginationEnd,
           notes: {
             ...acc[resource.topic_id].notes,
             [resource.id]: resource,
@@ -153,14 +178,6 @@ const normalize = key => (noteState, { data }) =>
         },
       }
     }
-    // else {
-    //   // Creating a new entry for a topic's notes
-    //   acc[resource.topic_id] = {
-    //     notes: {
-    //       [resource.id]: resource,
-    //     },
-    //   }
-    // }
     return acc
   }, {})
 
@@ -183,8 +200,6 @@ export default function noteReducer(
     return noteListNewState(noteState, payload)
   }
   if (type === SET_UPDATE_NOTE_CONTENT) {
-    console.log("Da payload in SET_UPDATE_NOTE_CONTENT:")
-    console.log(payload)
     const {
       data: { data },
       topicId,
