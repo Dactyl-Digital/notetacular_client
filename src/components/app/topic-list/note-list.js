@@ -5,15 +5,19 @@ import { useNote } from "../../../hooks/queries/useNote"
 import { useNoteActions } from "../../../hooks/commands/useNoteActions"
 import CreateResourceModal from "../../shared/create-resource-modal"
 
-const NoteList = ({ topics, topicId }) => {
+const NoteList = ({ topics, topicId, subCategoryId }) => {
   const { parentTopicsOfNotes } = useNote()
   const { createNote, listNotes } = useNoteActions()
   const [title, setTitle] = useState("")
 
+  console.log("what is topics in noteList?")
+  console.log(topics)
   const notes = topics[topicId].notes
   const noteIdList = Array.isArray(notes) ? notes : []
 
   useEffect(() => {
+    console.log("what is the noteIdList in noteList:")
+    console.log(noteIdList)
     if (parentTopicsOfNotes.hasOwnProperty(topicId)) {
       // Still more notes available on the backend.
       if (!parentTopicsOfNotes[topicId].notesPaginationEnd) {
@@ -31,12 +35,17 @@ const NoteList = ({ topics, topicId }) => {
   }, [])
 
   const handleCreateNewNote = () => {
-    createNote({ title, order: noteIdList.length, topic_id: topicId })
+    createNote({
+      title,
+      order: noteIdList.length,
+      topic_id: topicId,
+      sub_category_id: subCategoryId,
+    })
     setTitle("")
   }
 
   return (
-    <>
+    <div data-testid="note-list">
       <CreateResourceModal resource="Note">
         {toggleShowModal => (
           <form
@@ -79,12 +88,13 @@ const NoteList = ({ topics, topicId }) => {
                   key={`${topicId}-${noteId}`}
                   note={parentTopicsOfNotes[topicId].notes[noteId]}
                   topicId={topics[topicId].id}
+                  subCategoryId={subCategoryId}
                 />
               )
             }
           })}
       </div>
-    </>
+    </div>
   )
 }
 

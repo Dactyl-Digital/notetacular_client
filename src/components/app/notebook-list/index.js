@@ -113,7 +113,7 @@ const NotebookList = () => {
         setActive,
       }}
     >
-      <Container>
+      <Container data-testid="notebook-list-page">
         <Sidebar keys={keys} resourceList={notebooks} />
         <div id="main-content" ref={listEl}>
           <Heading title="Notebooks" />

@@ -100,7 +100,7 @@ const initializeQuillEditor = (editorId, readOnly) => {
   return quill
 }
 
-const Editor = ({ noteContent, persistNoteContent, editorId }) => {
+const Editor = ({ noteId, noteContent, persistNoteContent, editorId }) => {
   const [showOptions, setShowOptions] = useState(false)
   const [readOnly, setReadOnly] = useState(false)
   const [quill, setQuill] = useState(null)
@@ -152,7 +152,11 @@ const Editor = ({ noteContent, persistNoteContent, editorId }) => {
         </button>
       </div>
       {showOptions ? (
-        <Options readOnly={readOnly} handleOptionClick={handleOptionClick} />
+        <Options
+          noteId={noteId}
+          readOnly={readOnly}
+          handleOptionClick={handleOptionClick}
+        />
       ) : null}
       <div id={editorId} />
     </Container>

@@ -2,11 +2,13 @@ import {
   SET_CREATED_NOTE,
   SET_NOTE_LIST,
   LIST_SHARED_NOTES,
+  SET_ADD_NOTE_TAGS,
   SET_CREATE_NOTE_ERROR,
   SET_NOTE_LIST_ERROR,
   SET_LIST_SHARED_NOTE_ERROR,
   SET_UPDATE_NOTE_CONTENT,
   SET_UPDATE_NOTE_CONTENT_ERROR,
+  SET_REMOVED_NOTE_TAG,
 } from "../actions/note"
 import { checkProperty } from "./helpers"
 
@@ -95,6 +97,7 @@ const normalizeSingle = ({ parentTopicsOfNotes }, { data }) => {
   })
   return {
     [topic_id]: {
+      notesPaginationEnd: true,
       notes: {
         ...newNotes,
       },
@@ -183,6 +186,39 @@ const normalize = key => (noteState, { data }) =>
 
 const normalizeNotes = normalize("notes")
 
+const normalizeSingleUpdate = ({ parentTopicsOfNotes }, { data }) => {
+  const { topic_id } = data
+  const updatedTopic = checkProperty({
+    obj: parentTopicsOfNotes,
+    property: topic_id,
+    failFn: () => ({
+      [data.id]: data,
+    }),
+    recursiveFn: obj =>
+      checkProperty({
+        obj,
+        property: "notes",
+        successFn: () => ({
+          ...obj["notes"],
+          [data.id]: {
+            ...obj["notes"][data.id],
+            tags: data.tags,
+          },
+        }),
+        failFn: () => {
+          console.log("if failFn executes, you fucked up.")
+        },
+      }),
+  })
+  return {
+    [topic_id]: {
+      notes: {
+        ...updatedTopic,
+      },
+    },
+  }
+}
+
 export default function noteReducer(
   noteState = noteInitialState,
   { type, payload }
@@ -222,6 +258,24 @@ export default function noteReducer(
       },
     }
   }
+  if (type === SET_ADD_NOTE_TAGS) {
+    return {
+      ...noteState,
+      parentTopicsOfNotes: {
+        ...noteState.parentTopicsOfNotes,
+        ...normalizeSingleUpdate(noteState, payload),
+      },
+    }
+  }
+  if (type === SET_REMOVED_NOTE_TAG) {
+    return {
+      ...noteState,
+      parentTopicsOfNotes: {
+        ...noteState.parentTopicsOfNotes,
+        ...normalizeSingleUpdate(noteState, payload),
+      },
+    }
+  }
   // if (type === LIST_SHARED_SUB_CATEGORIES) {
   //   return { ...noteState, successfulSignup: true }
   // }
@@ -234,6 +288,8 @@ export default function noteReducer(
   if (type === SET_UPDATE_NOTE_CONTENT_ERROR) {
     return { ...noteState, updateNoteContentError: payload }
   }
+  // SET_ADD_TOPIC_TAGS_ERROR
+  // SET_REMOVE_TOPIC_TAG_ERROR
   // if (type === SET_LIST_SHARED_NOTES_ERROR) {
   //   return { ...noteState, signinError: payload.errors }
   // }

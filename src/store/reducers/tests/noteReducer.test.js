@@ -18,6 +18,7 @@ describe("noteReducer", () => {
     expect(noteReducer(undefined, setNoteList(listNotesResponse))).toEqual({
       parentTopicsOfNotes: {
         "1": {
+          notesPaginationEnd: true,
           notes: {
             "1": {
               id: 1,
@@ -50,6 +51,7 @@ describe("noteReducer", () => {
       // NOTE: The "1" key at the top level object is the topic_id which the note list is associated with.
       parentTopicsOfNotes: {
         "1": {
+          notesPaginationEnd: true,
           notes: {
             "1": {
               id: 1,

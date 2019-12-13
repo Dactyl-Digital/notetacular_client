@@ -9,7 +9,6 @@ import Sidebar from "../../shared/sidebar"
 import ResourceListing from "../../shared/resource-listing"
 import CreateResourceModal from "../../shared/create-resource-modal"
 import { ActiveCircleContext } from "../notebook-list"
-import { compareIdentifiers } from "semver"
 
 const Container = styled.div`
   display: flex;
@@ -64,22 +63,11 @@ const TopicList = ({ notebookId, subCategoryId }) => {
       }, 5000)
     }
     listEl.current.addEventListener("scroll", handleScroll)
-    console.log("the notebookId")
-    console.log(notebookId)
+
     const topicIdList =
       parentNotebooksOfSubCategories[notebookId].subCategories[subCategoryId]
         .topics
-    // if (topicIdList.length > 0) {
-    //   listTopics({
-    //     offset: 0,
-    //     topic_id_list: topicIdList,
-    //   })
-    // }
 
-    console.log("the parentSubCategoriesOfTopics in topic-list useEffect")
-    console.log(parentSubCategoriesOfTopics)
-    console.log("and the subCategoryId")
-    console.log(subCategoryId)
     if (parentSubCategoriesOfTopics.hasOwnProperty(subCategoryId)) {
       if (!parentSubCategoriesOfTopics[subCategoryId].topicsPaginationEnd) {
         listTopics({
@@ -129,11 +117,8 @@ const TopicList = ({ notebookId, subCategoryId }) => {
       ? parentSubCategoriesOfTopics[subCategoryId].topics
       : []
     : []
-  console.log("wtf is parentSubCategoriesOfTopics: ")
-  console.log(parentSubCategoriesOfTopics)
+
   const keys = Object.keys(topics)
-  console.log("the topic's keys:")
-  console.log(keys)
 
   return (
     <ActiveCircleContext.Provider
@@ -142,7 +127,7 @@ const TopicList = ({ notebookId, subCategoryId }) => {
         setActive,
       }}
     >
-      <Container>
+      <Container data-testid="topic-list-page">
         <Sidebar keys={keys} resourceList={topics} />
         <div id="main-content" ref={listEl}>
           <Heading title="Topics" />
@@ -169,12 +154,6 @@ const TopicList = ({ notebookId, subCategoryId }) => {
           </CreateResourceModal>
           <div id="topic-list">
             {keys.map((key, i) => {
-              console.log("the topics: ")
-              console.log(topics)
-              console.log("the key:")
-              console.log(key)
-              console.log("the topic @ topics[keys]: ")
-              console.log(topics[keys])
               return (
                 <ResourceListing
                   key={topics[key].id.toString()}
@@ -182,11 +161,9 @@ const TopicList = ({ notebookId, subCategoryId }) => {
                   tags={topics[key].tags}
                   index={i}
                   type="TOPIC"
-                  // TODO: Need to setup list_topics domain business logic to
-                  // actually retrieve tags...
-                  // tags={topics[key].tags}
                   topics={topics}
                   topicId={topics[key].id}
+                  subCategoryId={subCategoryId}
                   active={activeCircle.active === topics[key].title}
                   setActiveDisabled={setActiveDisabled}
                   scrollTop={scrollTop}

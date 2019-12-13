@@ -20,6 +20,7 @@ const Container = styled.div`
 `
 
 const NoteListing = ({
+  subCategoryId,
   topicId,
   note: { id, title, tags, content_markdown },
 }) => {
@@ -28,6 +29,7 @@ const NoteListing = ({
 
   const persistNoteContent = ({ content_text, content_markdown }) => {
     updateNoteContent({
+      subCategoryId,
       topicId,
       note_id: id,
       content_text,
@@ -50,6 +52,7 @@ const NoteListing = ({
       {/* TODO: create toggle for showing the editor */}
       {showEditor ? (
         <Editor
+          noteId={id}
           noteContent={content_markdown}
           persistNoteContent={persistNoteContent}
           editorId={`editor-${topicId}-${id}`}

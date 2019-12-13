@@ -7,30 +7,37 @@ import {
   setNoteListError,
   setUpdateNoteContent,
   setUpdateNoteContentError,
+  setAddedNoteTags,
+  setAddedNoteTagsError,
+  setRemovedNoteTag,
+  setRemoveNoteTagError,
 } from "../../store/actions/note"
 import { updateTopicNoteIdList } from "../../store/actions/topic"
 import {
   CREATE_NOTE_URL,
   LIST_NOTES_URL,
   UPDATE_NOTE_CONTENT_URL,
+  ADD_NOTE_TAGS_URL,
+  REMOVE_NOTE_TAG_URL,
 } from "../../api-endpoints"
 
-export const createNote = dispatch => createNoteData => {
+export const createNote = dispatch => ({
+  sub_category_id,
+  ...createNoteData
+}) => {
   dispatch(
     apiRequest({
       method: "POST",
       url: CREATE_NOTE_URL,
       payload: createNoteData,
-      onSuccess: createNoteSuccess(dispatch),
+      onSuccess: createNoteSuccess({ sub_category_id })(dispatch),
       onError: createNoteError(dispatch),
     })
   )
 }
 
-const createNoteSuccess = dispatch => response => {
-  console.log("the response.data.data passed to updateTopicNoteIdList: ")
-  console.log(response.data.data)
-  dispatch(updateTopicNoteIdList(response.data.data))
+const createNoteSuccess = ({ sub_category_id }) => dispatch => response => {
+  dispatch(updateTopicNoteIdList({ sub_category_id, ...response.data.data }))
   dispatch(setCreatedNote(response))
 }
 
@@ -61,6 +68,7 @@ const listNotesError = dispatch => error => {
 }
 
 export const updateNoteContent = dispatch => ({
+  subCategoryId,
   topicId,
   note_id,
   content_markdown,
@@ -75,18 +83,61 @@ export const updateNoteContent = dispatch => ({
         content_markdown,
         content_text,
       },
-      onSuccess: updateNoteContentSuccess(topicId)(dispatch),
+      onSuccess: updateNoteContentSuccess({ subCategoryId, topicId })(dispatch),
       onError: updateNoteContentError(dispatch),
     })
   )
 }
 
-const updateNoteContentSuccess = topicId => dispatch => response => {
-  dispatch(setUpdateNoteContent({ ...response, topicId }))
+const updateNoteContentSuccess = ({
+  subCategoryId,
+  topicId,
+}) => dispatch => response => {
+  dispatch(setUpdateNoteContent({ ...response, subCategoryId, topicId }))
 }
 
 const updateNoteContentError = dispatch => error => {
   dispatch(setUpdateNoteContentError(error))
+}
+
+export const addNoteTags = dispatch => data => {
+  dispatch(
+    apiRequest({
+      method: "POST",
+      url: ADD_NOTE_TAGS_URL,
+      payload: data,
+      onSuccess: addNoteTagsSuccess(dispatch),
+      onError: addNoteTagsError(dispatch),
+    })
+  )
+}
+
+const addNoteTagsSuccess = dispatch => response => {
+  dispatch(setAddedNoteTags(response))
+}
+
+const addNoteTagsError = dispatch => error => {
+  dispatch(setAddedNoteTagsError(error))
+}
+
+export const removeNoteTag = dispatch => data => {
+  dispatch(
+    apiRequest({
+      method: "PATCH",
+      url: REMOVE_NOTE_TAG_URL,
+      payload: data,
+      onSuccess: removeNoteTagSuccess(dispatch),
+      onError: removeNoteTagError(dispatch),
+    })
+  )
+}
+
+const removeNoteTagSuccess = dispatch => response => {
+  dispatch(setRemovedNoteTag(response))
+}
+
+const removeNoteTagError = dispatch => error => {
+  dispatch(setRemoveNoteTagError(error))
 }
 
 export function useNoteActions() {
@@ -96,5 +147,7 @@ export function useNoteActions() {
     createNote: createNote(dispatch),
     listNotes: listNotes(dispatch),
     updateNoteContent: updateNoteContent(dispatch),
+    addNoteTags: addNoteTags(dispatch),
+    removeNoteTag: removeNoteTag(dispatch),
   }
 }

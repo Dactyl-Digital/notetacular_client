@@ -46,6 +46,7 @@ const Container = styled.div`
   }
 
   h3 {
+    text-overflow: ellipsis;
     font-family: "Blinker", sans-serif;
     font-weight: 400;
     font-size: 1.8rem;
@@ -58,11 +59,53 @@ const Container = styled.div`
     margin: 0;
   }
 
+  @keyframes slide-text {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: ${props =>
+        `translateX(${-(props.titleRightPosition - 250)}px)`};
+      /* transform: translateX(calc(-200%)); */
+    }
+  }
+
+  /* .title-container {
+    &:hover {
+      transform: translateX(calc(200px - 100%));
+    }
+  } */
+
   #title-and-tags {
     display: flex;
     justify-content: space-between;
     min-width: 22.4rem;
     max-width: 22.4rem;
+  }
+
+  .title-container {
+    width: 8rem;
+    /* max-height: 2.2rem; */
+    overflow-x: scroll;
+
+    white-space: nowrap;
+    padding: 0.1rem 0;
+
+    transform: translateX(0);
+    transition: 8s;
+
+    /* &:-webkit-scrollbar {
+      display: none;
+    }
+    -ms-overflow-style: none;
+    overflow: -moz-scrollbars-none; */
+  }
+
+  h3 {
+    &:hover {
+      animation: slide-text 5s infinite;
+      /* transform: translateX(calc(200px - 100%)); */
+    }
   }
 
   #icons {
@@ -80,6 +123,7 @@ const ResourceListing = ({
   link,
   tags,
   topics,
+  subCategoryId,
   topicId,
   noteId,
   handleDelete,
@@ -91,15 +135,24 @@ const ResourceListing = ({
   setActiveCircle,
 }) => {
   const [showNotes, setShowNotes] = useState(false)
+  const [titleRightPosition, setTitleRightPosition] = useState(null)
   const listingEl = useRef(null)
+  const titleRef = useRef(null)
 
   useEffect(() => {
+    if (!titleRightPosition) {
+      console.log("the titleRef:")
+      console.log(titleRef.current.getBoundingClientRect())
+      if (titleRef.current !== null) {
+        setTitleRightPosition(titleRef.current.getBoundingClientRect().right)
+      }
+    }
     if (setActiveDisabled) return
     const elementTop = listingEl.current.getBoundingClientRect().top
     if (elementTop > -60 && elementTop < 60) {
       setActiveCircle({ active: title, activePosition: index })
     }
-  }, [scrollTop])
+  }, [scrollTop, titleRightPosition])
 
   return (
     // When scrolling.... the activeCircle should
@@ -107,16 +160,28 @@ const ResourceListing = ({
     // In the notebook-list, sub-category-list... etc.
     // and pass that down as a prop to be checked against.
     <>
-      <Container id={title} ref={listingEl} type={type} active={active}>
+      <Container
+        id={title}
+        ref={listingEl}
+        type={type}
+        active={active}
+        titleRightPosition={titleRightPosition}
+      >
         <div id="title-and-tags">
           {type === "TOPIC" || type === "NOTE" ? (
-            <h3>{title}</h3>
+            <div className="title-container">
+              <h3 ref={titleRef}>{title}</h3>
+            </div>
           ) : (
             <Link to={`/app/${link}`}>
-              <h3>{title}</h3>
+              <div className="title-container">
+                <h3 ref={titleRef}>{title}</h3>
+              </div>
             </Link>
           )}
-          {(type === "TOPIC" || type === "NOTE") && <Tags tags={tags} />}
+          {(type === "TOPIC" || type === "NOTE") && (
+            <Tags tags={tags} type={type} topicId={topicId} noteId={noteId} />
+          )}
         </div>
         <div id="icons">
           {/* TODO: Implement delete capability */}
@@ -136,7 +201,11 @@ const ResourceListing = ({
         </div>
       </Container>
       {type === "TOPIC" && showNotes && (
-        <NoteList topics={topics} topicId={topicId} />
+        <NoteList
+          topics={topics}
+          topicId={topicId}
+          subCategoryId={subCategoryId}
+        />
       )}
     </>
   )

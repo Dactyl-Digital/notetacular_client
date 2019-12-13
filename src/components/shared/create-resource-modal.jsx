@@ -31,9 +31,18 @@ const Container = styled.div`
   }
 `
 
-const CreateResourceModal = ({ children, resource }) => {
+const CreateResourceModal = ({
+  children,
+  resource,
+  IconComponent,
+  buttonType,
+}) => {
   return (
-    <Modal resource={resource}>
+    <Modal
+      resource={resource}
+      IconComponent={IconComponent}
+      buttonType={buttonType}
+    >
       {toggleShowModal => (
         <Container>
           <button id="close-modal-btn" onClick={toggleShowModal}>

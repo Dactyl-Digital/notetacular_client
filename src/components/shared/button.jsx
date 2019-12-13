@@ -3,8 +3,11 @@ import styled from "styled-components"
 
 const StyledButton = styled.button`
   padding: 0.6rem 1.6rem;
+  padding: ${props => (props.size === "SMALL" ? "0.4rem 1.2rem" : null)};
+  margin-left: ${props => (props.size === "SMALL" ? "2rem" : null)};
   border-radius: 25px;
   font-size: 1.4rem;
+  font-size: ${props => (props.size === "SMALL" ? "1rem" : null)};
   font-family: "Blinker", sans-serif;
   font-weight: 800;
   color: #fcfcfc;
@@ -17,9 +20,9 @@ const StyledButton = styled.button`
   }
 `
 
-const Button = ({ children, type, handleClick }) => {
+const Button = ({ children, type, size, handleClick }) => {
   return (
-    <StyledButton type={type} onClick={handleClick}>
+    <StyledButton type={type} size={size} onClick={handleClick}>
       <span>{children}</span>
     </StyledButton>
   )

@@ -5,6 +5,7 @@ import notebookReducer from "./notebookReducer"
 import subCategoryReducer from "./subCategoryReducer"
 import topicReducer from "./topicReducer"
 import noteReducer from "./noteReducer"
+import noteTimerReducer from "./noteTimerReducer"
 // import modalReducer from "./modalReducer"
 
 export const rootReducer = combineReducers({
@@ -14,5 +15,6 @@ export const rootReducer = combineReducers({
   subCategory: subCategoryReducer,
   topic: topicReducer,
   note: noteReducer,
+  noteTimer: noteTimerReducer,
   // modal: modalReducer,
 })

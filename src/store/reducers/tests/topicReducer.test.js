@@ -16,10 +16,25 @@ describe("topicReducer", () => {
 
   it("setTopicList should set a normalized list of topics to the topicState and increments the corresponding offset by 20", () => {
     expect(topicReducer(undefined, setTopicList(listTopicsResponse))).toEqual({
-      listTopicsOffset: 20,
-      topics: {
-        "1": { id: 1, title: "Topic1", note_id_list: [1, 2] },
-        "2": { id: 2, title: "Topic2", note_id_list: [] },
+      parentSubCategoriesOfTopics: {
+        "1": {
+          listOffset: 2,
+          topics: {
+            "1": {
+              id: 1,
+              sub_category_id: 1,
+              title: "Topic1",
+              note_id_list: [1, 2],
+            },
+            "2": {
+              id: 2,
+              sub_category_id: 1,
+              title: "Topic2",
+              note_id_list: [],
+            },
+          },
+          topicsPaginationEnd: true,
+        },
       },
       listSharedTopicsOffset: 0,
       sharedTopics: {},
@@ -34,14 +49,35 @@ describe("topicReducer", () => {
       undefined,
       setTopicList(listTopicsResponse)
     )
+
     expect(
       topicReducer(stateWithTopics, setCreatedTopic(createTopicResponse))
     ).toEqual({
-      listTopicsOffset: 20,
-      topics: {
-        "1": { id: 1, title: "Topic1", note_id_list: [1, 2] },
-        "2": { id: 2, title: "Topic2", note_id_list: [] },
-        "3": { id: 3, title: "Topic3", note_id_list: [] },
+      parentSubCategoriesOfTopics: {
+        "1": {
+          listOffset: 3,
+          topics: {
+            "1": {
+              id: 1,
+              sub_category_id: 1,
+              title: "Topic1",
+              note_id_list: [1, 2],
+            },
+            "2": {
+              id: 2,
+              sub_category_id: 1,
+              title: "Topic2",
+              note_id_list: [],
+            },
+            "3": {
+              id: 3,
+              sub_category_id: 1,
+              title: "Topic3",
+              note_id_list: [],
+            },
+          },
+          topicsPaginationEnd: true,
+        },
       },
       listSharedTopicsOffset: 0,
       sharedTopics: {},

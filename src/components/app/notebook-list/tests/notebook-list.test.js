@@ -1,5 +1,9 @@
 import React from "react"
+import { createStore, applyMiddleware } from "redux"
 import axios from "axios"
+import configureStore from "redux-mock-store"
+import { rootReducer } from "../../../../store/reducers"
+import { apiMiddleware } from "../../../../store/middleware/api"
 import { Provider } from "react-redux"
 import {
   render,
@@ -8,7 +12,7 @@ import {
   waitForElement,
   debugDOM,
 } from "@testing-library/react"
-import { store } from "../../../../store"
+// import { store } from "../../../../store"
 import NotebookList from "../index"
 // import { initialStateWithoutTransactions } from "test_fixture_data"
 // import { inputChangeTestCase, inputChange } from "./helpers"
@@ -21,8 +25,20 @@ afterEach(cleanup)
 
 jest.mock("axios")
 
-test("1+1=2", () => {
-  expect(1 + 1).toBe(2)
+test("NotebookList renders list of notebooks", async () => {
+  // const store = mockStore(rootReducer)
+  const store = createStore(rootReducer, {}, applyMiddleware(apiMiddleware))
+  const { getByTestId, debug } = render(
+    <Provider store={store}>
+      <NotebookList />
+    </Provider>
+  )
+
+  const firstNotebook = await waitForElement(() =>
+    getByTestId("notebook-list-page")
+  )
+  debug()
+  expect(firstNotebook).toMatchSnapshot()
 })
 
 // test("BudgetDisplay renders with retrieved data from budget app API.", async done => {

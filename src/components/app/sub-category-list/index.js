@@ -129,7 +129,7 @@ const SubCategoryList = ({ notebookId }) => {
         setActive,
       }}
     >
-      <Container>
+      <Container data-testid="sub-category-list-page">
         <Sidebar keys={keys} resourceList={subCategories} />
         <div id="main-content" ref={listEl}>
           <Heading title="Sub Categories" />

@@ -80,6 +80,7 @@ export const createSubCategoryResponse = createAxiosSuccessResponse({
   message: "Successfully created sub category!",
   data: {
     id: 3,
+    notebook_id: 1,
     title: "SubCategory3",
     topic_id_list: [],
   },
@@ -89,8 +90,8 @@ export const listSubCategoriesResponse = createAxiosSuccessResponse({
   message: "Successfully listed sub categories!",
   data: {
     sub_categories: [
-      { id: 1, title: "SubCategory1", topic_id_list: [1, 2] },
-      { id: 2, title: "SubCategory2", topic_id_list: [] },
+      { id: 1, notebook_id: 1, title: "SubCategory1", topic_id_list: [1, 2] },
+      { id: 2, notebook_id: 1, title: "SubCategory2", topic_id_list: [] },
     ],
   },
 })
@@ -99,6 +100,7 @@ export const createTopicResponse = createAxiosSuccessResponse({
   message: "Successfully created topic!",
   data: {
     id: 3,
+    sub_category_id: 1,
     title: "Topic3",
     note_id_list: [],
   },
@@ -108,8 +110,8 @@ export const listTopicsResponse = createAxiosSuccessResponse({
   message: "Successfully listed topics!",
   data: {
     topics: [
-      { id: 1, title: "Topic1", note_id_list: [1, 2] },
-      { id: 2, title: "Topic2", note_id_list: [] },
+      { id: 1, sub_category_id: 1, title: "Topic1", note_id_list: [1, 2] },
+      { id: 2, sub_category_id: 1, title: "Topic2", note_id_list: [] },
     ],
   },
 })

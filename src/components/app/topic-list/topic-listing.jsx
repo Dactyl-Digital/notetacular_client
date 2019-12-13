@@ -38,7 +38,7 @@ const TopicListing = ({ title, tags, notes }) => {
         <div>
           <h3>{title}</h3>
         </div>
-        <Tags tags={tags} />
+        <Tags tags={tags} type="TOPIC" />
         <div
           className="drop-down-icon"
           onClick={() => setShowNotes(!showNotes)}

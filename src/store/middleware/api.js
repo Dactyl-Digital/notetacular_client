@@ -108,7 +108,60 @@ const makeRequest = (
         onError(error)
       })
   }
-
+  if (method === "PATCH") {
+    console.log("payload in DELETE")
+    console.log(payload)
+    axios
+      .patch(url, payload)
+      .then(function(response) {
+        console.log("the response in PATCH")
+        console.log(response)
+        // dispatchToggleLoader(dispatch, false, { method, url })
+        onSuccess(response)
+      })
+      .catch(function(error) {
+        console.log("the error in PATCH")
+        console.log(error)
+        if (
+          error.hasOwnProperty("message") &&
+          error.message === "Network Error"
+        ) {
+          return onError({
+            response: {
+              data: { message: "An error occured with the network." },
+            },
+          })
+        }
+        onError(error)
+      })
+  }
+  if (method === "DELETE") {
+    console.log("payload in DELETE")
+    console.log(payload)
+    axios
+      .patch(url)
+      .then(function(response) {
+        console.log("the response in DELETE")
+        console.log(response)
+        // dispatchToggleLoader(dispatch, false, { method, url })
+        onSuccess(response)
+      })
+      .catch(function(error) {
+        console.log("the error in DELETE")
+        console.log(error)
+        if (
+          error.hasOwnProperty("message") &&
+          error.message === "Network Error"
+        ) {
+          return onError({
+            response: {
+              data: { message: "An error occured with the network." },
+            },
+          })
+        }
+        onError(error)
+      })
+  }
   // if (method === "GET") {
   //   // dispatchToggleLoader(dispatch, true, { method, url })
   //   return axios

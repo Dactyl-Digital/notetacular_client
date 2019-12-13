@@ -25,9 +25,9 @@ import { checkProperty } from "./helpers"
 //   },
 // },
 
-const parentNotebooksOfSubCategories = JSON.parse(localStorage.getItem(
-  "parentNotebooksOfSubCategories"
-))
+const parentNotebooksOfSubCategories = JSON.parse(
+  localStorage.getItem("parentNotebooksOfSubCategories")
+)
 
 export const subCategoryInitialState = {
   parentNotebooksOfSubCategories: parentNotebooksOfSubCategories
@@ -69,6 +69,7 @@ const normalizeSingle = ({ parentNotebooksOfSubCategories }, { data }) => {
   })
   return {
     [notebook_id]: {
+      subCategoriesPaginationEnd: true,
       subCategories: {
         ...newSubCategories,
       },
@@ -137,9 +138,9 @@ export default function subCategoryReducer(
   if (type === SET_CREATED_SUB_CATEGORY) {
     return {
       ...subCategoryState,
-      subCategories: {
-        ...subCategoryState.subCategories,
-        ...normalizeSingle(payload),
+      parentNotebooksOfSubCategories: {
+        ...subCategoryState.parentNotebooksSubCaparentNotebooksOfSubCategoriescs,
+        ...normalizeSingle(subCategoryState, payload),
       },
     }
   }

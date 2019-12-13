@@ -25,7 +25,7 @@ const Overlay = styled.div`
 const portalRoot =
   typeof document !== `undefined` ? document.getElementById("portal") : null
 
-const Modal = ({ children, resource }) => {
+const Modal = ({ children, resource, IconComponent, buttonType }) => {
   const [el, setEl] = useState(null)
   const [showModal, setShowModal] = useState(false)
   const toggleShowModal = () => setShowModal(!showModal)
@@ -50,10 +50,22 @@ const Modal = ({ children, resource }) => {
   // Check that this.el is not null before using ReactDOM.createPortal
   if (el) {
     return (
-      <Container>
-        <Button type="CREATE" handleClick={toggleShowModal}>
-          Create {resource}
-        </Button>
+      <Container id="modal">
+        {buttonType === "ICON" && (
+          <div className="toggle-modal-btn" onClick={toggleShowModal}>
+            <IconComponent />
+          </div>
+        )}
+        {buttonType === "NORMAL" && (
+          <Button type="CREATE" handleClick={toggleShowModal}>
+            Create {resource}
+          </Button>
+        )}
+        {buttonType === "SMALL" && (
+          <Button type="CREATE" size="SMALL" handleClick={toggleShowModal}>
+            Add {resource}
+          </Button>
+        )}
         {/* {showModal ? children(toggleShowModal) : null} */}
         {showModal
           ? ReactDOM.createPortal(
