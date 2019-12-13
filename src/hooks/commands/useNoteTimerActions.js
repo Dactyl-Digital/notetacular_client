@@ -23,29 +23,30 @@ export const createNoteTimer = dispatch => createNoteTimerData => {
 }
 
 const createNoteTimerSuccess = dispatch => response => {
-  console.log("createNoteTimerSuccess response: ", response)
   dispatch(setCreatedNoteTimer(response))
 }
 
 const createNoteTimerError = dispatch => error => {
-  console.log("createNoteTimerError response: ", error)
   dispatch(setCreateNoteTimerError(error))
 }
 
-export const updateNoteTimer = dispatch => updateNoteTimerData => {
+export const updateNoteTimer = dispatch => ({
+  note_id,
+  ...updateNoteTimerData
+}) => {
   dispatch(
     apiRequest({
       method: "PATCH",
       url: NOTE_TIMER_URL,
       payload: updateNoteTimerData,
-      onSuccess: updateNoteTimerSuccess(dispatch),
+      onSuccess: updateNoteTimerSuccess({ note_id })(dispatch),
       onError: updateNoteTimerError(dispatch),
     })
   )
 }
 
-const updateNoteTimerSuccess = dispatch => response => {
-  dispatch(setUpdatedNoteTimer(response))
+const updateNoteTimerSuccess = ({ note_id }) => dispatch => response => {
+  dispatch(setUpdatedNoteTimer({note_id, ...response}))
 }
 
 const updateNoteTimerError = dispatch => error => {

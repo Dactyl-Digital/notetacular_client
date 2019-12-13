@@ -16,7 +16,7 @@ export const noteTimerInitialState = {
   createNoteTimerError: null,
   noteTimerListError: null,
   listSharedNoteTimersError: null,
-  updateNoteTimerContentError: null,
+  updateNoteTimerError: null,
 }
 
 const normalizeSingle = ({ parentNotesOfNoteTimers }, { data }) => {
@@ -47,13 +47,14 @@ const normalizeSingle = ({ parentNotesOfNoteTimers }, { data }) => {
     failFn: () => 1,
   })
   return {
-    noteTimersPaginationEnd: true,
     [note_id]: {
+      noteTimersPaginationEnd: true,
       note_timers: {
+        ...parentNotesOfNoteTimers[note_id].note_timers,
         ...newNoteTimers,
       },
+      listOffset: newListOffset,
     },
-    listOffset: newListOffset,
   }
 }
 
@@ -110,6 +111,42 @@ const normalize = key => (noteTimerState, { data }) =>
 
 const normalizeNoteTimers = normalize("note_timers")
 
+const updateNormalizedSingle = (
+  { parentNotesOfNoteTimers },
+  { note_id, data }
+) => {
+  console.log("WTF IS DATA: ", data)
+  const updatedNoteTimer = checkProperty({
+    obj: parentNotesOfNoteTimers,
+    property: note_id,
+    failFn: () => ({
+      [data.id]: data,
+    }),
+    recursiveFn: obj =>
+      checkProperty({
+        obj,
+        property: "note_timers",
+        successFn: () => ({
+          ...obj["note_timers"],
+          [data.id]: {
+            ...parentNotesOfNoteTimers[note_id].note_timers[data.id],
+            ...data,
+          },
+        }),
+        failFn: () =>
+          console.log("failFn in updated noteTimerReducer shouldn't run..."),
+      }),
+  })
+  return {
+    [note_id]: {
+      ...parentNotesOfNoteTimers[note_id],
+      note_timers: {
+        ...parentNotesOfNoteTimers[note_id].note_timers,
+        ...updatedNoteTimer,
+      },
+    },
+  }
+}
 export default function noteTimerReducer(
   noteTimerState = noteTimerInitialState,
   { type, payload }
@@ -127,9 +164,13 @@ export default function noteTimerReducer(
     return noteTimerListNewState(noteTimerState, payload)
   }
   if (type === SET_UPDATED_NOTE_TIMER) {
+    console.log("the payload is: ", payload)
     return {
       ...noteTimerState,
-      // TODO
+      parentNotesOfNoteTimers: {
+        ...noteTimerState.parentNotesOfNoteTimers,
+        ...updateNormalizedSingle(noteTimerState, payload),
+      },
     }
   }
   if (type === SET_DELETED_NOTE_TIMER) {

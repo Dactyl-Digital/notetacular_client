@@ -59,6 +59,7 @@ const normalizeSingle = ({ parentSubCategoriesOfTopics }, { data }) => {
       topicsPaginationEnd: true,
       topics: {
         ...newTopics,
+        ...parentSubCategoriesOfTopics[sub_category_id].topics,
       },
       listOffset: newListOffset,
     },
@@ -92,6 +93,7 @@ const normalizeSingleUpdate = ({ parentSubCategoriesOfTopics }, { data }) => {
   return {
     [sub_category_id]: {
       topics: {
+        ...parentSubCategoriesOfTopics[sub_category_id].topics,
         ...updatedTopic,
       },
     },

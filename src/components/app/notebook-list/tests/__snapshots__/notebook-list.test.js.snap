@@ -85,23 +85,14 @@ exports[`NotebookList renders list of notebooks 1`] = `
       </svg>
     </div>
     <div
-      class="sc-gqjmRU bdvwNp"
-    >
-      <button
-        class="sc-gZMcBi DKbJC"
-        type="CREATE"
-      >
-        <span>
-          Create 
-          Notebook
-        </span>
-      </button>
-    </div>
+      class="sc-htoDjs kStOlp"
+      id="modal"
+    />
     <div
       id="notebook-list"
     >
       <div
-        class="sc-fjdhpX cWzOLp"
+        class="sc-fjdhpX fiEohR"
         id="Notebook1"
       >
         <div
@@ -110,9 +101,13 @@ exports[`NotebookList renders list of notebooks 1`] = `
           <a
             href="/app/notebook/1/sub-categories"
           >
-            <h3>
-              Notebook1
-            </h3>
+            <div
+              class="title-container"
+            >
+              <h3>
+                Notebook1
+              </h3>
+            </div>
           </a>
         </div>
         <div
@@ -159,7 +154,7 @@ exports[`NotebookList renders list of notebooks 1`] = `
         </div>
       </div>
       <div
-        class="sc-fjdhpX gmDfiI"
+        class="sc-fjdhpX cCYHQd"
         id="Notebook2"
       >
         <div
@@ -168,9 +163,13 @@ exports[`NotebookList renders list of notebooks 1`] = `
           <a
             href="/app/notebook/2/sub-categories"
           >
-            <h3>
-              Notebook2
-            </h3>
+            <div
+              class="title-container"
+            >
+              <h3>
+                Notebook2
+              </h3>
+            </div>
           </a>
         </div>
         <div

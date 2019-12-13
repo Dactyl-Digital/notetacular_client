@@ -175,6 +175,15 @@ export const listNoteTimersResponse = createAxiosSuccessResponse({
   },
 })
 
+export const updateNoteTimerResponse = createAxiosSuccessResponse({
+  message: "Successfully updated the note timer!",
+  data: {
+    id: 2,
+    description: "Updated was a great success!",
+    elapsed_seconds: 120,
+  },
+})
+
 export const serverError = createAxiosErrorResponse({
   message: "Oops... Something went wrong.",
 })

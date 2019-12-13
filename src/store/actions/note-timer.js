@@ -34,9 +34,9 @@ export const setCreateNoteTimerError = error => ({
   },
 })
 
-export const setUpdatedNoteTimer = ({ data }) => ({
+export const setUpdatedNoteTimer = ({ note_id, data }) => ({
   type: SET_UPDATED_NOTE_TIMER,
-  payload: data,
+  payload: { note_id, data: data.data },
   meta: {
     trigger:
       "POST to /api/note-timer was successful and updated note will be updated in \

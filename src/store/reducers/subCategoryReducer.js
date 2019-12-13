@@ -71,6 +71,7 @@ const normalizeSingle = ({ parentNotebooksOfSubCategories }, { data }) => {
     [notebook_id]: {
       subCategoriesPaginationEnd: true,
       subCategories: {
+        ...parentNotebooksOfSubCategories[notebook_id].subCategories,
         ...newSubCategories,
       },
       listOffset: newListOffset,
