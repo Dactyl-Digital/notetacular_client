@@ -52,15 +52,18 @@ export const setUpdateNoteTimerError = error => ({
   },
 })
 
-export const setDeletedNoteTimer = ({ data }) => ({
-  type: SET_DELETED_NOTE_TIMER,
-  payload: data,
-  meta: {
-    trigger:
-      "POST to /api/note-timer was successful and deleted note will be removed from \
-              the reducer's note timer state.",
-  },
-})
+export const setDeletedNoteTimer = ({ note_id, data }) => {
+  console.log("wtf is data: ", data)
+  return {
+    type: SET_DELETED_NOTE_TIMER,
+    payload: { note_id, data: data.data },
+    meta: {
+      trigger:
+        "POST to /api/note-timer was successful and deleted note will be removed from \
+                the reducer's note timer state.",
+    },
+  }
+}
 
 export const setDeleteNoteTimerError = error => ({
   type: SET_DELETE_NOTE_TIMER_ERROR,

@@ -115,7 +115,6 @@ const updateNormalizedSingle = (
   { parentNotesOfNoteTimers },
   { note_id, data }
 ) => {
-  console.log("WTF IS DATA: ", data)
   const updatedNoteTimer = checkProperty({
     obj: parentNotesOfNoteTimers,
     property: note_id,
@@ -147,6 +146,36 @@ const updateNormalizedSingle = (
     },
   }
 }
+
+const removeNoteTimer = ({ parentNotesOfNoteTimers }, { note_id, data }) => {
+  const filteredNoteTimers = Object.keys(
+    parentNotesOfNoteTimers[note_id]["note_timers"]
+  ).reduce((acc, key) => {
+    if (parentNotesOfNoteTimers[note_id]["note_timers"][key].id !== data.id) {
+      acc[parentNotesOfNoteTimers[note_id]["note_timers"][key].id] =
+        parentNotesOfNoteTimers[note_id]["note_timers"][key]
+    }
+    return acc
+  }, {})
+
+  const newListOffset = checkProperty({
+    obj: parentNotesOfNoteTimers,
+    property: note_id,
+    successFn: () => parentNotesOfNoteTimers[note_id].listOffset - 1,
+    failFn: () => 1,
+  })
+
+  return {
+    [note_id]: {
+      ...parentNotesOfNoteTimers[note_id],
+      note_timers: {
+        ...filteredNoteTimers,
+      },
+      listOffset: newListOffset,
+    },
+  }
+}
+
 export default function noteTimerReducer(
   noteTimerState = noteTimerInitialState,
   { type, payload }
@@ -164,7 +193,6 @@ export default function noteTimerReducer(
     return noteTimerListNewState(noteTimerState, payload)
   }
   if (type === SET_UPDATED_NOTE_TIMER) {
-    console.log("the payload is: ", payload)
     return {
       ...noteTimerState,
       parentNotesOfNoteTimers: {
@@ -174,9 +202,14 @@ export default function noteTimerReducer(
     }
   }
   if (type === SET_DELETED_NOTE_TIMER) {
+    console.log("the payload in removeNoteTimer:")
+    console.log(payload)
     return {
       ...noteTimerState,
-      // TODO
+      parentNotesOfNoteTimers: {
+        ...noteTimerState.parentNotesOfNoteTimers,
+        ...removeNoteTimer(noteTimerState, payload),
+      },
     }
   }
   if (type === SET_CREATE_NOTE_TIMER_ERROR) {

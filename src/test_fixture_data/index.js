@@ -184,6 +184,13 @@ export const updateNoteTimerResponse = createAxiosSuccessResponse({
   },
 })
 
+export const deletedNoteTimerResponse = createAxiosSuccessResponse({
+  message: "Successfully deleted the note timer!",
+  data: {
+    id: 2,
+  },
+})
+
 export const serverError = createAxiosErrorResponse({
   message: "Oops... Something went wrong.",
 })

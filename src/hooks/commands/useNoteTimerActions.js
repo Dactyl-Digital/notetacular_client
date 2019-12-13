@@ -46,7 +46,7 @@ export const updateNoteTimer = dispatch => ({
 }
 
 const updateNoteTimerSuccess = ({ note_id }) => dispatch => response => {
-  dispatch(setUpdatedNoteTimer({note_id, ...response}))
+  dispatch(setUpdatedNoteTimer({ note_id, ...response }))
 }
 
 const updateNoteTimerError = dispatch => error => {
@@ -65,8 +65,8 @@ export const deleteNoteTimer = dispatch => ({ note_timer_id }) => {
   )
 }
 
-const deleteNoteTimerSuccess = dispatch => response => {
-  dispatch(setDeletedNoteTimer(response))
+const deleteNoteTimerSuccess = ({ note_id }) => dispatch => response => {
+  dispatch(setDeletedNoteTimer({ note_id, ...response }))
 }
 
 const deleteNoteTimerError = dispatch => error => {

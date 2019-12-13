@@ -3,11 +3,13 @@ import {
   setCreatedNoteTimer,
   setNoteTimerList,
   setUpdatedNoteTimer,
+  setDeletedNoteTimer,
 } from "../../actions/note-timer"
 import {
   createNoteTimerResponse,
   listNoteTimersResponse,
   updateNoteTimerResponse,
+  deletedNoteTimerResponse,
 } from "../../../test_fixture_data"
 
 describe("noteTimerReducer", () => {
@@ -100,7 +102,7 @@ describe("noteTimerReducer", () => {
     })
   })
 
-  it.only("setUpdatedNoteTimer should update the note timer in the noteTimer redux state", () => {
+  it("setUpdatedNoteTimer should update the note timer in the noteTimer redux state", () => {
     const stateWithNoteTimers = noteTimerReducer(
       undefined,
       setNoteTimerList(listNoteTimersResponse)
@@ -132,6 +134,45 @@ describe("noteTimerReducer", () => {
             },
           },
           listOffset: 2,
+        },
+      },
+      listSharedNoteTimersOffset: 0,
+      sharedNoteTimers: {},
+      createNoteTimerError: null,
+      noteTimerListError: null,
+      listSharedNoteTimersError: null,
+      updateNoteTimerError: null,
+    })
+  })
+
+  it.only("setDeletedNoteTimer should remove the note timer from the noteTimer redux state", () => {
+    const stateWithNoteTimers = noteTimerReducer(
+      undefined,
+      setNoteTimerList(listNoteTimersResponse)
+    )
+
+    console.log("the deletedNoteTimerResponse")
+    console.log(deletedNoteTimerResponse)
+
+    expect(
+      noteTimerReducer(
+        stateWithNoteTimers,
+        setDeletedNoteTimer({ note_id: 1, ...deletedNoteTimerResponse })
+      )
+    ).toEqual({
+      parentNotesOfNoteTimers: {
+        "1": {
+          noteTimersPaginationEnd: true,
+          note_timers: {
+            "1": {
+              id: 1,
+              timer_count: 1,
+              elapsed_seconds: 0,
+              note_id: 1,
+              description: null,
+            },
+          },
+          listOffset: 1,
         },
       },
       listSharedNoteTimersOffset: 0,
