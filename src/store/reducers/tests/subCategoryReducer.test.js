@@ -13,9 +13,7 @@ import {
 
 describe("subCategoryReducer", () => {
   it("should return the initial state", () => {
-    expect(subCategoryReducer(undefined, { data: {} })).toEqual(
-      subCategoryInitialState
-    )
+    expect(subCategoryReducer(undefined, {})).toEqual(subCategoryInitialState)
   })
 
   it("setSubCategoryList should set a normalized list of sub categories to the subCategoryState and increments the corresponding offset by 2", () => {

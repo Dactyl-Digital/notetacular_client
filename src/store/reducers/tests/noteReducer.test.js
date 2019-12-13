@@ -11,7 +11,7 @@ import {
 
 describe("noteReducer", () => {
   it("should return the initial state", () => {
-    expect(noteReducer(undefined, { data: {} })).toEqual(noteInitialState)
+    expect(noteReducer(undefined, {})).toEqual(noteInitialState)
   })
 
   it("setNoteList should set a normalized list of notes to the noteState and increments the corresponding offset by 20", () => {

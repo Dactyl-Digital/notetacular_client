@@ -14,6 +14,7 @@ import {
   listTopicsResponse,
   createNoteResponse,
   listNotesResponse,
+  createNoteTimerResponse,
 } from "../../../test_fixture_data"
 
 const mockAxios = {
@@ -60,6 +61,9 @@ const mockAxios = {
     }
     if (url === "http://localhost:4000/api/note") {
       return Promise.resolve(createNoteResponse)
+    }
+    if (url === "http://localhost:4000/api/note-timer") {
+      return Promise.resolve(createNoteTimerResponse)
     }
   },
   noPost: url => {

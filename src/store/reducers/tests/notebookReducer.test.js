@@ -12,9 +12,7 @@ import {
 
 describe("notebookReducer", () => {
   it("should return the initial state", () => {
-    expect(notebookReducer(undefined, { data: {} })).toEqual(
-      notebookInitialState
-    )
+    expect(notebookReducer(undefined, {})).toEqual(notebookInitialState)
   })
 
   it("setNotebookList should set a normalized list of notebooks to the notebookState and increments the corresponding offset by 20", () => {

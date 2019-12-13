@@ -297,8 +297,6 @@ export default function noteReducer(
 }
 
 const noteListNewState = (noteState, payload) => {
-  console.log("the payload in list new note state:")
-  console.log(payload)
   return {
     ...noteState,
     parentTopicsOfNotes: {

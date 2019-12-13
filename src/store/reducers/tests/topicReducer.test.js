@@ -11,7 +11,7 @@ import {
 
 describe("topicReducer", () => {
   it("should return the initial state", () => {
-    expect(topicReducer(undefined, { data: {} })).toEqual(topicInitialState)
+    expect(topicReducer(undefined, {})).toEqual(topicInitialState)
   })
 
   it("setTopicList should set a normalized list of topics to the topicState and increments the corresponding offset by 20", () => {

@@ -141,6 +141,40 @@ export const listNotesResponse = createAxiosSuccessResponse({
   },
 })
 
+export const createNoteTimerResponse = createAxiosSuccessResponse({
+  message: "Successfully created note timer!",
+  data: {
+    id: 3,
+    timer_count: 3,
+    elapsed_seconds: 0,
+    description: null,
+    note_id: 1,
+  },
+})
+
+// TODO: Implement this route on the backend
+export const listNoteTimersResponse = createAxiosSuccessResponse({
+  message: "Successfully listed note timers!",
+  data: {
+    note_timers: [
+      {
+        id: 1,
+        timer_count: 1,
+        elapsed_seconds: 0,
+        description: null,
+        note_id: 1,
+      },
+      {
+        id: 2,
+        timer_count: 2,
+        elapsed_seconds: 0,
+        description: null,
+        note_id: 1,
+      },
+    ],
+  },
+})
+
 export const serverError = createAxiosErrorResponse({
   message: "Oops... Something went wrong.",
 })

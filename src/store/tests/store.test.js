@@ -14,6 +14,7 @@ import {
   updateTopicNoteIdList,
 } from "../actions/topic"
 import { setCreatedNote, setNoteList } from "../actions/note"
+import { setCreatedNoteTimer } from "../actions/note-timer"
 import { signupUser } from "../../hooks/commands/useAuthActions"
 import {
   createNotebook,
@@ -25,6 +26,7 @@ import {
 } from "../../hooks/commands/useSubCategoryActions"
 import { createTopic, listTopics } from "../../hooks/commands/useTopicActions"
 import { createNote, listNotes } from "../../hooks/commands/useNoteActions"
+import { createNoteTimer } from "../../hooks/commands/useNoteTimerActions"
 import {
   signupData,
   signupErrorResponse,
@@ -40,6 +42,7 @@ import {
   createNoteData,
   createNoteResponse,
   listNotesResponse,
+  createNoteTimerResponse,
 } from "../../test_fixture_data"
 
 const middlewares = [apiMiddleware]
@@ -206,6 +209,19 @@ test("Store receives SET_NOTE_LIST action type when GET /api/note is a success",
   setTimeout(() => {
     const actions = store.getActions()
     expect(actions[0]).toEqual(setNoteList(listNotesResponse))
+    done()
+  }, 0)
+})
+
+test("Store receives SET_CREATED_NOTE_TIMER action type when POST /api/note-timer is a success", done => {
+  const store = mockStore(rootReducer)
+  createNoteTimer(store.dispatch)({
+    timer_count: 3,
+    note_id: 1,
+  })
+  setTimeout(() => {
+    const actions = store.getActions()
+    expect(actions[0]).toEqual(setCreatedNoteTimer(createNoteTimerResponse))
     done()
   }, 0)
 })
