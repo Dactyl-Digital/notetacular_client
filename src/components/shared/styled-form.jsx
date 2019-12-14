@@ -9,7 +9,7 @@ const StyledForm = styled.form`
   min-height: 14rem;
   max-height: 14rem;
   padding: 1.4rem;
-  padding-bottom: 0.7rem;
+  padding-bottom: 0;
 
   #form-fields {
     display: flex;
@@ -18,8 +18,8 @@ const StyledForm = styled.form`
     label {
       font-family: "Blinker", sans-serif;
       font-weight: 500;
-      color: #969464;
       margin-bottom: 0.2rem;
+      color: #969464;
     }
 
     input {
@@ -27,6 +27,9 @@ const StyledForm = styled.form`
       min-width: 12rem;
       max-width: 12rem;
       border: 0.1rem solid #969464;
+      color: #222;
+      font-size: 0.9rem;
+      padding-left: 0.2rem;
     }
 
     .form-button {

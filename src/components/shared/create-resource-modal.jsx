@@ -1,7 +1,9 @@
 import React, { useState } from "react"
 import styled from "styled-components"
 import Modal from "./modal"
-import XIcon from "../shared/icons/x-icon"
+import XIcon from "./icons/x-icon"
+import AddIcon from "./icons/add-icon"
+import Button from "./button"
 
 const Container = styled.div`
   /* display: flex;
@@ -15,6 +17,10 @@ const Container = styled.div`
   background: #fcfcfc;
   border-radius: 5px;
   box-shadow: 0rem 0.1rem 1rem rgba(255, 255, 255, 70%);
+
+  #modal-header {
+    display: flex;
+  }
 
   #form-heading {
     display: flex;
@@ -59,9 +65,15 @@ const CreateResourceModal = ({
       {toggleShowModal => (
         <Container>
           <div id="form-heading">
-            <h2>
-              {action} {resource}
-            </h2>
+            <div id="modal-header">
+              <h2>{action ? `${action} ${resource}` : `${resource}`}</h2>
+              {resource === "Timers" && (
+                <Button type="ADD" size="SMALL">
+                  <AddIcon />
+                </Button>
+              )}
+            </div>
+
             <div id="close-modal-x" onClick={toggleShowModal}>
               <XIcon color="#969494" />
             </div>

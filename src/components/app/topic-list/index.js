@@ -9,6 +9,8 @@ import Sidebar from "../../shared/sidebar"
 import ResourceListing from "../../shared/resource-listing"
 import CreateResourceModal from "../../shared/create-resource-modal"
 import { ActiveCircleContext } from "../notebook-list"
+import Button from "../../shared/button"
+import StyledForm from "../../shared/styled-form"
 
 const Container = styled.div`
   display: flex;
@@ -131,25 +133,35 @@ const TopicList = ({ notebookId, subCategoryId }) => {
         <Sidebar keys={keys} resourceList={topics} />
         <div id="main-content" ref={listEl}>
           <Heading title="Topics" />
-          <CreateResourceModal resource="Topic">
+          <CreateResourceModal
+            action="Create"
+            resource="Topic"
+            buttonType="NORMAL"
+          >
             {/* TODO: Create a separate component for this form. */}
             {toggleShowModal => (
-              <form
+              <StyledForm
                 onSubmit={e => {
                   e.preventDefault()
                   handleCreateNewTopic()
                   toggleShowModal(false)
                 }}
               >
-                <label htmlFor="title">Title</label>
-                <input
-                  id="title"
-                  type="text"
-                  value={title}
-                  onChange={e => setTitle(e.target.value)}
-                />
-                <button>Submit!</button>
-              </form>
+                <div id="form-fields">
+                  <label htmlFor="title">Title</label>
+                  <input
+                    id="title"
+                    type="text"
+                    value={title}
+                    onChange={e => setTitle(e.target.value)}
+                  />
+                </div>
+                <div id="form-button">
+                  <Button type="CREATE" size="SMALL">
+                    Submit!
+                  </Button>
+                </div>
+              </StyledForm>
             )}
           </CreateResourceModal>
           <div id="topic-list">

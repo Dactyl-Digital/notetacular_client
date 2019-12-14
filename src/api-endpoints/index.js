@@ -26,3 +26,4 @@ export const REMOVE_NOTE_TAG_URL = `${API_URL}/note/tags`
 
 // Supports post, patch, delete
 export const NOTE_TIMER_URL = `${API_URL}/note-timer`
+export const LIST_NOTE_TIMERS_URL = `${NOTE_TIMER_URL}?limit=20&offset=`

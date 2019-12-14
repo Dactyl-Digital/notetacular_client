@@ -3,12 +3,14 @@ import { apiRequest } from "../../store/actions/api"
 import {
   setCreatedNoteTimer,
   setCreateNoteTimerError,
+  setNoteTimerList,
+  setNoteTimerListError,
   setUpdatedNoteTimer,
   setUpdateNoteTimerError,
   setDeletedNoteTimer,
   setDeleteNoteTimerError,
 } from "../../store/actions/note-timer"
-import { NOTE_TIMER_URL } from "../../api-endpoints"
+import { NOTE_TIMER_URL, LIST_NOTE_TIMERS_URL } from "../../api-endpoints"
 
 export const createNoteTimer = dispatch => createNoteTimerData => {
   dispatch(
@@ -28,6 +30,27 @@ const createNoteTimerSuccess = dispatch => response => {
 
 const createNoteTimerError = dispatch => error => {
   dispatch(setCreateNoteTimerError(error))
+}
+
+export const listNoteTimers = dispatch => ({ offset, note_timer_id_list }) => {
+  console.log("dispatching note_timer_id_list: ", note_timer_id_list)
+  dispatch(
+    apiRequest({
+      method: "GET",
+      url: `${LIST_NOTE_TIMERS_URL}${offset}`,
+      payload: { note_timer_id_list },
+      onSuccess: listNoteTimersSuccess(dispatch),
+      onError: listNoteTimersError(dispatch),
+    })
+  )
+}
+
+const listNoteTimersSuccess = dispatch => response => {
+  dispatch(setNoteTimerList(response))
+}
+
+const listNoteTimersError = dispatch => error => {
+  dispatch(setNoteTimerListError(error))
 }
 
 export const updateNoteTimer = dispatch => ({
@@ -78,6 +101,7 @@ export function useNoteTimerActions() {
 
   return {
     createNoteTimer: createNoteTimer(dispatch),
+    listNoteTimers: listNoteTimers(dispatch),
     updateNoteTimer: updateNoteTimer(dispatch),
     deleteNoteTimer: deleteNoteTimer(dispatch),
   }

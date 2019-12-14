@@ -22,7 +22,7 @@ const Container = styled.div`
 const NoteListing = ({
   subCategoryId,
   topicId,
-  note: { id, title, tags, content_markdown },
+  note: { id, title, tags, content_markdown, note_timers },
 }) => {
   const { updateNoteContent } = useNoteActions()
   const [showEditor, setShowEditor] = useState(false)
@@ -53,6 +53,7 @@ const NoteListing = ({
       {showEditor ? (
         <Editor
           noteId={id}
+          note_timer_id_list={note_timers}
           noteContent={content_markdown}
           persistNoteContent={persistNoteContent}
           editorId={`editor-${topicId}-${id}`}

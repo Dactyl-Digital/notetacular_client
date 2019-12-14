@@ -6,13 +6,14 @@ import { useSubCategoryActions } from "../../../hooks/commands/useSubCategoryAct
 import Heading from "../../shared/heading"
 import Sidebar from "../../shared/sidebar"
 import ResourceListing from "../../shared/resource-listing"
-import Modal from "../../shared/modal"
 // import CreateSubCategoryModal from "./create-sub-category-modal"
 import CreateResourceModal from "../../shared/create-resource-modal"
 // TODO: You're exporting an exact copy of this from notebook-list
 // as the CircleScrollNav needs it to use the Context Provider.
 // Need to figure out a better arrangement for this
 import { ActiveCircleContext } from "../notebook-list"
+import Button from "../../shared/button"
+import StyledForm from "../../shared/styled-form"
 
 const Container = styled.div`
   display: flex;
@@ -134,24 +135,34 @@ const SubCategoryList = ({ notebookId }) => {
         <div id="main-content" ref={listEl}>
           <Heading title="Sub Categories" />
           {/* <CreateSubCategoryModal notebookId={notebookId} /> */}
-          <CreateResourceModal resource="Sub Category">
+          <CreateResourceModal
+            action="Create"
+            resource="Sub Category"
+            buttonType="NORMAL"
+          >
             {toggleShowModal => (
-              <form
+              <StyledForm
                 onSubmit={e => {
                   e.preventDefault()
                   handleCreateNewSubCategory()
                   toggleShowModal(false)
                 }}
               >
-                <label htmlFor="title">Title</label>
-                <input
-                  id="title"
-                  type="text"
-                  value={title}
-                  onChange={e => setTitle(e.target.value)}
-                />
-                <button>Submit!</button>
-              </form>
+                <div id="form-fields">
+                  <label htmlFor="title">Title</label>
+                  <input
+                    id="title"
+                    type="text"
+                    value={title}
+                    onChange={e => setTitle(e.target.value)}
+                  />
+                </div>
+                <div id="form-button">
+                  <Button type="CREATE" size="SMALL">
+                    Submit!
+                  </Button>
+                </div>
+              </StyledForm>
             )}
           </CreateResourceModal>
           <div id="sub-category-list">
