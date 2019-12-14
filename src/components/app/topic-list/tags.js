@@ -33,7 +33,7 @@ const Container = styled.div`
 const ExistingTagsView = ({ tags, type, topicId, noteId }) => (
   <>
     {tags.map(tag => (
-      <Tag type={type} topicId={topicId} noteId={noteId}>
+      <Tag key={tag} type={type} topicId={topicId} noteId={noteId}>
         {tag}
       </Tag>
     ))}

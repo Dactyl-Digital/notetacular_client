@@ -1,28 +1,39 @@
 import React, { useState } from "react"
 import styled from "styled-components"
 import Modal from "./modal"
+import XIcon from "../shared/icons/x-icon"
 
 const Container = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  /* display: flex;
+  flex-direction: column;
+  justify-content: center; */
+  /* align-items: center; */
   position: relative;
   width: 40vw;
-  min-width: 18rem;
-  max-width: 28rem;
-  height: 40vh;
-  min-height: 18rem;
-  max-height: 28rem;
+  min-width: 24rem;
+  max-width: 34rem;
   background: #fcfcfc;
   border-radius: 5px;
   box-shadow: 0rem 0.1rem 1rem rgba(255, 255, 255, 70%);
 
-  #close-modal-btn {
-    position: absolute;
-    top: 0;
-    right: 0;
-    margin-top: 1rem;
-    margin-right: 1rem;
+  #form-heading {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.8rem 1.4rem;
+    border-bottom: 0.15rem solid rgb(150, 148, 148, 20%);
+
+    h2 {
+      font-family: "Blinker", sans-serif;
+      font-weight: 500;
+      font-size: 1.6rem;
+      color: #969494;
+      margin: 0;
+    }
+  }
+
+  #close-modal-x {
+    display: flex;
+    align-items: center;
   }
 
   form {
@@ -33,21 +44,28 @@ const Container = styled.div`
 
 const CreateResourceModal = ({
   children,
+  action,
   resource,
   IconComponent,
   buttonType,
 }) => {
   return (
     <Modal
+      // action={action}
       resource={resource}
       IconComponent={IconComponent}
       buttonType={buttonType}
     >
       {toggleShowModal => (
         <Container>
-          <button id="close-modal-btn" onClick={toggleShowModal}>
-            Close
-          </button>
+          <div id="form-heading">
+            <h2>
+              {action} {resource}
+            </h2>
+            <div id="close-modal-x" onClick={toggleShowModal}>
+              <XIcon color="#969494" />
+            </div>
+          </div>
           {children(toggleShowModal)}
         </Container>
       )}

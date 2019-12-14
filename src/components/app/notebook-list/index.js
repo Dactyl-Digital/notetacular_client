@@ -7,6 +7,8 @@ import Sidebar from "../../shared/sidebar"
 import ResourceListing from "../../shared/resource-listing"
 // import CreateNotebookModal from "./create-notebook-modal"
 import CreateResourceModal from "../../shared/create-resource-modal"
+import Button from "../../shared/button"
+import StyledForm from "../../shared/styled-form"
 
 export const ActiveCircleContext = React.createContext({
   active: null,
@@ -118,25 +120,35 @@ const NotebookList = () => {
         <div id="main-content" ref={listEl}>
           <Heading title="Notebooks" />
           {/* <CreateNotebookModal /> */}
-          <CreateResourceModal resource="Notebook">
+          <CreateResourceModal
+            action="Create"
+            resource="Notebook"
+            buttonType="NORMAL"
+          >
             {/* TODO: Create a separate component for this form. */}
             {toggleShowModal => (
-              <form
+              <StyledForm
                 onSubmit={e => {
                   e.preventDefault()
                   handleCreateNewNotebook()
                   toggleShowModal(false)
                 }}
               >
-                <label htmlFor="title">Title</label>
-                <input
-                  id="title"
-                  type="text"
-                  value={title}
-                  onChange={e => setTitle(e.target.value)}
-                />
-                <button>Submit!</button>
-              </form>
+                <div id="form-fields">
+                  <label htmlFor="title">Title</label>
+                  <input
+                    id="title"
+                    type="text"
+                    value={title}
+                    onChange={e => setTitle(e.target.value)}
+                  />
+                </div>
+                <div id="form-button">
+                  <Button type="CREATE" size="SMALL">
+                    Submit!
+                  </Button>
+                </div>
+              </StyledForm>
             )}
           </CreateResourceModal>
           <div id="notebook-list">

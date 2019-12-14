@@ -202,8 +202,6 @@ export default function noteTimerReducer(
     }
   }
   if (type === SET_DELETED_NOTE_TIMER) {
-    console.log("the payload in removeNoteTimer:")
-    console.log(payload)
     return {
       ...noteTimerState,
       parentNotesOfNoteTimers: {
