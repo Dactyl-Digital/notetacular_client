@@ -5,6 +5,7 @@ import { useNoteTimerActions } from "../../../hooks/commands/useNoteTimerActions
 import { useNoteTimer } from "../../../hooks/queries/useNoteTimer"
 import Button from "../../shared/button"
 import TrashIcon from "../../shared/icons/trash-icon"
+import { formatTime } from "./helpers"
 
 const Container = styled.div`
   display: flex;
@@ -146,8 +147,8 @@ const NoteTimers = ({ noteId, note_timer_id_list }) => {
                   {elapsedSeconds !== null &&
                   activeTimer.noteId === noteId &&
                   activeTimer.noteTimerId === note_timers[key].id
-                    ? elapsedSeconds
-                    : note_timers[key].elapsed_seconds}
+                    ? formatTime(elapsedSeconds)
+                    : formatTime(note_timers[key].elapsed_seconds)}
                 </div>
                 {elapsedSeconds !== null &&
                 activeTimer.noteId === noteId &&

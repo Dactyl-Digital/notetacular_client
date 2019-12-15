@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react"
 import { useNoteTimerActions } from "../../../hooks/commands/useNoteTimerActions"
 import { TimerContext } from "./context/timer-context"
+import { formatTime } from "./helpers"
 
 const Timer = ({ children }) => {
   const { updateNoteTimer } = useNoteTimerActions()
@@ -76,7 +77,9 @@ const Timer = ({ children }) => {
       <>
         {/* TODO: Create a new modal component which will display the current timer
       When the timer is running */}
-        {elapsedSeconds && <h1 id="time-count">{elapsedSeconds}</h1>}
+        {elapsedSeconds && (
+          <h1 id="time-count">{formatTime(elapsedSeconds)}</h1>
+        )}
         {children}
       </>
     </TimerContext.Provider>
