@@ -136,10 +136,8 @@ const makeRequest = (
       })
   }
   if (method === "DELETE") {
-    console.log("payload in DELETE")
-    console.log(payload)
     axios
-      .patch(url)
+      .delete(url)
       .then(function(response) {
         console.log("the response in DELETE")
         console.log(response)

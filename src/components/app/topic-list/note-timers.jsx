@@ -95,6 +95,7 @@ const NoteTimers = ({ noteId, note_timer_id_list }) => {
     createNoteTimer,
     listNoteTimers,
     updateNoteTimer,
+    deleteNoteTimer,
   } = useNoteTimerActions()
 
   useEffect(() => {
@@ -152,7 +153,16 @@ const NoteTimers = ({ noteId, note_timer_id_list }) => {
               handleUpdateNoteTimer={handleUpdateNoteTimer}
             ></NoteTimerDescription>
             {/* TODO: Add padding to the right to line it up w/ XIcon */}
-            <TrashIcon marginRight={1.4} />
+            <TrashIcon
+              marginRight={1.4}
+              handleClick={() => {
+                console.log("deleting this b")
+                deleteNoteTimer({
+                  note_id: noteId,
+                  note_timer_id: note_timers[key].id,
+                })
+              }}
+            />
           </div>
         </Container>
       ))}

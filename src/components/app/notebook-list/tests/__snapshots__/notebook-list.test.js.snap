@@ -2,7 +2,7 @@
 
 exports[`NotebookList renders list of notebooks 1`] = `
 <div
-  class="sc-jzJRlG gATEGt"
+  class="sc-chPdSV cjRUHx"
   data-testid="notebook-list-page"
 >
   <div
@@ -62,7 +62,7 @@ exports[`NotebookList renders list of notebooks 1`] = `
         Notebooks
       </h1>
       <svg
-        class="sc-bdVaJa giaiHc"
+        class="sc-bdVaJa jrpnWk"
         id="Capa_1"
         version="1.1"
         viewBox="0 0 310.42 310.42"
@@ -87,12 +87,22 @@ exports[`NotebookList renders list of notebooks 1`] = `
     <div
       class="sc-htoDjs kStOlp"
       id="modal"
-    />
+    >
+      <button
+        class="sc-gzVnrw bnJxmV"
+        type="CREATE"
+      >
+        <span>
+          Create 
+          Notebook
+        </span>
+      </button>
+    </div>
     <div
       id="notebook-list"
     >
       <div
-        class="sc-fjdhpX fiEohR"
+        class="sc-kAzzGY kMfAnX"
         id="Notebook1"
       >
         <div
@@ -114,7 +124,7 @@ exports[`NotebookList renders list of notebooks 1`] = `
           id="icons"
         >
           <svg
-            class="sc-bdVaJa giaiHc"
+            class="sc-bdVaJa jrpnWk"
             id="Layer_1"
             version="1.1"
             viewBox="0 0 512 512"
@@ -154,7 +164,7 @@ exports[`NotebookList renders list of notebooks 1`] = `
         </div>
       </div>
       <div
-        class="sc-fjdhpX cCYHQd"
+        class="sc-kAzzGY hKSUcB"
         id="Notebook2"
       >
         <div
@@ -176,7 +186,7 @@ exports[`NotebookList renders list of notebooks 1`] = `
           id="icons"
         >
           <svg
-            class="sc-bdVaJa giaiHc"
+            class="sc-bdVaJa jrpnWk"
             id="Layer_1"
             version="1.1"
             viewBox="0 0 512 512"

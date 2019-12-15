@@ -76,19 +76,20 @@ const updateNoteTimerError = dispatch => error => {
   dispatch(setUpdateNoteTimerError(error))
 }
 
-export const deleteNoteTimer = dispatch => ({ note_timer_id }) => {
+export const deleteNoteTimer = dispatch => ({ note_id, note_timer_id }) => {
   dispatch(
     apiRequest({
       method: "DELETE",
       url: `${NOTE_TIMER_URL}/${note_timer_id}`,
       payload: {},
-      onSuccess: deleteNoteTimerSuccess(dispatch),
+      onSuccess: deleteNoteTimerSuccess({ note_id })(dispatch),
       onError: deleteNoteTimerError(dispatch),
     })
   )
 }
 
 const deleteNoteTimerSuccess = ({ note_id }) => dispatch => response => {
+  console.log("deleteNoteTimerSuccess dispatching...")
   dispatch(setDeletedNoteTimer({ note_id, ...response }))
 }
 
