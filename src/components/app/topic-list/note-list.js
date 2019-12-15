@@ -27,10 +27,12 @@ const NoteList = ({ topics, topicId, subCategoryId }) => {
         })
       }
     } else {
-      listNotes({
-        offset: 0,
-        note_id_list: noteIdList,
-      })
+      if (noteIdList.length > 0) {
+        listNotes({
+          offset: 0,
+          note_id_list: noteIdList,
+        })
+      }
     }
   }, [])
 

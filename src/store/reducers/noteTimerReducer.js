@@ -20,6 +20,8 @@ export const noteTimerInitialState = {
 }
 
 const normalizeSingle = ({ parentNotesOfNoteTimers }, { data }) => {
+  console.log("data in normalizeSingle:")
+  console.log(data)
   const { note_id } = data
   const newNoteTimers = checkProperty({
     obj: parentNotesOfNoteTimers,

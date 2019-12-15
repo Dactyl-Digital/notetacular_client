@@ -6,6 +6,7 @@ import { useTopicActions } from "../../../hooks/commands/useTopicActions"
 // import TopicListing from "./topic-listing"
 import Heading from "../../shared/heading"
 import Sidebar from "../../shared/sidebar"
+import Timer from "./timer"
 import ResourceListing from "../../shared/resource-listing"
 import CreateResourceModal from "../../shared/create-resource-modal"
 import { ActiveCircleContext } from "../notebook-list"
@@ -78,10 +79,12 @@ const TopicList = ({ notebookId, subCategoryId }) => {
         })
       }
     } else {
-      listTopics({
-        offset: 0,
-        topic_id_list: topicIdList,
-      })
+      if (topicIdList.length > 0) {
+        listTopics({
+          offset: 0,
+          topic_id_list: topicIdList,
+        })
+      }
     }
 
     return () => {
@@ -164,26 +167,28 @@ const TopicList = ({ notebookId, subCategoryId }) => {
               </StyledForm>
             )}
           </CreateResourceModal>
-          <div id="topic-list">
-            {keys.map((key, i) => {
-              return (
-                <ResourceListing
-                  key={topics[key].id.toString()}
-                  title={topics[key].title}
-                  tags={topics[key].tags}
-                  index={i}
-                  type="TOPIC"
-                  topics={topics}
-                  topicId={topics[key].id}
-                  subCategoryId={subCategoryId}
-                  active={activeCircle.active === topics[key].title}
-                  setActiveDisabled={setActiveDisabled}
-                  scrollTop={scrollTop}
-                  setActiveCircle={setActiveCircle}
-                />
-              )
-            })}
-          </div>
+          <Timer>
+            <div id="topic-list">
+              {keys.map((key, i) => {
+                return (
+                  <ResourceListing
+                    key={topics[key].id.toString()}
+                    title={topics[key].title}
+                    tags={topics[key].tags}
+                    index={i}
+                    type="TOPIC"
+                    topics={topics}
+                    topicId={topics[key].id}
+                    subCategoryId={subCategoryId}
+                    active={activeCircle.active === topics[key].title}
+                    setActiveDisabled={setActiveDisabled}
+                    scrollTop={scrollTop}
+                    setActiveCircle={setActiveCircle}
+                  />
+                )
+              })}
+            </div>
+          </Timer>
         </div>
       </Container>
     </ActiveCircleContext.Provider>

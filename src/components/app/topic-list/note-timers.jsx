@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react"
 import styled from "styled-components"
+import { TimerContext } from "./context/timer-context"
 import { useNoteTimerActions } from "../../../hooks/commands/useNoteTimerActions"
 import { useNoteTimer } from "../../../hooks/queries/useNoteTimer"
 import Button from "../../shared/button"
@@ -133,40 +134,74 @@ const NoteTimers = ({ noteId, note_timer_id_list }) => {
   const keys = Object.keys(note_timers)
 
   return (
-    <div>
-      {/* IMMEDIATE TODO: FINISH IMPLEMENTING NECESSARY FORMAT
-      FOR THIS MODAL FORM! */}
-      {keys.map((key, i) => (
-        <Container idx={i} key={`note-timer-${key}`}>
-          <div className="time-btn-container">
-            <div className="elapsed-time">
-              {note_timers[key].elapsed_seconds}
-            </div>
-            <Button type="CREATE" size="EXTRA_SMALL">
-              Start
-            </Button>
-          </div>
-          <div className="description-trash-container">
-            <NoteTimerDescription
-              noteTimerId={note_timers[key].id}
-              description={note_timers[key].description}
-              handleUpdateNoteTimer={handleUpdateNoteTimer}
-            ></NoteTimerDescription>
-            {/* TODO: Add padding to the right to line it up w/ XIcon */}
-            <TrashIcon
-              marginRight={1.4}
-              handleClick={() => {
-                console.log("deleting this b")
-                deleteNoteTimer({
-                  note_id: noteId,
-                  note_timer_id: note_timers[key].id,
-                })
-              }}
-            />
-          </div>
-        </Container>
-      ))}
-    </div>
+    <TimerContext.Consumer>
+      {({ elapsedSeconds, activeTimer, startTimer, stopTimer }) => (
+        <div>
+          {/* IMMEDIATE TODO: FINISH IMPLEMENTING NECESSARY FORMAT
+        FOR THIS MODAL FORM! */}
+          {keys.map((key, i) => (
+            <Container idx={i} key={`note-timer-${key}`}>
+              <div className="time-btn-container">
+                <div className="elapsed-time">
+                  {elapsedSeconds !== null &&
+                  activeTimer.noteId === noteId &&
+                  activeTimer.noteTimerId === note_timers[key].id
+                    ? elapsedSeconds
+                    : note_timers[key].elapsed_seconds}
+                </div>
+                {elapsedSeconds !== null &&
+                activeTimer.noteId === noteId &&
+                activeTimer.noteTimerId === note_timers[key].id ? (
+                  <Button
+                    size="EXTRA_SMALL"
+                    handleClick={() => {
+                      stopTimer({
+                        noteId,
+                        noteTimerId: note_timers[key].id,
+                      })
+                    }}
+                  >
+                    Stop
+                  </Button>
+                ) : (
+                  <Button
+                    type="CREATE"
+                    size="EXTRA_SMALL"
+                    handleClick={() => {
+                      startTimer({
+                        currentElapsedSeconds: note_timers[key].elapsed_seconds,
+                        noteId,
+                        noteTimerId: note_timers[key].id,
+                      })
+                    }}
+                  >
+                    Start
+                  </Button>
+                )}
+              </div>
+              <div className="description-trash-container">
+                <NoteTimerDescription
+                  noteTimerId={note_timers[key].id}
+                  description={note_timers[key].description}
+                  handleUpdateNoteTimer={handleUpdateNoteTimer}
+                ></NoteTimerDescription>
+                {/* TODO: Add padding to the right to line it up w/ XIcon */}
+                <TrashIcon
+                  marginRight={1.4}
+                  handleClick={() => {
+                    console.log("deleting this b")
+                    deleteNoteTimer({
+                      note_id: noteId,
+                      note_timer_id: note_timers[key].id,
+                    })
+                  }}
+                />
+              </div>
+            </Container>
+          ))}
+        </div>
+      )}
+    </TimerContext.Consumer>
   )
 }
 

@@ -12,7 +12,7 @@ export const setCreatedNoteTimer = ({ data }) => ({
   meta: {
     trigger:
       "POST to /api/note-timer was successful and created note will be added to \
-              the reducer's note timer state.",
+                the reducer's note timer state.",
   },
 })
 

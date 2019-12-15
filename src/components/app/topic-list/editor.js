@@ -107,8 +107,14 @@ const Editor = ({
   persistNoteContent,
   editorId,
 }) => {
+  // const { updateNoteTimer } = useNoteTimerActions()
   const [showOptions, setShowOptions] = useState(false)
   const [readOnly, setReadOnly] = useState(false)
+  // const [elapsedSeconds, setElapsedSeconds] = useState(null)
+  // const [activeTimer, setActiveTimer] = useState({
+  //   noteId: null,
+  //   noteTimerId: null,
+  // })
   const [quill, setQuill] = useState(null)
 
   useEffect(() => {
