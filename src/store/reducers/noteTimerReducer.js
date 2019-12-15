@@ -193,13 +193,16 @@ export default function noteTimerReducer(
     return noteTimerListNewState(noteTimerState, payload)
   }
   if (type === SET_UPDATED_NOTE_TIMER) {
-    return {
+    const result = {
       ...noteTimerState,
       parentNotesOfNoteTimers: {
         ...noteTimerState.parentNotesOfNoteTimers,
         ...updateNormalizedSingle(noteTimerState, payload),
       },
     }
+    console.log("the result in set_updated_note_timer")
+    console.log(result)
+    return result
   }
   if (type === SET_DELETED_NOTE_TIMER) {
     return {

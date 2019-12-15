@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import styled from "styled-components"
 import { useNoteTimerActions } from "../../../hooks/commands/useNoteTimerActions"
 import { useNoteTimer } from "../../../hooks/queries/useNoteTimer"
@@ -40,9 +40,62 @@ const Container = styled.div`
   color: #6f6e6e; */
 `
 
+const NoteTimerDescription = ({
+  noteTimerId,
+  description,
+  handleUpdateNoteTimer,
+}) => {
+  const [showTextArea, setShowTextArea] = useState(false)
+  const [text, setText] = useState("")
+
+  const toggleTextArea = () => setShowTextArea(!showTextArea)
+
+  return (
+    <>
+      {description !== null ? (
+        <p>{description}</p>
+      ) : (
+        // TODO: Gonna have to add some aria attributes for this...
+        <>
+          {showTextArea ? (
+            <form>
+              <textarea value={text} onChange={e => setText(e.target.value)} />
+              <button
+                onClick={() => {
+                  handleUpdateNoteTimer({
+                    note_timer_id: noteTimerId,
+                    updates: {
+                      description: text,
+                    },
+                  })
+                  setText("")
+                  toggleTextArea()
+                }}
+              >
+                Submit!
+              </button>
+              <button onClick={toggleTextArea}>Cancel</button>
+            </form>
+          ) : (
+            <div className="add-description-text" onClick={toggleTextArea}>
+              Add a Description
+            </div>
+          )}
+        </>
+      )}
+    </>
+  )
+}
+
 const NoteTimers = ({ noteId, note_timer_id_list }) => {
+  console.log("the noteId in NoteTimers")
+  console.log(noteId)
   const { parentNotesOfNoteTimers } = useNoteTimer()
-  const { createNoteTimer, listNoteTimers } = useNoteTimerActions()
+  const {
+    createNoteTimer,
+    listNoteTimers,
+    updateNoteTimer,
+  } = useNoteTimerActions()
 
   useEffect(() => {
     if (parentNotesOfNoteTimers.hasOwnProperty(noteId)) {
@@ -54,12 +107,20 @@ const NoteTimers = ({ noteId, note_timer_id_list }) => {
         })
       }
     } else {
-      listNoteTimers({
-        offset: 0,
-        note_timer_id_list: note_timer_id_list.map(({ id }) => id),
-      })
+      if (note_timer_id_list.length > 0) {
+        listNoteTimers({
+          offset: 0,
+          note_timer_id_list: note_timer_id_list.map(({ id }) => id),
+        })
+      }
     }
   }, [])
+
+  const handleUpdateNoteTimer = updateNoteTimerData =>
+    updateNoteTimer({
+      note_id: noteId,
+      ...updateNoteTimerData,
+    })
 
   // NOTE: This fucking sucks
   const note_timers = parentNotesOfNoteTimers.hasOwnProperty(noteId)
@@ -85,12 +146,11 @@ const NoteTimers = ({ noteId, note_timer_id_list }) => {
             </Button>
           </div>
           <div className="description-trash-container">
-            {note_timers[key].description !== null ? (
-              <p>{note_timers[key].description}</p>
-            ) : (
-              // TODO: Gonna have to add some aria attributes for this...
-              <div className="add-description-text">Add a Description</div>
-            )}
+            <NoteTimerDescription
+              noteTimerId={note_timers[key].id}
+              description={note_timers[key].description}
+              handleUpdateNoteTimer={handleUpdateNoteTimer}
+            ></NoteTimerDescription>
             {/* TODO: Add padding to the right to line it up w/ XIcon */}
             <TrashIcon marginRight={1.4} />
           </div>

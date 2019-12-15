@@ -151,9 +151,6 @@ describe("noteTimerReducer", () => {
       setNoteTimerList(listNoteTimersResponse)
     )
 
-    console.log("the deletedNoteTimerResponse")
-    console.log(deletedNoteTimerResponse)
-
     expect(
       noteTimerReducer(
         stateWithNoteTimers,

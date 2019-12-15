@@ -37,6 +37,8 @@ const TimersContainer = styled.div`
   min-height: 16rem;
   height: 16rem;
   overflow-y: scroll;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
 `
 
 const Options = ({
@@ -75,8 +77,15 @@ const Options = ({
   //   }
   // }, [])
 
-  const noteTimers = parentNotesOfNoteTimers[noteId].note_timers
-  const keys = Object.keys(noteTimers)
+  // TODO: This code is duplicated in note-timers... See if it's feasible to just
+  // pass down the note_timers from here
+  const note_timers = parentNotesOfNoteTimers.hasOwnProperty(noteId)
+    ? parentNotesOfNoteTimers[noteId].hasOwnProperty("note_timers")
+      ? parentNotesOfNoteTimers[noteId].note_timers
+      : []
+    : []
+
+  const keys = Object.keys(note_timers)
   const noteTimersLength = keys.length
 
   return (

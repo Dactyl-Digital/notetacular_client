@@ -36,11 +36,14 @@ export const setCreateNoteTimerError = error => ({
 
 export const setUpdatedNoteTimer = ({ note_id, data }) => ({
   type: SET_UPDATED_NOTE_TIMER,
-  payload: { note_id, data: data.data },
+  // TODO: The test for updating a noteTimer passed when I was just
+  // passing data.data... but that failed when receiving the actual
+  // response from the server... Having had this issue with anything else.
+  payload: { note_id, data: data.data.data },
   meta: {
     trigger:
       "POST to /api/note-timer was successful and updated note will be updated in \
-              the reducer's note timer state.",
+                the reducer's note timer state.",
   },
 })
 
