@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { Router } from "@reach/router"
+import { Router, Link } from "@reach/router"
 import axios from "axios"
 import { API_URL } from "../api-endpoints"
 import Layout from "../components/layout"
@@ -37,7 +37,14 @@ const EmailVerification = props => {
     <>
       <h1>Email Verification Page!</h1>
       <div>
-        Status: {data && data} {error && error}
+        Status:{" "}
+        {data && (
+          <>
+            <div>data</div>
+            <Link to="/app/login">Go Login!</Link>
+          </>
+        )}{" "}
+        {error && error}
       </div>
     </>
   )

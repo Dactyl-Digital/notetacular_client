@@ -52,6 +52,7 @@ const PrivateRoute = ({ component: Component, location, ...rest }) => {
   }
 
   if (!authenticated && location.pathname !== `/app/login`) {
+    localStorage.removeItem("authenticated")
     navigate("/app/login")
     return null
   }

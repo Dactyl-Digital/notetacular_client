@@ -2,6 +2,7 @@ export const API_URL = "http://localhost:4000/api"
 
 export const SIGNUP_URL = `${API_URL}/signup`
 export const LOGIN_URL = `${API_URL}/login`
+export const LOGOUT_URL = `${API_URL}/logout`
 
 // Notebook Action Endpoints
 export const CREATE_NOTEBOOK_URL = `${API_URL}/notebook`

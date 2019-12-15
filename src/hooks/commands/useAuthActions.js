@@ -5,8 +5,10 @@ import {
   setSignupError,
   setLoginUser,
   setLoginError,
+  setLogoutUser,
+  setLogoutError,
 } from "../../store/actions/auth"
-import { SIGNUP_URL, LOGIN_URL } from "../../api-endpoints"
+import { SIGNUP_URL, LOGIN_URL, LOGOUT_URL } from "../../api-endpoints"
 
 // NOTE:
 // Had to break out the action dispatcher helper functions from outside of useAuthActions
@@ -58,12 +60,33 @@ const loginError = dispatch => error => {
   dispatch(setLoginError(error))
 }
 
+export const logoutUser = dispatch => () => {
+  dispatch(
+    apiRequest({
+      method: "POST",
+      url: LOGOUT_URL,
+      payload: {},
+      onSuccess: logoutSuccess(dispatch),
+      onError: logoutError(dispatch),
+    })
+  )
+}
+
+export const logoutSuccess = dispatch => () => {
+  dispatch(setLogoutUser())
+}
+
+const logoutError = dispatch => error => {
+  dispatch(setLogoutError(error))
+}
+
 export function useAuthActions() {
   const dispatch = useDispatch()
 
   return {
     signupUser: signupUser(dispatch),
     loginUser: loginUser(dispatch),
+    logoutUser: logoutUser(dispatch),
     loginSuccess: loginSuccess(dispatch),
   }
 }

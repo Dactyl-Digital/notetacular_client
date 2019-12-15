@@ -1,5 +1,6 @@
-import React from "react"
-import { Link } from "gatsby"
+import React, { useEffect } from "react"
+import { useAuthActions } from "../../../hooks/commands/useAuthActions"
+import { useAuth } from "../../../hooks/queries/useAuth"
 import styled from "styled-components"
 import Options from "./options"
 import CircleScrollNav from "./circle-scroll-nav"
@@ -22,24 +23,37 @@ const Container = styled.div`
   }
 `
 
-const Sidebar = ({ keys, resourceList }) => (
-  <Container>
-    {/* <h4>Notastical</h4> */}
-    <nav>
-      <Options />
-      <CircleScrollNav keys={keys} resourceList={resourceList} />
-      <button
-        onClick={() => {
-          // TODO: Implement useAuthAction -> logoutUser
-          // and handle localStorage.removeItem("authenticated") inside
-          // of the store.subscribe handleChange function
-          localStorage.removeItem("authenticated")
-        }}
-      >
-        Log Out
-      </button>
-    </nav>
-  </Container>
-)
+const Sidebar = ({ keys, resourceList }) => {
+  const { authenticated } = useAuth()
+  const { logoutUser } = useAuthActions()
+
+  useEffect(() => {
+    if (!authenticated) {
+      localStorage.removeItem("authenticated")
+    }
+  }, [authenticated])
+
+  return (
+    <Container>
+      {/* <h4>Notastical</h4> */}
+      <nav>
+        <Options />
+        <CircleScrollNav keys={keys} resourceList={resourceList} />
+        <button
+          onClick={() => {
+            // TODO: Implement useAuthAction -> logoutUser
+            // and handle localStorage.removeItem("authenticated") inside
+            // of the store.subscribe handleChange function
+            if (authenticated) {
+              logoutUser()
+            }
+          }}
+        >
+          Log Out
+        </button>
+      </nav>
+    </Container>
+  )
+}
 
 export default Sidebar
