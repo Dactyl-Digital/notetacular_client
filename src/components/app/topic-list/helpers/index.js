@@ -8,13 +8,11 @@ export const formatTime = number => {
       hours = minutes / 60
       minutes = minutes - hours * 60
     }
-    // const minutes = strNum.slice(0, strNum.length - 2)
-    // const seconds = strNum.slice(strNum.length - 2)
     if (hours) {
       return `${hours}:${minutes}:${seconds}`
     } else {
       return `${minutes}:${
-        String(seconds).length === 1 ? "0" + seconds : seconds
+        String(seconds).length === 1 ? `0${seconds}` : seconds
       }`
     }
   }

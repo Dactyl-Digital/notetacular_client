@@ -45,24 +45,16 @@ const Timer = ({ children }) => {
     }
   }
 
-  const stopTimer = ({ noteId, noteTimerId }) => {
-    if (
-      activeTimer.noteId === noteId &&
-      activeTimer.noteTimerId === noteTimerId
-    ) {
-      // timer(null)
-      handleUpdateNoteTimer({
-        noteId,
-        note_timer_id: noteTimerId,
-        updates: {
-          elapsed_seconds: elapsedSeconds,
-        },
-      })
-      timer(null)
-      // setElapsedSeconds(null)
-      setActiveTimer({ noteId: null, noteTimerId: null })
-    }
-    // Persist updated noteTimer stuff
+  const stopTimer = () => {
+    handleUpdateNoteTimer({
+      noteId: activeTimer.noteId,
+      note_timer_id: activeTimer.noteTimerId,
+      updates: {
+        elapsed_seconds: elapsedSeconds,
+      },
+    })
+    setActiveTimer({ noteId: null, noteTimerId: null })
+    timer(null)
   }
 
   return (

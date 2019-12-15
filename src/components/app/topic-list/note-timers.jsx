@@ -156,10 +156,7 @@ const NoteTimers = ({ noteId, note_timer_id_list }) => {
                   <Button
                     size="EXTRA_SMALL"
                     handleClick={() => {
-                      stopTimer({
-                        noteId,
-                        noteTimerId: note_timers[key].id,
-                      })
+                      stopTimer()
                     }}
                   >
                     Stop
