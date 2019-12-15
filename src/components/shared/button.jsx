@@ -4,12 +4,14 @@ import styled from "styled-components"
 const StyledButton = styled.button`
   padding: 0.6rem 1.6rem;
   padding: ${props => props.size === "SMALL" && "0.4rem 1.2rem"};
+  padding: ${props => props.size === "EXTRA_SMALL" && "0.1rem 1rem"};
   padding: ${props => props.type === "ADD" && "0.05rem 0.4rem"};
   margin-left: ${props => props.size === "SMALL" && "2rem"};
   margin-left: ${props => props.type === "ADD" && "1rem"};
   border-radius: 25px;
   font-size: 1.4rem;
-  font-size: ${props => (props.size === "SMALL" ? "1rem" : null)};
+  font-size: ${props => props.size === "SMALL" && "1rem"};
+  font-size: ${props => props.size === "EXTRA_SMALL" && "1rem"};
   font-family: "Blinker", sans-serif;
   font-weight: 800;
   color: #fcfcfc;

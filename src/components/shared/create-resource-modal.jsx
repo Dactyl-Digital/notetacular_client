@@ -12,7 +12,7 @@ const Container = styled.div`
   /* align-items: center; */
   position: relative;
   width: 40vw;
-  min-width: 24rem;
+  min-width: 34rem;
   max-width: 34rem;
   background: #fcfcfc;
   border-radius: 5px;
@@ -54,6 +54,7 @@ const CreateResourceModal = ({
   resource,
   IconComponent,
   buttonType,
+  addAction,
 }) => {
   return (
     <Modal
@@ -68,7 +69,7 @@ const CreateResourceModal = ({
             <div id="modal-header">
               <h2>{action ? `${action} ${resource}` : `${resource}`}</h2>
               {resource === "Timers" && (
-                <Button type="ADD" size="SMALL">
+                <Button type="ADD" size="SMALL" handleClick={addAction}>
                   <AddIcon />
                 </Button>
               )}

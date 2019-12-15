@@ -33,6 +33,12 @@ const Container = styled.div`
   }
 `
 
+const TimersContainer = styled.div`
+  min-height: 16rem;
+  height: 16rem;
+  overflow-y: scroll;
+`
+
 const Options = ({
   readOnly,
   noteId,
@@ -69,6 +75,10 @@ const Options = ({
   //   }
   // }, [])
 
+  const noteTimers = parentNotesOfNoteTimers[noteId].note_timers
+  const keys = Object.keys(noteTimers)
+  const noteTimersLength = keys.length
+
   return (
     <Container>
       <div className="options-icons-container">
@@ -82,35 +92,23 @@ const Options = ({
           resource="Timers"
           buttonType="ICON"
           IconComponent={() => <div>TimerIcon</div>}
+          addAction={() => {
+            createNoteTimer({
+              timer_count: noteTimersLength + 1,
+              note_id: noteId,
+            })
+          }}
         >
           {/* TODO: Create a separate component for this form. */}
-          {toggleShowModal => {
+          {_toggleShowModal => {
             return (
-              <form
-                onSubmit={e => {
-                  e.preventDefault()
-                  // handleCreateNewNoteTimer()
-                  createNoteTimer({
-                    timer_count: 1,
-                    note_id: noteId,
-                  })
-                  toggleShowModal(false)
-                }}
-              >
+              <TimersContainer>
                 {/* TODO: Fix all of this prop drilling with context.... About 4/5 levels deep now. */}
                 <NoteTimers
                   noteId={noteId}
                   note_timer_id_list={note_timer_id_list}
                 />
-                {/* <label htmlFor="title">Title</label>
-              <input
-                id="title"
-                type="text"
-                value={title}
-                onChange={e => setTitle(e.target.value)}
-              /> */}
-                <button>Submit!</button>
-              </form>
+              </TimersContainer>
             )
           }}
         </CreateResourceModal>

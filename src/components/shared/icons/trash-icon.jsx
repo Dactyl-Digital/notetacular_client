@@ -1,8 +1,9 @@
 import React from "react"
 import StyledSvg from "./styled-svg"
 
-const TrashIcon = () => (
+const TrashIcon = ({ marginRight }) => (
   <StyledSvg
+    marginRight={marginRight}
     version="1.1"
     id="Layer_1"
     xmlns="http://www.w3.org/2000/svg"

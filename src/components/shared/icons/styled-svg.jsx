@@ -6,6 +6,7 @@ const StyledSvg = styled.svg`
   height: 1.2rem;
   fill: #656565;
   fill: ${props => props.color && `${props.color}`};
+  margin-right: ${props => props.marginRight && `${props.marginRight}rem`};
 
   &:hover {
     fill: #f78764;
