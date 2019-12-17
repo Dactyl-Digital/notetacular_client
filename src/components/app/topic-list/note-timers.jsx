@@ -89,9 +89,7 @@ const NoteTimerDescription = ({
   )
 }
 
-const NoteTimers = ({ noteId, note_timer_id_list }) => {
-  console.log("the noteId in NoteTimers")
-  console.log(noteId)
+const NoteTimers = ({ noteId, note_timer_id_list, toggleShowModal }) => {
   const { parentNotesOfNoteTimers } = useNoteTimer()
   const {
     createNoteTimer,
@@ -166,6 +164,7 @@ const NoteTimers = ({ noteId, note_timer_id_list }) => {
                     type="CREATE"
                     size="EXTRA_SMALL"
                     handleClick={() => {
+                      toggleShowModal()
                       startTimer({
                         currentElapsedSeconds: note_timers[key].elapsed_seconds,
                         noteId,

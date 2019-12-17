@@ -1,6 +1,4 @@
-import React, { useEffect } from "react"
-import { useAuthActions } from "../../../hooks/commands/useAuthActions"
-import { useAuth } from "../../../hooks/queries/useAuth"
+import React from "react"
 import styled from "styled-components"
 import Options from "./options"
 import CircleScrollNav from "./circle-scroll-nav"
@@ -11,7 +9,7 @@ const Container = styled.div`
   align-items: center;
   min-width: 16rem;
   height: 100vh;
-  padding-top: 1.2rem;
+  padding-top: 2rem;
   background: #11eef6;
   overflow-y: scroll;
 
@@ -24,33 +22,12 @@ const Container = styled.div`
 `
 
 const Sidebar = ({ keys, resourceList }) => {
-  const { authenticated } = useAuth()
-  const { logoutUser } = useAuthActions()
-
-  useEffect(() => {
-    if (!authenticated) {
-      localStorage.removeItem("authenticated")
-    }
-  }, [authenticated])
-
   return (
     <Container>
       {/* <h4>Notastical</h4> */}
       <nav>
         <Options />
         <CircleScrollNav keys={keys} resourceList={resourceList} />
-        <button
-          onClick={() => {
-            // TODO: Implement useAuthAction -> logoutUser
-            // and handle localStorage.removeItem("authenticated") inside
-            // of the store.subscribe handleChange function
-            if (authenticated) {
-              logoutUser()
-            }
-          }}
-        >
-          Log Out
-        </button>
       </nav>
     </Container>
   )

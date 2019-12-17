@@ -5,7 +5,7 @@ export const LOGIN_URL = `${API_URL}/login`
 export const LOGOUT_URL = `${API_URL}/logout`
 
 // Notebook Action Endpoints
-export const CREATE_NOTEBOOK_URL = `${API_URL}/notebook`
+export const NOTEBOOK_URL = `${API_URL}/notebook`
 export const LIST_NOTEBOOKS_URL = `${API_URL}/notebook?limit=20&offset=`
 
 // Sub Category Action Endpoints

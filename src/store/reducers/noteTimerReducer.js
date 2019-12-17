@@ -48,11 +48,19 @@ const normalizeSingle = ({ parentNotesOfNoteTimers }, { data }) => {
     successFn: () => parentNotesOfNoteTimers[note_id].listOffset + 1,
     failFn: () => 1,
   })
+  const prevTimers = checkProperty({
+    obj: parentNotesOfNoteTimers,
+    property: "topics",
+    successFn: () => ({
+      ...parentNotesOfNoteTimers[note_id].note_timers,
+    }),
+    failFn: () => ({}),
+  })
   return {
     [note_id]: {
       noteTimersPaginationEnd: true,
       note_timers: {
-        ...parentNotesOfNoteTimers[note_id].note_timers,
+        ...prevTimers,
         ...newNoteTimers,
       },
       listOffset: newListOffset,

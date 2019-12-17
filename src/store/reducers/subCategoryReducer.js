@@ -67,11 +67,22 @@ const normalizeSingle = ({ parentNotebooksOfSubCategories }, { data }) => {
     successFn: () => parentNotebooksOfSubCategories[notebook_id].listOffset + 1,
     failFn: () => 1,
   })
+  // NOTE: Was just spreading the object that's in the successFn directly in
+  // the returned object literal's subCategories object... but that caused
+  // an error when the sub category being created is the first.
+  const prevSubCategories = checkProperty({
+    obj: parentNotebooksOfSubCategories,
+    property: "subCategories",
+    successFn: () => ({
+      ...parentNotebooksOfSubCategories[notebook_id].subCategories,
+    }),
+    failFn: () => ({}),
+  })
   return {
     [notebook_id]: {
       subCategoriesPaginationEnd: true,
       subCategories: {
-        ...parentNotebooksOfSubCategories[notebook_id].subCategories,
+        ...prevSubCategories,
         ...newSubCategories,
       },
       listOffset: newListOffset,

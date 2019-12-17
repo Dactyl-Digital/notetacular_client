@@ -5,14 +5,16 @@ import {
   setCreateNotebookError,
   setNotebookList,
   setNotebookListError,
+  setDeletedNotebook,
+  setDeleteNotebookError,
 } from "../../store/actions/notebook"
-import { CREATE_NOTEBOOK_URL, LIST_NOTEBOOKS_URL } from "../../api-endpoints"
+import { NOTEBOOK_URL, LIST_NOTEBOOKS_URL } from "../../api-endpoints"
 
 export const createNotebook = dispatch => createNotebookData => {
   dispatch(
     apiRequest({
       method: "POST",
-      url: CREATE_NOTEBOOK_URL,
+      url: NOTEBOOK_URL,
       payload: createNotebookData,
       onSuccess: createNotebookSuccess(dispatch),
       onError: createNotebookError(dispatch),
@@ -48,11 +50,32 @@ const listNotebooksError = dispatch => error => {
   dispatch(setNotebookListError(error))
 }
 
+export const deleteNotebook = dispatch => ({ notebook_id }) => {
+  dispatch(
+    apiRequest({
+      method: "DELETE",
+      url: `${NOTEBOOK_URL}/${notebook_id}`,
+      payload: {},
+      onSuccess: deleteNotebookSuccess(dispatch),
+      onError: deleteNotebookError(dispatch),
+    })
+  )
+}
+
+const deleteNotebookSuccess = dispatch => response => {
+  dispatch(setDeletedNotebook(response))
+}
+
+const deleteNotebookError = dispatch => error => {
+  dispatch(setDeleteNotebookError(error))
+}
+
 export function useNotebookActions() {
   const dispatch = useDispatch()
 
   return {
     createNotebook: createNotebook(dispatch),
     listNotebooks: listNotebooks(dispatch),
+    deleteNotebook: deleteNotebook(dispatch),
   }
 }

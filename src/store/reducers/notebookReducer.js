@@ -12,8 +12,6 @@ const listNotebooksOffset = JSON.parse(
   localStorage.getItem("listNotebooksOffset")
 )
 const notebooks = JSON.parse(localStorage.getItem("notebooks"))
-console.log("notebooks retrieved from localStorage!")
-console.log(notebooks)
 const notebooksPaginationEnd = JSON.parse(
   localStorage.getItem("notebooksPaginationEnd")
 )

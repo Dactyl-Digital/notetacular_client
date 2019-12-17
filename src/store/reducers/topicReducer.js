@@ -54,12 +54,22 @@ const normalizeSingle = ({ parentSubCategoriesOfTopics }, { data }) => {
       parentSubCategoriesOfTopics[sub_category_id].listOffset + 1,
     failFn: () => 1,
   })
+
+  const prevTopics = checkProperty({
+    obj: parentSubCategoriesOfTopics,
+    property: "topics",
+    successFn: () => ({
+      ...parentSubCategoriesOfTopics[sub_category_id].topics,
+    }),
+    failFn: () => ({}),
+  })
+
   return {
     [sub_category_id]: {
       topicsPaginationEnd: true,
       topics: {
+        ...prevTopics,
         ...newTopics,
-        ...parentSubCategoriesOfTopics[sub_category_id].topics,
       },
       listOffset: newListOffset,
     },

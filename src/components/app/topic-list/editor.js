@@ -151,7 +151,7 @@ const Editor = ({
       console.log("Implement are you sure? Followed by API delete to backend.")
   }
 
-  console.log(`readOnly: ${readOnly}`)
+  // console.log(`readOnly: ${readOnly}`)
 
   return (
     <Container readOnly={readOnly} showOptions={showOptions}>

@@ -51,8 +51,6 @@ const Options = ({
   const { parentNotesOfNoteTimers } = useNoteTimer()
   const { createNoteTimer, listNoteTimers } = useNoteTimerActions()
 
-  console.log("what is note_timer_id_list:")
-  console.log(note_timer_id_list)
   // console.log("what is topics in noteList?")
   // console.log(topics)
   // const notes = topics[topicId].notes
@@ -109,13 +107,14 @@ const Options = ({
           }}
         >
           {/* TODO: Create a separate component for this form. */}
-          {_toggleShowModal => {
+          {toggleShowModal => {
             return (
               <TimersContainer>
                 {/* TODO: Fix all of this prop drilling with context.... About 4/5 levels deep now. */}
                 <NoteTimers
                   noteId={noteId}
                   note_timer_id_list={note_timer_id_list}
+                  toggleShowModal={toggleShowModal}
                 />
               </TimersContainer>
             )

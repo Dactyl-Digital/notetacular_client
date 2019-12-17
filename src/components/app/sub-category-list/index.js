@@ -42,7 +42,6 @@ const SubCategoryList = ({ notebookId }) => {
   const listEl = useRef(null)
 
   useEffect(() => {
-    console.log("SUBCATEGORYLIST USE EFFECT RUNNING!")
     const hash = window.location.hash
     if (hash && !activeCircle.active) {
       const id = hash.slice(1, hash.length)
@@ -65,7 +64,6 @@ const SubCategoryList = ({ notebookId }) => {
     //   })
     // }
 
-    console.log("what is parentNotebooksOfSubCategories: ")
     console.dir(parentNotebooksOfSubCategories)
     if (parentNotebooksOfSubCategories.hasOwnProperty(notebookId)) {
       if (
@@ -77,10 +75,12 @@ const SubCategoryList = ({ notebookId }) => {
         })
       }
     } else {
-      listSubCategories({
-        offset: 0,
-        sub_category_id_list: subCategoryIdList,
-      })
+      if (subCategoryIdList.length > 0) {
+        listSubCategories({
+          offset: 0,
+          sub_category_id_list: subCategoryIdList,
+        })
+      }
     }
 
     return () => {
@@ -120,8 +120,7 @@ const SubCategoryList = ({ notebookId }) => {
       ? parentNotebooksOfSubCategories[notebookId].subCategories
       : []
     : []
-  console.log("wtf is parentNotebooksOfSubCategories: ")
-  console.log(parentNotebooksOfSubCategories)
+
   const keys = Object.keys(subCategories)
   return (
     <ActiveCircleContext.Provider

@@ -4,6 +4,8 @@ import { useTopic } from "../../../hooks/queries/useTopic"
 import { useNote } from "../../../hooks/queries/useNote"
 import { useNoteActions } from "../../../hooks/commands/useNoteActions"
 import CreateResourceModal from "../../shared/create-resource-modal"
+import Button from "../../shared/button"
+import StyledForm from "../../shared/styled-form"
 
 const NoteList = ({ topics, topicId, subCategoryId }) => {
   const { parentTopicsOfNotes } = useNote()
@@ -48,25 +50,31 @@ const NoteList = ({ topics, topicId, subCategoryId }) => {
 
   return (
     <div data-testid="note-list">
-      <CreateResourceModal resource="Note">
+      <CreateResourceModal action="Create" resource="Note" buttonType="NORMAL">
+        {/* TODO: Create a separate component for this form. */}
         {toggleShowModal => (
-          <form
+          <StyledForm
             onSubmit={e => {
               e.preventDefault()
               handleCreateNewNote()
               toggleShowModal(false)
             }}
           >
-            <label htmlFor="title">Title</label>
-            <input
-              id="title"
-              type="text"
-              value={title}
-              onChange={e => setTitle(e.target.value)}
-            />
-            {/* TODO: Optional Description textarea */}
-            <button>Submit!</button>
-          </form>
+            <div id="form-fields">
+              <label htmlFor="title">Title</label>
+              <input
+                id="title"
+                type="text"
+                value={title}
+                onChange={e => setTitle(e.target.value)}
+              />
+            </div>
+            <div id="form-button">
+              <Button type="CREATE" size="SMALL">
+                Submit!
+              </Button>
+            </div>
+          </StyledForm>
         )}
       </CreateResourceModal>
       <div id="note-list">

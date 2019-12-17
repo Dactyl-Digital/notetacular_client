@@ -10,6 +10,8 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   max-width: 14rem;
+  /* height: 3rem; */
+  /* border: 2px solid #222; */
 
   #modal {
     margin: 0;
@@ -104,7 +106,7 @@ const Tags = ({ type, tags, topicId, noteId }) => {
   return (
     <Container>
       <div className="tag-list">
-        {tags.length > 0 ? (
+        {tags !== null && tags.length > 0 ? (
           <>
             <ExistingTagsView
               type={type}
@@ -125,7 +127,7 @@ const Tags = ({ type, tags, topicId, noteId }) => {
           />
         )}
       </div>
-      {tags.length > 0 && (
+      {tags !== null && tags.length > 0 && (
         <NoTagsCreatedYetView
           title={title}
           setTitle={setTitle}

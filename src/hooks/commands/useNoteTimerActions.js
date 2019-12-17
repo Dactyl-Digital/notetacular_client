@@ -89,7 +89,6 @@ export const deleteNoteTimer = dispatch => ({ note_id, note_timer_id }) => {
 }
 
 const deleteNoteTimerSuccess = ({ note_id }) => dispatch => response => {
-  console.log("deleteNoteTimerSuccess dispatching...")
   dispatch(setDeletedNoteTimer({ note_id, ...response }))
 }
 

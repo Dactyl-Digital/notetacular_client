@@ -10,6 +10,8 @@ import {
 } from "../../store/actions/auth"
 import { SIGNUP_URL, LOGIN_URL, LOGOUT_URL } from "../../api-endpoints"
 
+const validUsernameRegex = "/[A-Za-z0-9_-]+/"
+
 // NOTE:
 // Had to break out the action dispatcher helper functions from outside of useAuthActions
 // so they may be used when testing the mocked store.
@@ -21,6 +23,7 @@ import { SIGNUP_URL, LOGIN_URL, LOGOUT_URL } from "../../api-endpoints"
 //     3. You might have more than one copy of React in the same app
 //     See https://fb.me/react-invalid-hook-call for tips about how to debug and fix this problem.
 export const signupUser = dispatch => signupData => {
+  // TODO: Handle regex validations here...
   dispatch(
     apiRequest({
       method: "POST",

@@ -31,24 +31,26 @@ const PrivateRoute = ({ component: Component, location, ...rest }) => {
     parentSubCategoriesOfTopics,
   ])
 
+  // TODO: Add a time expiry for the state persisted to localstorage
+  // to be refreshed/rejected from being hydrated into redux state.
   const handleSaveReduxState = () => {
-    localStorage.setItem(
-      "listNotebooksOffset",
-      JSON.stringify(listNotebooksOffset)
-    )
-    localStorage.setItem("notebooks", JSON.stringify(notebooks))
-    localStorage.setItem(
-      "notebooksPaginationEnd",
-      JSON.stringify(notebooksPaginationEnd)
-    )
-    localStorage.setItem(
-      "parentNotebooksOfSubCategories",
-      JSON.stringify(parentNotebooksOfSubCategories)
-    )
-    localStorage.setItem(
-      "parentSubCategoriesOfTopics",
-      JSON.stringify(parentSubCategoriesOfTopics)
-    )
+    // localStorage.setItem(
+    //   "listNotebooksOffset",
+    //   JSON.stringify(listNotebooksOffset)
+    // )
+    // localStorage.setItem("notebooks", JSON.stringify(notebooks))
+    // localStorage.setItem(
+    //   "notebooksPaginationEnd",
+    //   JSON.stringify(notebooksPaginationEnd)
+    // )
+    // localStorage.setItem(
+    //   "parentNotebooksOfSubCategories",
+    //   JSON.stringify(parentNotebooksOfSubCategories)
+    // )
+    // localStorage.setItem(
+    //   "parentSubCategoriesOfTopics",
+    //   JSON.stringify(parentSubCategoriesOfTopics)
+    // )
   }
 
   if (!authenticated && location.pathname !== `/app/login`) {

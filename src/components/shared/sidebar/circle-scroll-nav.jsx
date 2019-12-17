@@ -7,7 +7,7 @@ const Nav = styled.nav`
   flex-direction: column;
   width: 100%;
   height: 100%;
-  border: 2px solid #222;
+  /* border: 2px solid #222; */
 
   .scroll-link {
     display: flex;
@@ -63,8 +63,6 @@ const A = styled.a`
 
 // Will receive the resourceList object (i.e. notebooks, subCategories, topics) from redux state and the Object.keys array as props
 const CircleScrollNav = props => {
-  console.log("wtf be props in CircleScrollNav")
-  console.log(props)
   return (
     <ActiveCircleContext.Consumer>
       {({ active, activePosition, setActive }) => (
@@ -75,8 +73,6 @@ const CircleScrollNav = props => {
               key={`#${props.resourceList[key].title}`}
               href={`#${props.resourceList[key].title}`}
               onClick={() => {
-                console.log("CircleScrollNav calling setActive")
-                console.log(setActive)
                 setActive({
                   active: props.resourceList[key].title,
                   activePosition: i,

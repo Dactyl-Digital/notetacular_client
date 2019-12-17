@@ -67,9 +67,21 @@ const TopicList = ({ notebookId, subCategoryId }) => {
     }
     listEl.current.addEventListener("scroll", handleScroll)
 
-    const topicIdList =
-      parentNotebooksOfSubCategories[notebookId].subCategories[subCategoryId]
-        .topics
+    // const topicIdList =
+    //   parentNotebooksOfSubCategories[notebookId].subCategories[subCategoryId]
+    //     .topics
+
+    const topicIdList = parentNotebooksOfSubCategories.hasOwnProperty(
+      notebookId
+    )
+      ? parentNotebooksOfSubCategories[notebookId].hasOwnProperty(
+          "subCategories"
+        )
+        ? parentNotebooksOfSubCategories[notebookId].subCategories[
+            subCategoryId
+          ].topics
+        : []
+      : []
 
     if (parentSubCategoriesOfTopics.hasOwnProperty(subCategoryId)) {
       if (!parentSubCategoriesOfTopics[subCategoryId].topicsPaginationEnd) {
