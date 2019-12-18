@@ -24,6 +24,7 @@ const Container = styled.div`
     padding: 0 8vw;
     padding-top: 2rem;
     width: 100%;
+    min-width: 32rem;
     height: 100vh;
     overflow-y: scroll;
   }
@@ -154,10 +155,12 @@ const NotebookList = () => {
           <div id="notebook-list">
             {keys.map((key, i) => (
               <ResourceListing
+                type="NOTEBOOK"
                 key={notebooks[key].id.toString()}
                 title={notebooks[key].title}
                 link={`notebook/${notebooks[key].id}/sub-categories`}
                 index={i}
+                notebookId={notebooks[key].id}
                 active={activeCircle.active === notebooks[key].title}
                 setActiveDisabled={setActiveDisabled}
                 scrollTop={scrollTop}

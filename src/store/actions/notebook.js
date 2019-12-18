@@ -17,9 +17,9 @@ export const setCreatedNotebook = ({ data }) => ({
   },
 })
 
-export const setCreateNotebookError = error => ({
+export const setCreateNotebookError = ({ response: { data } }) => ({
   type: SET_CREATE_NOTEBOOK_ERROR,
-  payload: error,
+  payload: data,
   meta: {
     trigger: "Server failed to create notebook.",
   },
@@ -53,9 +53,9 @@ export const setDeletedNotebook = ({ data }) => ({
   },
 })
 
-export const setDeleteNotebookError = error => ({
+export const setDeleteNotebookError = ({ response: { data } }) => ({
   type: SET_DELETE_NOTEBOOK_ERROR,
-  payload: error,
+  payload: data,
   meta: {
     trigger: "Server failed to delete notebook.",
   },

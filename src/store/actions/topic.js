@@ -20,9 +20,9 @@ export const setCreatedTopic = ({ data }) => ({
   },
 })
 
-export const setCreateTopicError = error => ({
+export const setCreateTopicError = ({ response: { data } }) => ({
   type: SET_CREATE_TOPIC_ERROR,
-  payload: error,
+  payload: data,
   meta: {
     trigger: "Server failed to create topic.",
   },

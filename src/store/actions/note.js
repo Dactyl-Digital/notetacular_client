@@ -21,9 +21,9 @@ export const setCreatedNote = ({ data }) => ({
   },
 })
 
-export const setCreateNoteError = error => ({
+export const setCreateNoteError = ({ response: { data } }) => ({
   type: SET_CREATE_NOTE_ERROR,
-  payload: error,
+  payload: data,
   meta: {
     trigger: "Server failed to create note.",
   },
@@ -57,9 +57,9 @@ export const setUpdateNoteContent = ({ data, topicId }) => ({
   },
 })
 
-export const setUpdateNoteContentError = error => ({
+export const setUpdateNoteContentError = ({ response: { data } }) => ({
   type: SET_UPDATE_NOTE_CONTENT_ERROR,
-  payload: error,
+  payload: data,
   meta: {
     trigger: "Server failed to update note.",
   },

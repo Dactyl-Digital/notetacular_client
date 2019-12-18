@@ -63,7 +63,7 @@ export default function notebookReducer(
   //   return { ...notebookState, successfulSignup: true }
   // }
   if (type === SET_CREATE_NOTEBOOK_ERROR) {
-    return { ...notebookState, signupError: payload }
+    return { ...notebookState, createNotebookError: payload }
   }
   if (type === SET_NOTEBOOK_LIST_ERROR) {
     return { ...notebookState, notebookListError: payload }

@@ -1,8 +1,9 @@
 import React from "react"
 import StyledSvg from "./styled-svg"
 
-const ArrowIcon = () => (
+const ArrowIcon = ({ toggled }) => (
   <StyledSvg
+    toggled={toggled}
     version="1.1"
     xmlns="http://www.w3.org/2000/svg"
     x="0"

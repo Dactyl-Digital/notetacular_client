@@ -27,7 +27,6 @@ const StyledForm = styled.form`
       min-width: 12rem;
       max-width: 12rem;
       border: 0.1rem solid #969464;
-      color: #222;
       font-size: 0.9rem;
       padding-left: 0.2rem;
     }

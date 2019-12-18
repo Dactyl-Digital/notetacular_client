@@ -16,9 +16,9 @@ export const setCreatedSubCategory = ({ data }) => ({
   },
 })
 
-export const setCreateSubCategoryError = error => ({
+export const setCreateSubCategoryError = ({ response: { data } }) => ({
   type: SET_CREATE_SUB_CATEGORY_ERROR,
-  payload: error,
+  payload: data,
   meta: {
     trigger: "Server failed to create sub category.",
   },

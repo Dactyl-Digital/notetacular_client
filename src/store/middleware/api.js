@@ -1,30 +1,24 @@
 import axios from "axios"
-// import { toggleLoader } from "../actions/ui"
+import { toggleLoader } from "../actions/ui"
 
 const API_REQUEST = "API_REQUEST"
 
-// const dispatchToggleLoader = (dispatch, bool, { method, url }) =>
-//   dispatch(toggleLoader({ loaderVisible: bool, trigger: `${method} ${url}` }))
+const dispatchToggleLoader = (dispatch, bool, { method, url }) =>
+  dispatch(toggleLoader({ loading: bool, trigger: `${method} ${url}` }))
 
 const makeRequest = (
   dispatch,
   { payload },
   { method, url, onSuccess, onError }
 ) => {
+  dispatchToggleLoader(dispatch, true, { method, url })
   if (method === "GET") {
-    // axios({
-    //   method: "get",
-    //   url: url,
-    //   params: payload,
-    // })
     axios
       .get(url, {
         params: payload,
       })
       .then(function(response) {
-        console.log("the response in GET")
-        console.log(response)
-        // dispatchToggleLoader(dispatch, false, { method, url })
+        dispatchToggleLoader(dispatch, false, { method, url })
         onSuccess(response)
       })
       .catch(function(error) {
@@ -40,6 +34,7 @@ const makeRequest = (
             },
           })
         }
+        dispatchToggleLoader(dispatch, false, { method, url })
         onError(error)
       })
   }
@@ -51,9 +46,7 @@ const makeRequest = (
     return axios
       .post(url, payload)
       .then(function(response) {
-        // dispatchToggleLoader(dispatch, false, { method, url })
-        console.log("the response in POST")
-        console.log(response)
+        dispatchToggleLoader(dispatch, false, { method, url })
         onSuccess(response)
       })
       .catch(function(error) {
@@ -67,7 +60,6 @@ const makeRequest = (
         //   message: "Oops... Something went wrong."
         // }
         console.log("the error in POST")
-        console.log(error)
         console.dir(error)
 
         if (
@@ -80,6 +72,7 @@ const makeRequest = (
             },
           })
         }
+        dispatchToggleLoader(dispatch, false, { method, url })
         onError(error)
       })
   }
@@ -87,9 +80,7 @@ const makeRequest = (
     axios
       .put(url, payload)
       .then(function(response) {
-        console.log("the response in PUT")
-        console.log(response)
-        // dispatchToggleLoader(dispatch, false, { method, url })
+        dispatchToggleLoader(dispatch, false, { method, url })
         onSuccess(response)
       })
       .catch(function(error) {
@@ -105,18 +96,15 @@ const makeRequest = (
             },
           })
         }
+        dispatchToggleLoader(dispatch, false, { method, url })
         onError(error)
       })
   }
   if (method === "PATCH") {
-    console.log("payload in DELETE")
-    console.log(payload)
     axios
       .patch(url, payload)
       .then(function(response) {
-        console.log("the response in PATCH")
-        console.log(response)
-        // dispatchToggleLoader(dispatch, false, { method, url })
+        dispatchToggleLoader(dispatch, false, { method, url })
         onSuccess(response)
       })
       .catch(function(error) {
@@ -132,6 +120,7 @@ const makeRequest = (
             },
           })
         }
+        dispatchToggleLoader(dispatch, false, { method, url })
         onError(error)
       })
   }
@@ -139,9 +128,7 @@ const makeRequest = (
     axios
       .delete(url)
       .then(function(response) {
-        console.log("the response in DELETE")
-        console.log(response)
-        // dispatchToggleLoader(dispatch, false, { method, url })
+        dispatchToggleLoader(dispatch, false, { method, url })
         onSuccess(response)
       })
       .catch(function(error) {
@@ -157,25 +144,10 @@ const makeRequest = (
             },
           })
         }
+        dispatchToggleLoader(dispatch, false, { method, url })
         onError(error)
       })
   }
-  // if (method === "GET") {
-  //   // dispatchToggleLoader(dispatch, true, { method, url })
-  //   return axios
-  //     .get(url)
-  //     .then(function(response) {
-  //       console.log("the response in GET")
-  //       console.log(response)
-  //       // dispatchToggleLoader(dispatch, false, { method, url })
-  //       onSuccess(response)
-  //     })
-  //     .catch(function(error) {
-  //       console.log("the error in GET")
-  //       console.log(error)
-  //       onError(error)
-  //     })
-  // }
 }
 
 export const apiMiddleware = ({ dispatch }) => next => action => {

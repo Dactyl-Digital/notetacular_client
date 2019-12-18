@@ -7,7 +7,7 @@ const Container = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  padding-right: 1.8rem;
+  padding-right: 1.6rem;
 
   h1 {
     font-family: "Blinker", sans-serif;

@@ -23,6 +23,7 @@ const Container = styled.div`
     padding: 0 8vw;
     padding-top: 2rem;
     width: 100%;
+    min-width: 32rem;
     height: 100vh;
     overflow-y: scroll;
   }

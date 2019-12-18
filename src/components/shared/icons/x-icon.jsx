@@ -1,11 +1,11 @@
 import React from "react"
 import StyledSvg from "./styled-svg"
 
-const XIcon = ({ color }) => (
+const XIcon = ({ className, color }) => (
   <StyledSvg
     color={color}
+    className={className}
     version="1.1"
-    id="Capa_1"
     xmlns="http://www.w3.org/2000/svg"
     x="0"
     y="0"

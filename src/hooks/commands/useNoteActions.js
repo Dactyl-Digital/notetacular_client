@@ -101,6 +101,7 @@ const updateNoteContentError = dispatch => error => {
 }
 
 export const addNoteTags = dispatch => data => {
+  console.log("Dispatching addNoteTags API REQUEST")
   dispatch(
     apiRequest({
       method: "POST",
