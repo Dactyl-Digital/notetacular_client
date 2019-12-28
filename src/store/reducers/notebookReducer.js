@@ -9,11 +9,17 @@ import {
 // import {helperFunction} from '../helpers'
 
 const listNotebooksOffset = JSON.parse(
-  localStorage.getItem("listNotebooksOffset")
+  typeof localStorage !== "undefined"
+    ? localStorage.getItem("listNotebooksOffset")
+    : null
 )
-const notebooks = JSON.parse(localStorage.getItem("notebooks"))
+const notebooks = JSON.parse(
+  typeof localStorage !== "undefined" ? localStorage.getItem("notebooks") : null
+)
 const notebooksPaginationEnd = JSON.parse(
-  localStorage.getItem("notebooksPaginationEnd")
+  typeof localStorage !== "undefined"
+    ? localStorage.getItem("notebooksPaginationEnd")
+    : null
 )
 
 export const notebookInitialState = {

@@ -1,11 +1,15 @@
-import React, { useRef, useState, useEffect } from "react"
+import React, { useRef, useState, useEffect, lazy, Suspense } from "react"
 import { Link } from "gatsby"
 import styled from "styled-components"
 import { useNotebookActions } from "../../hooks/commands/useNotebookActions"
 import Tags from "../app/topic-list/tags"
-import NoteList from "../app/topic-list/note-list"
 import TrashIcon from "./icons/trash-icon"
 import ArrowIcon from "./icons/arrow-icon"
+const NoteList = lazy(() => import("../app/topic-list/note-list"));
+// SOLUTION!!! -> To the quill "document is undefined" at gatsby build time!!!
+// NOTE: Causes an error when running in dev though...
+// const NoteList = React.lazy(() => import("../app/topic-list/note-list"))
+// import NoteList from "../app/topic-list/note-list"
 
 const Container = styled.div`
   display: flex;
@@ -24,10 +28,11 @@ const Container = styled.div`
   background: ${props => props.type === "NOTE" && "#11EEF6"};
 
   &:hover {
-    /* transform: ${props => props.type !== "NOTE" && `scale(1.005)`}; */
-    transform: ${props => props.type !== "NOTE" && `translateY(-0.05rem)`};
+    transform: translateY(-0.05rem);
     box-shadow: ${props =>
-      props.type !== "NOTE" && ` 0rem 0.1rem 1rem rgba(17, 238, 246, 30%)`};
+      props.type === "NOTE"
+        ? `0rem 0.1rem 1rem rgba(27, 113, 113, 30%)`
+        : `0rem 0.1rem 1rem rgba(17, 238, 246, 30%)`};
   }
   &:before {
     content: "";
@@ -136,6 +141,12 @@ const ResourceListing = ({
     //   }
     // }
 
+    // TODO.... This is really weird. And this error didn't pop up for the past
+    // week that this code was written... But Inside of NoteListing I use ResourceListing
+    // as well. And it has no need for a setActiveCircle, so it causes an error.
+    // But the fact that this is the first time this error has shown up... WTF.
+    // Figure out a better way to implement this stuff....
+    if (type === "NOTE") return
     if (setActiveDisabled) return
     const elementTop = listingEl.current.getBoundingClientRect().top
     if (elementTop > -60 && elementTop < 60) {
@@ -177,7 +188,7 @@ const ResourceListing = ({
           <div
             onClick={() => {
               if (type === "NOTEBOOK") {
-                deleteNotebook({ notebook_id:  notebookId })
+                deleteNotebook({ notebook_id: notebookId })
               }
               if (type === "TOPIC") {
                 // removeTopicTag({ topic_id: topicId, tag: children })
@@ -202,14 +213,17 @@ const ResourceListing = ({
         </div>
       </Container>
       {type === "TOPIC" && toggled && (
-        <NoteList
-          topics={topics}
-          topicId={topicId}
-          subCategoryId={subCategoryId}
-        />
+        <Suspense fallback={<div>Loading...</div>}>
+          <NoteList
+            topics={topics}
+            topicId={topicId}
+            subCategoryId={subCategoryId}
+            toggled={toggled}
+          />
+        </Suspense>
       )}
     </>
   )
 }
 
-export default ResourceListing
+export default React.memo(ResourceListing)

@@ -6,6 +6,7 @@ import { useNoteTimer } from "../../../hooks/queries/useNoteTimer"
 import pencilIcon from "../../../assets/icons/pencil-edit-button.svg"
 import bookIcon from "../../../assets/icons/open-book.svg"
 import trashIcon from "../../../assets/icons/bin.svg"
+import ClockIcon from "../../shared/icons/clock-icon"
 import CreateResourceModal from "../../shared/create-resource-modal"
 import Button from "../../shared/button"
 import StyledForm from "../../shared/styled-form"
@@ -27,6 +28,12 @@ const Container = styled.div`
   }
 
   img {
+    width: 1.2rem;
+    height: 1.2rem;
+    margin-left: 1rem;
+  }
+
+  svg {
     width: 1.2rem;
     height: 1.2rem;
     margin-left: 1rem;
@@ -98,7 +105,7 @@ const Options = ({
         <CreateResourceModal
           resource="Timers"
           buttonType="ICON"
-          IconComponent={() => <div>TimerIcon</div>}
+          IconComponent={() => <ClockIcon />}
           addAction={() => {
             createNoteTimer({
               timer_count: noteTimersLength + 1,
@@ -108,6 +115,7 @@ const Options = ({
         >
           {/* TODO: Create a separate component for this form. */}
           {toggleShowModal => {
+            console.log("returning timers modal content...")
             return (
               <TimersContainer>
                 {/* TODO: Fix all of this prop drilling with context.... About 4/5 levels deep now. */}

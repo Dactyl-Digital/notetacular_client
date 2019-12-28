@@ -15,7 +15,9 @@ const Login = () => {
   })
 
   if (authenticated) {
-    localStorage.setItem("authenticated", authenticated)
+    if (typeof localStorage !== "undefined") {
+      localStorage.setItem("authenticated", authenticated)
+    }
     navigate("/app/notebooks")
   }
 

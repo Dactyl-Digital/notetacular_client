@@ -7,7 +7,12 @@ import {
 } from "../actions/auth"
 // import {helperFunction} from '../helpers'
 
-const authenticated = localStorage.getItem("authenticated")
+let authenticated
+if (typeof localStorage !== "undefined") {
+  authenticated = localStorage.getItem("authenticated")
+} else {
+  authenticated = null
+}
 
 export const authInitialState = {
   authenticated: authenticated ? true : false,

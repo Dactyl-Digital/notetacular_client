@@ -1,5 +1,6 @@
 export const SET_CREATED_NOTE_TIMER = "SET_CREATED_NOTE_TIMER"
 export const SET_NOTE_TIMER_LIST = "SET_NOTE_TIMER_LIST"
+export const SET_NOTE_TIMER_LIST_ERROR = "SET_NOTE_TIMER_LIST_ERROR"
 export const SET_CREATE_NOTE_TIMER_ERROR = "SET_CREATE_NOTE_TIMER_ERROR"
 export const SET_UPDATED_NOTE_TIMER = "SET_UPDATED_NOTE_TIMER"
 export const SET_UPDATE_NOTE_TIMER_ERROR = "SET_UPDATE_NOTE_TIMER_ERROR"
@@ -23,6 +24,14 @@ export const setNoteTimerList = ({ data }) => ({
     trigger:
       "POST to /api/note-timer was successful and listed note timers will be added to \
               the reducer's note timer state.",
+  },
+})
+
+export const setNoteTimerListError = ({ response: { data } }) => ({
+  type: SET_NOTE_TIMER_LIST_ERROR,
+  payload: data,
+  meta: {
+    trigger: "Server failed to list note timers.",
   },
 })
 

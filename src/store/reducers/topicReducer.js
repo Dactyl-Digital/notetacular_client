@@ -12,7 +12,9 @@ import {
 import { checkProperty } from "./helpers"
 
 const parentSubCategoriesOfTopics = JSON.parse(
-  localStorage.getItem("parentSubCategoriesOfTopics")
+  typeof localStorage !== "undefined"
+    ? window.localStorage.getItem("parentSubCategoriesOfTopics")
+    : null
 )
 
 export const topicInitialState = {

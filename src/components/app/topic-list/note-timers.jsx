@@ -136,8 +136,6 @@ const NoteTimers = ({ noteId, note_timer_id_list, toggleShowModal }) => {
     <TimerContext.Consumer>
       {({ elapsedSeconds, activeTimer, startTimer, stopTimer }) => (
         <div>
-          {/* IMMEDIATE TODO: FINISH IMPLEMENTING NECESSARY FORMAT
-        FOR THIS MODAL FORM! */}
           {keys.map((key, i) => (
             <Container idx={i} key={`note-timer-${key}`}>
               <div className="time-btn-container">
@@ -186,7 +184,6 @@ const NoteTimers = ({ noteId, note_timer_id_list, toggleShowModal }) => {
                 <TrashIcon
                   marginRight={1.4}
                   handleClick={() => {
-                    console.log("deleting this b")
                     deleteNoteTimer({
                       note_id: noteId,
                       note_timer_id: note_timers[key].id,

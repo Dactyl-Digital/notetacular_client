@@ -41,8 +41,8 @@ const Container = styled.div`
 // `
 
 // Use a ternary operator to make sure that the document object is defined
-const portalRoot =
-  typeof document !== `undefined` ? document.getElementById("portal") : null
+let portalRoot =
+  typeof document !== "undefined" ? document.getElementById("portal") : null
 
 const TimerModal = ({
   children,
@@ -57,8 +57,7 @@ const TimerModal = ({
 
   useEffect(() => {
     // Use a ternary operator to make sure that the document object is defined
-    const div =
-      typeof document !== `undefined` ? document.createElement("div") : null
+    let div = document.createElement("div")
     setEl(div)
 
     if (portalRoot) {

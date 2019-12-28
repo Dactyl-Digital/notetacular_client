@@ -9,6 +9,11 @@ const StyledSvg = styled.svg`
   fill: ${props => props.color && `${props.color}`};
   margin-right: ${props => props.marginRight && `${props.marginRight}rem`};
 
+  g {
+    width: ${props => props.type === "CLOCK" && `4rem`};
+    height: ${props => props.type === "CLOCK" && `4rem`};
+  }
+
   &:after {
     content: "";
     position: absolute;

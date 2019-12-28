@@ -26,7 +26,9 @@ import { checkProperty } from "./helpers"
 // },
 
 const parentNotebooksOfSubCategories = JSON.parse(
-  localStorage.getItem("parentNotebooksOfSubCategories")
+  typeof localStorage !== "undefined"
+    ? localStorage.getItem("parentNotebooksOfSubCategories")
+    : null
 )
 
 export const subCategoryInitialState = {

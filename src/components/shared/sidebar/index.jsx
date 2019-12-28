@@ -33,4 +33,4 @@ const Sidebar = ({ keys, resourceList }) => {
   )
 }
 
-export default Sidebar
+export default React.memo(Sidebar)

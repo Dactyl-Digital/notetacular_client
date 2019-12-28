@@ -5,70 +5,47 @@ import { API_URL } from "../api-endpoints"
 import Layout from "../components/layout"
 import Signup from "../components/app/signup"
 import Login from "../components/app/login"
+import EmailVerification from "../components/app/email-verification"
 import PrivateRoute from "../components/shared/private-route"
 import RecentlyUpdatedNotebooks from "../components/app/recently-updated-notes"
 import NotebookList from "../components/app/notebook-list"
 import SubCategoryList from "../components/app/sub-category-list"
 import TopicList from "../components/app/topic-list"
+// const TopicList = React.lazy(() => import("../components/app/topic-list"))
 
-import { useNotebook } from "../hooks/queries/useNotebook"
-import { useSubCategory } from "../hooks/queries/useSubCategory"
-import { useTopic } from "../hooks/queries/useTopic"
-
-const EmailVerification = props => {
-  const [data, setData] = useState(null)
-  const [error, setError] = useState(null)
-
-  useEffect(() => {
-    const [VERIFICATION_URL, ..._rest] = props.location.href.match(
-      /\/verify-email.*/
-    )
-    axios
-      .get(`${API_URL}${VERIFICATION_URL}`)
-      .then(({ data }) => {
-        setData(data.message)
-      })
-      .catch(err => {
-        setError("Oops... Something went wrong. Please try again.")
-      })
-  }, [])
-
+const TestComp = () => {
   return (
     <>
-      <h1>Email Verification Page!</h1>
-      <div>
-        Status:{" "}
-        {data && (
-          <>
-            <div>data</div>
-            <Link to="/app/login">Go Login!</Link>
-          </>
-        )}{" "}
-        {error && error}
-      </div>
+      <h1>If this shows then something is fucked...</h1>
     </>
   )
 }
 
-const App = () => (
-  <Layout>
-    <Router>
-      <Signup path="/app/signup" />
-      <Login path="/app/login" />
-      <PrivateRoute path="/app/" component={RecentlyUpdatedNotebooks} />
-      {/* TODO: Utilize path params for dynamic linking */}
-      <PrivateRoute path="/app/notebooks" component={NotebookList} />
-      <PrivateRoute
-        path="/app/notebook/:notebookId/sub-categories"
-        component={SubCategoryList}
-      />
-      <PrivateRoute
-        path="/app/notebook/:notebookId/sub-category/:subCategoryId/topics"
-        component={TopicList}
-      />
-      <EmailVerification path="/app/api/verify-email/*" />
-    </Router>
-  </Layout>
-)
+const App = () => {
+  if (typeof window !== "undefined") {
+    return (
+      <Layout>
+        <Router>
+          <Signup path="/app/signup/" />
+          <Login path="/app/login/" />
+          <TestComp path="/app/test/" />
+          <EmailVerification path="/app/api/verify-email/*" />
+          {/* <PrivateRoute path="/app/" component={RecentlyUpdatedNotebooks} /> */}
+          {/* TODO: Utilize path params for dynamic linking */}
+          <PrivateRoute path="/app/notebooks/" component={NotebookList} />
+          <PrivateRoute
+            path="/app/notebook/:notebookId/sub-categories/"
+            component={SubCategoryList}
+          />
+          <PrivateRoute
+            path="/app/notebook/:notebookId/sub-category/:subCategoryId/topics/"
+            component={TopicList}
+          />
+        </Router>
+      </Layout>
+    )
+  }
+  return null
+}
 
 export default App

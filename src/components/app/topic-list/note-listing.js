@@ -17,9 +17,18 @@ const Container = styled.div`
   /* margin-bottom: 2rem; */
   border-radius: 3px;
   /* border: 2px solid #222; */
+  /* overflow: hidden; */
+
+  transform: translateY(-100%);
+  opacity: 0%;
+  transition: opacity 0.6s, transform 0.8s ease-in-out;
+  transform: ${props => props.toggled && `translateY(0%)`};
+  opacity: ${props => props.toggled && `100%`};
 `
 
 const NoteListing = ({
+  idx,
+  toggled,
   subCategoryId,
   topicId,
   note: { id, title, tags, content_markdown, note_timers },
@@ -38,7 +47,7 @@ const NoteListing = ({
   }
 
   return (
-    <Container>
+    <Container className="note-listing" idx={idx} toggled={toggled}>
       {/* TODO: Implement API PUT to save text editor contents to the
         database/store it in redux. Otherwise the editor will be clear when
         showEditor is toggled. */}
@@ -63,4 +72,4 @@ const NoteListing = ({
   )
 }
 
-export default NoteListing
+export default React.memo(NoteListing)

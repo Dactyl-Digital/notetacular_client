@@ -70,7 +70,11 @@ const CreateResourceModal = ({
               <h2>{action ? `${action} ${resource}` : `Add ${resource}`}</h2>
               {resource === "Timers" ||
                 (resource === "Tags" && (
-                  <Button type="ADD" size="SMALL" handleClick={addAction}>
+                  <Button
+                    type={buttonType}
+                    size="SMALL"
+                    handleClick={addAction}
+                  >
                     <AddIcon />
                   </Button>
                 ))}

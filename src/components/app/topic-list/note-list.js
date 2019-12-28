@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react"
+import styled from "styled-components"
 import NoteListing from "./note-listing"
 import { useTopic } from "../../../hooks/queries/useTopic"
 import { useNote } from "../../../hooks/queries/useNote"
@@ -7,19 +8,25 @@ import CreateResourceModal from "../../shared/create-resource-modal"
 import Button from "../../shared/button"
 import StyledForm from "../../shared/styled-form"
 
-const NoteList = ({ topics, topicId, subCategoryId }) => {
+const Container = styled.div`
+  /* button {
+    opacity: 0%;
+    transform: translateY(-20%);
+    transition: opacity 0.6s, transform 0.8s ease-in-out;
+    opacity: ${props => props.toggled && `100%`};
+    transform: ${props => props.toggled && `translateY(0%)`};
+  } */
+`
+
+const NoteList = ({ topics, topicId, subCategoryId, toggled }) => {
   const { parentTopicsOfNotes } = useNote()
   const { createNote, listNotes } = useNoteActions()
   const [title, setTitle] = useState("")
 
-  console.log("what is topics in noteList?")
-  console.log(topics)
   const notes = topics[topicId].notes
   const noteIdList = Array.isArray(notes) ? notes : []
 
   useEffect(() => {
-    console.log("what is the noteIdList in noteList:")
-    console.log(noteIdList)
     if (parentTopicsOfNotes.hasOwnProperty(topicId)) {
       // Still more notes available on the backend.
       if (!parentTopicsOfNotes[topicId].notesPaginationEnd) {
@@ -49,7 +56,7 @@ const NoteList = ({ topics, topicId, subCategoryId }) => {
   }
 
   return (
-    <div data-testid="note-list">
+    <Container data-testid="note-list" toggled={toggled}>
       <CreateResourceModal action="Create" resource="Note" buttonType="NORMAL">
         {/* TODO: Create a separate component for this form. */}
         {toggleShowModal => (
@@ -77,24 +84,14 @@ const NoteList = ({ topics, topicId, subCategoryId }) => {
           </StyledForm>
         )}
       </CreateResourceModal>
-      <div id="note-list">
+      <div className="note-list">
         {parentTopicsOfNotes.hasOwnProperty(topicId) &&
-          noteIdList.map(noteId => {
-            console.log("iterating through noteIdList")
-            console.log(parentTopicsOfNotes)
-            // console.log("what do I get accessing: notes[key]")
-            // console.log(notes[topicId])
-            // console.log("and what is noteIdList: ")
-            // console.log(noteIdList)
-            // console.log("what do I get accessing: notes[key][noteId]")
-            // console.log(notes[topicId][noteId])
+          noteIdList.map((noteId, idx) => {
             if (parentTopicsOfNotes[topicId].notes.hasOwnProperty(noteId)) {
-              console.log(
-                "THE NOTE: ",
-                parentTopicsOfNotes[topicId].notes[noteId]
-              )
               return (
                 <NoteListing
+                  idx={idx}
+                  toggled={toggled}
                   key={`${topicId}-${noteId}`}
                   note={parentTopicsOfNotes[topicId].notes[noteId]}
                   topicId={topics[topicId].id}
@@ -104,8 +101,8 @@ const NoteList = ({ topics, topicId, subCategoryId }) => {
             }
           })}
       </div>
-    </div>
+    </Container>
   )
 }
 
-export default NoteList
+export default React.memo(NoteList)

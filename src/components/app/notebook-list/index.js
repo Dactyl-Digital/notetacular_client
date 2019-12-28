@@ -49,7 +49,10 @@ const NotebookList = () => {
   const listEl = useRef(null)
 
   useEffect(() => {
-    const hash = window.location.hash
+    let hash
+    if (typeof window !== "undefined") {
+      hash = window.location.hash
+    }
     if (hash && !activeCircle.active) {
       const id = hash.slice(1, hash.length)
       setTimeout(() => {

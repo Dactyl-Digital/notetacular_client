@@ -33,48 +33,12 @@ const Container = styled.div`
 
   #options-menu-container {
     display: block;
-    /* height: 100%; */
     overflow: hidden;
     margin-top: 0.2rem;
-    /* border: 2px solid #222; */
-
-    /* A post recommending transitioning max-height */
-    height: 0%;
-    background: lime;
-    transition: height 0.15s ease-in-out;
-    /* animation: open 0.8s; */
-    /* animation-duration: 0.8s; */
-    /* animation-name: open-options; */
-    /* opacity: 0%; */
-    height: ${props => props.toggled && `100%`};
-    /* animation: ${props =>
-      props.toggled
-        ? `open-options 1.8s forwards`
-        : `close-options 1.8s forwards`}; */
-    /* animation: ${props => !props.toggled && `close 0.8s`}; */
-    /* transition: height 0.6s; */
-    /* height: ${props => props.toggled && `100%`}; */
-    /* @keyframes open-options {
-      from {
-        opacity: 0%;
-        height: 0%;
-      }
-      to {
-        opacity: 100%;
-        height: 100%;
-      }
-    }
-
-    @keyframes close-options {
-      from {
-        opacity: 100%;
-        height: 100%;
-      }
-      to {
-        opacity: 0%;
-        height: 0%;
-      }
-    } */
+    max-height: 0rem;
+    transition: max-height 0.6s ease-in-out;
+    /* NOTE: Applying a percentage height doesn't trigger the transition */
+    max-height: ${props => props.toggled && `10rem`};
   }
 
   ul {
@@ -115,7 +79,9 @@ const Options = () => {
 
   useEffect(() => {
     if (!authenticated) {
-      localStorage.removeItem("authenticated")
+      if (typeof localStorage !== "undefined") {
+        localStorage.removeItem("authenticated")
+      }
     }
   }, [authenticated])
 
@@ -156,4 +122,4 @@ const Options = () => {
   )
 }
 
-export default Options
+export default React.memo(Options)

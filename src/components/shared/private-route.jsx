@@ -17,9 +17,13 @@ const PrivateRoute = ({ component: Component, location, ...rest }) => {
   useEffect(() => {
     // set up window leave listener which will be the hook
     // for saving reduxState to localStorage
-    window.addEventListener("beforeunload", handleSaveReduxState)
+    if (typeof window !== "undefined") {
+      window.addEventListener("beforeunload", handleSaveReduxState)
+    }
     return () => {
-      window.removeEventListener("beforeunload", handleSaveReduxState)
+      if (typeof window !== "undefined") {
+        window.removeEventListener("beforeunload", handleSaveReduxState)
+      }
     }
     // Due to closure.... The beforeunload eventListener needs to be re-registered in order to read the updated reduxState
     // TODO: Determine if having this logic here will be negative for performance...
@@ -54,7 +58,9 @@ const PrivateRoute = ({ component: Component, location, ...rest }) => {
   }
 
   if (!authenticated && location.pathname !== `/app/login`) {
-    localStorage.removeItem("authenticated")
+    if (typeof localStorage !== "undefined") {
+      localStorage.removeItem("authenticated")
+    }
     navigate("/app/login")
     return null
   }

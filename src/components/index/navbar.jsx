@@ -18,7 +18,7 @@ const Navbar = () => (
       {` `}
       <Link to="/app/login">Login</Link>
       <button>
-        <Link to="/app/login">Try it for Free</Link>
+        <Link to="/app/signup">Try it for Free</Link>
       </button>
     </nav>
   </div>

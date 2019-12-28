@@ -39,18 +39,20 @@ const Container = styled.div`
 
     &:hover {
       background: #11eef6;
-      transform: scale(1.2);
+      transform: translateY(-0.05rem);
     }
   }
 `
 
 const captureSaveEvent = quill => persistNoteContent => e => {
-  if (
-    (window.navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey) &&
-    e.keyCode == 83
-  ) {
-    e.preventDefault()
-    saveEditorContent(quill, persistNoteContent)
+  if (typeof window !== "undefined") {
+    if (
+      (window.navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey) &&
+      e.keyCode == 83
+    ) {
+      e.preventDefault()
+      saveEditorContent(quill, persistNoteContent)
+    }
   }
 }
 
@@ -96,8 +98,15 @@ const initializeQuillEditor = (editorId, readOnly) => {
     readOnly: readOnly,
     theme: "snow",
   }
-  const quill = new Quill(`#${editorId}`, options)
-  return quill
+  let quill
+  if (typeof localStorage !== "undefined") {
+    quill = new Quill(`#${editorId}`, options)
+  }
+  if (quill) {
+    return quill
+  } else {
+    return null
+  }
 }
 
 const Editor = ({
@@ -134,10 +143,14 @@ const Editor = ({
       handleSave = captureSaveEvent(quill)(persistNoteContent)
       quill.root.addEventListener("keydown", handleSave)
     }
-    window.addEventListener("beforeunload", handleConfirmLeave)
+    if (typeof window !== "undefined") {
+      window.addEventListener("beforeunload", handleConfirmLeave)
+    }
 
     return () => {
-      window.removeEventListener("beforeunload", handleConfirmLeave)
+      if (typeof window !== "undefined") {
+        window.removeEventListener("beforeunload", handleConfirmLeave)
+      }
       if (quill) {
         quill.root.removeEventListener("keydown", handleSave)
         saveEditorContent(quill, persistNoteContent)

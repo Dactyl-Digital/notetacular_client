@@ -16,6 +16,7 @@ exports.onCreatePage = async ({ page, actions }) => {
   if (page.path.match(/^\/app/)) {
     page.matchPath = "/app/*"
     // Update the page.
+    console.log("creating page: ", page)
     createPage(page)
   }
 }

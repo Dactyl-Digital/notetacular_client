@@ -98,4 +98,4 @@ const CircleScrollNav = props => {
   )
 }
 
-export default CircleScrollNav
+export default React.memo(CircleScrollNav)
