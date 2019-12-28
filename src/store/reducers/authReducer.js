@@ -1,6 +1,7 @@
 import {
   LOGIN_USER,
   LOGOUT_USER,
+  INVALID_SESSION,
   SIGN_UP_SUCCESS,
   SET_SIGNUP_ERROR,
   SET_LOGIN_ERROR,
@@ -29,6 +30,9 @@ export default function authReducer(
     return { ...authState, authenticated: true }
   }
   if (type === LOGOUT_USER) {
+    return { ...authState, authenticated: false }
+  }
+  if (type === INVALID_SESSION) {
     return { ...authState, authenticated: false }
   }
   if (type === SIGN_UP_SUCCESS) {

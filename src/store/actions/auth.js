@@ -1,5 +1,6 @@
 export const LOGIN_USER = "LOGIN_USER"
 export const LOGOUT_USER = "LOGOUT_USER"
+export const INVALID_SESSION = "INVALID_SESSION"
 export const SIGN_UP_SUCCESS = "SIGN_UP_SUCCESS"
 export const SET_SIGNUP_ERROR = "SET_SIGNUP_ERROR"
 export const SET_LOGIN_ERROR = "SET_LOGIN_ERROR"

@@ -68,16 +68,11 @@ const CreateResourceModal = ({
           <div id="form-heading">
             <div id="modal-header">
               <h2>{action ? `${action} ${resource}` : `Add ${resource}`}</h2>
-              {resource === "Timers" ||
-                (resource === "Tags" && (
-                  <Button
-                    type={buttonType}
-                    size="SMALL"
-                    handleClick={addAction}
-                  >
-                    <AddIcon />
-                  </Button>
-                ))}
+              {(resource === "Timers" || resource === "Tags") && (
+                <Button type="ADD" size="SMALL" handleClick={addAction}>
+                  <AddIcon />
+                </Button>
+              )}
             </div>
 
             <div id="close-modal-x" onClick={toggleShowModal}>

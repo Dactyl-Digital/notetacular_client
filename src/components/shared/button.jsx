@@ -8,6 +8,7 @@ const StyledButton = styled.button`
   padding: ${props => props.type === "ADD" && "0.05rem 0.4rem"};
   margin-left: ${props => props.size === "SMALL" && "2rem"};
   margin-left: ${props => props.type === "ADD" && "1rem"};
+  margin-left: ${props => props.removeMargin && "0rem"};
   border-radius: 25px;
   font-size: 1.4rem;
   font-size: ${props => props.size === "SMALL" && "1rem"};
@@ -35,9 +36,14 @@ const StyledButton = styled.button`
   }
 `
 
-const Button = ({ children, type, size, handleClick }) => {
+const Button = ({ children, type, size, removeMargin, handleClick }) => {
   return (
-    <StyledButton type={type} size={size} onClick={handleClick}>
+    <StyledButton
+      type={type}
+      size={size}
+      removeMargin={removeMargin}
+      onClick={handleClick}
+    >
       <span>{children}</span>
     </StyledButton>
   )

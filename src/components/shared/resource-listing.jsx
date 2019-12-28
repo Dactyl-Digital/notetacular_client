@@ -5,7 +5,7 @@ import { useNotebookActions } from "../../hooks/commands/useNotebookActions"
 import Tags from "../app/topic-list/tags"
 import TrashIcon from "./icons/trash-icon"
 import ArrowIcon from "./icons/arrow-icon"
-const NoteList = lazy(() => import("../app/topic-list/note-list"));
+const NoteList = lazy(() => import("../app/topic-list/note-list"))
 // SOLUTION!!! -> To the quill "document is undefined" at gatsby build time!!!
 // NOTE: Causes an error when running in dev though...
 // const NoteList = React.lazy(() => import("../app/topic-list/note-list"))
@@ -22,7 +22,7 @@ const Container = styled.div`
   transition: box-shadow 0.4s, transform 0.4s ease-in-out;
   margin-top: 2rem;
   padding-right: 1.8rem;
-  transform: ${props => props.active && "scale(1.005)"};
+  transform: ${props => props.active && "translateY(-0.05rem)"};
   box-shadow: ${props =>
     props.active && "0rem 0.1rem 1rem rgba(17, 238, 246, 30%)"};
   background: ${props => props.type === "NOTE" && "#11EEF6"};
@@ -62,13 +62,17 @@ const Container = styled.div`
     text-shadow: 0.1rem 0.1rem #1b7171;
     margin: 0;
     margin-left: 1.6rem;
+    border: 2px solid #222;
+    min-width: 10rem;
+    max-width: 14rem;
   }
 
   #title-and-tags {
     display: flex;
     justify-content: space-between;
     min-width: 22.4rem;
-    max-width: 22.4rem;
+    max-width: 32.4rem;
+    border: 2px solid blue;
   }
 
   .title-container {

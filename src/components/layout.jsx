@@ -36,6 +36,13 @@ const Layout = ({ children }) => {
     }
   `)
 
+  // NOTE: This style rule is because I don't intend to support mobile/tablets
+  // TODO: Implement useEffect to check screen width and show an overlay w/ a message
+  // to notify the user.
+  // @media (max-width: 1082px) {
+  //   background: lime;
+  // }
+
   return (
     <Provider store={store}>
       <Helmet

@@ -19,7 +19,7 @@ const Container = styled.div`
   align-items: center;
   max-width: 14rem;
   border-radius: 25px;
-  margin-left: 2rem;
+  margin-left: 1rem;
 
   #modal {
     margin: 0;
@@ -28,9 +28,12 @@ const Container = styled.div`
   .tag-list {
     display: flex;
     justify-content: space-between;
+    min-width: 14rem;
     width: 14rem;
+    max-width: 14rem;
     border-radius: 25px;
     overflow-x: scroll;
+    border: 2px solid lime;
   }
 
   #tag-input-container {
@@ -233,6 +236,8 @@ const Tags = ({ type, tags, topicId, noteId }) => {
           />
         )}
       </div>
+      {/* TODO: Refactor... All of this is just to
+      display the plus icon if tags are going to be listed */}
       {tags !== null && tags.length > 0 && (
         <NoTagsCreatedYetView
           inputKeys={Object.keys(tagInputList)}

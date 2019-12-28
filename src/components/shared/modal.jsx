@@ -61,7 +61,12 @@ const Modal = ({ children, resource, IconComponent, buttonType }) => {
           </Button>
         )}
         {buttonType === "SMALL" && (
-          <Button type="CREATE" size="SMALL" handleClick={toggleShowModal}>
+          <Button
+            type="CREATE"
+            size="SMALL"
+            handleClick={toggleShowModal}
+            removeMargin={resource === "Tags"}
+          >
             Add {resource}
           </Button>
         )}

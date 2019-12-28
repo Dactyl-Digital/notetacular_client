@@ -2,6 +2,21 @@ import axios from "axios"
 import { toggleLoader } from "../actions/ui"
 
 const API_REQUEST = "API_REQUEST"
+const VALID_SESSION = "VALID_SESSION"
+
+const invalidSession = ({ response: { data } }) => {
+  console.log("invalidSession running")
+  if (data.hasOwnProperty("message") && data.message === "Invalid session") {
+    return {
+      type: "INVALID_SESSION",
+      payload: {},
+      meta: {
+        trigger: "User's cookie session has expired.",
+      },
+    }
+  }
+  return VALID_SESSION
+}
 
 const dispatchToggleLoader = (dispatch, bool, { method, url }) =>
   dispatch(toggleLoader({ loading: bool, trigger: `${method} ${url}` }))
@@ -35,7 +50,9 @@ const makeRequest = (
           })
         }
         dispatchToggleLoader(dispatch, false, { method, url })
-        onError(error)
+        const result = invalidSession(error)
+        if (result === VALID_SESSION) return onError(error)
+        dispatch(result)
       })
   }
   if (method === "POST") {
@@ -73,7 +90,9 @@ const makeRequest = (
           })
         }
         dispatchToggleLoader(dispatch, false, { method, url })
-        onError(error)
+        const result = invalidSession(error)
+        if (result === VALID_SESSION) return onError(error)
+        dispatch(result)
       })
   }
   if (method === "PUT") {
@@ -97,7 +116,9 @@ const makeRequest = (
           })
         }
         dispatchToggleLoader(dispatch, false, { method, url })
-        onError(error)
+        const result = invalidSession(error)
+        if (result === VALID_SESSION) return onError(error)
+        dispatch(result)
       })
   }
   if (method === "PATCH") {
@@ -121,7 +142,9 @@ const makeRequest = (
           })
         }
         dispatchToggleLoader(dispatch, false, { method, url })
-        onError(error)
+        const result = invalidSession(error)
+        if (result === VALID_SESSION) return onError(error)
+        dispatch(result)
       })
   }
   if (method === "DELETE") {
@@ -145,7 +168,9 @@ const makeRequest = (
           })
         }
         dispatchToggleLoader(dispatch, false, { method, url })
-        onError(error)
+        const result = invalidSession(error)
+        if (result === VALID_SESSION) return onError(error)
+        dispatch(result)
       })
   }
 }
