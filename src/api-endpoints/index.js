@@ -31,12 +31,3 @@ export const REMOVE_NOTE_TAG_URL = `${API_URL}/note/tags`
 // Supports post, patch, delete
 export const NOTE_TIMER_URL = `${API_URL}/note-timer`
 export const LIST_NOTE_TIMERS_URL = `${NOTE_TIMER_URL}?limit=20&offset=`
-
-// Just saving my DNS stuff here temporarily...
-// email.mg.notastical.com CNAME mailgun.org
-// mg.notastical.com MX 10 mxa.mailgun.org
-// mg.notastical.com MX 10 mxb.mailgun.org
-// notastical.com confident-archimedes-62e903.netlify.com
-// www.notastical.com confident-archimedes-62e903.netlify.com
-// smtp._domainkey.mg.notastical.com TXT
-// "k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0fDI4C3kC8vpr7I7aAtLaT7I/CwvvW2Ogu3Ky1txNbicuth4i5C8HO3edRKVauunzQfGJBNNap5yE3EjsXU6vfTr58jkCtl9jZtLPotUqxNtlMd8qFIlcbKnKvKpaOxqiz8DpcVdpB4Wb3UINRtJibPFDbPTPcW0Ecjiiaq109GLivkxq3pk+ymV8lPdKAE7UlcgV3c/g5F+j0iR+RoEA4BKFo2eHg5xo0zx/AIzIf4QJG6YT6XZsxhpvHhIcrew9Hlx2tt4twZsYuBwhYvYDvrZ618a9UtRsVmZqep57QM84GDJU0PMrJninIYBGDMrI+4UcSc0ySm7fKeY8AlzhwIDAQAB"
