@@ -94,7 +94,7 @@ const ExistingTagsView = ({ tags, type, topicId, noteId }) => (
 )
 
 const NoTagsCreatedYetView = ({
-  inputKeys,
+  inputValueList,
   setTagInputValue,
   getTagInputValue,
   removeTagInputValue,
@@ -108,29 +108,28 @@ const NoTagsCreatedYetView = ({
       resource="Tags"
       IconComponent={IconComponent ? IconComponent : null}
       buttonType={buttonType}
-      addAction={() => handleAddNewTagInput({ count: inputKeys.length })}
+      addAction={() => handleAddNewTagInput()}
     >
       {/* TODO: Create a separate component for this form. */}
       {toggleShowModal => (
         <StyledForm
           onSubmit={e => {
             e.preventDefault()
-            handleAddNewTag({ keys: inputKeys })
+            handleAddNewTag({ inputValueList })
             toggleShowModal(false)
           }}
         >
           <div>
-            {inputKeys.map((key, idx) => {
+            {inputValueList.map((inputValue, idx) => {
               return (
-                <div id="tag-input-container" key={`tag-${key}-${idx}`}>
+                <div id="tag-input-container" key={`tag-${idx}`}>
                   <div id="form-fields">
                     <input
-                      id="title"
                       type="text"
-                      value={getTagInputValue({ count: idx })}
+                      value={getTagInputValue({ index: idx })}
                       onChange={e =>
                         setTagInputValue({
-                          count: idx,
+                          index: idx,
                           newValue: e.target.value,
                         })
                       }
@@ -138,7 +137,7 @@ const NoTagsCreatedYetView = ({
                   </div>
                   <div
                     id="xicon-container"
-                    onClick={() => removeTagInputValue({ count: idx })}
+                    onClick={() => removeTagInputValue({ index: idx })}
                   >
                     <XIcon id="tag-xicon" />
                   </div>
@@ -161,55 +160,56 @@ const NoTagsCreatedYetView = ({
 const Tags = ({ type, tags, topicId, noteId }) => {
   const { addTopicTags } = useTopicActions()
   const { addNoteTags } = useNoteActions()
-  const [tagInputList, setTagInputList] = useState({ "0": "" })
+  const [tagInputList, setTagInputList] = useState([""])
+  const [inputListErrorPositions, setInputListErrorPositions] = useState([])
 
-  const handleAddNewTag = ({ keys }) => {
+  const handleAddNewTag = ({ inputValueList }) => {
     let validTags = true
-    const tagList = keys.map(key => {
-      const tag = tagInputList[key]
-      if (tag.length >= 3 && tag.length <= 25) {
-        return tag
-      }
+
+    inputValueList.map((tagValue, idx) => {
+      if (tagValue.length >= 3 && tagValue.length <= 25) return
+      setInputListErrorPositions([...inputListErrorPositions, idx])
       validTags = false
     })
 
     if (validTags) {
       if (type === "TOPIC") {
         addTopicTags({
-          tags: tagList,
+          tags: inputValueList,
           topic_id: topicId,
         })
       }
       if (type === "NOTE") {
         addNoteTags({
-          tags: tagList,
+          tags: inputValueList,
           note_id: noteId,
         })
       }
+      setInputListErrorPositions([])
+      setTagInputList([""])
     }
-    setTagInputList({ inputs: { "0": "" } })
   }
 
-  const getTagInputValue = ({ count }) => tagInputList[count]
-  const setTagInputValue = ({ count, newValue }) => {
-    setTagInputList({
-      ...tagInputList,
-      [count]: newValue,
-    })
+  const getTagInputValue = ({ index }) => tagInputList[index]
+
+  const setTagInputValue = ({ index, newValue }) => {
+    setTagInputList([
+      ...tagInputList.slice(0, index),
+      newValue,
+      ...tagInputList.slice(index + 1, tagInputList.length),
+    ])
   }
-  const removeTagInputValue = ({ count }) => {
-    const keys = Object.keys(tagInputList)
-    if (keys.length === 1) return
-    const updatedInputs = keys.reduce((acc, key) => {
-      if (Number(key) !== Number(count)) {
-        acc[key] = tagInputList[key]
-      }
-      return acc
-    }, {})
-    setTagInputList({ ...updatedInputs })
+
+  const removeTagInputValue = ({ index }) => {
+    if (tagInputList.length === 1) return
+    setTagInputList([
+      ...tagInputList.slice(0, index),
+      ...tagInputList.slice(index + 1, tagInputList.length),
+    ])
   }
-  const handleAddNewTagInput = ({ count }) => {
-    setTagInputList({ ...tagInputList, [count]: "" })
+
+  const handleAddNewTagInput = () => {
+    setTagInputList([...tagInputList, ""])
   }
 
   return (
@@ -226,7 +226,7 @@ const Tags = ({ type, tags, topicId, noteId }) => {
           </>
         ) : (
           <NoTagsCreatedYetView
-            inputKeys={Object.keys(tagInputList)}
+            inputValueList={tagInputList}
             setTagInputValue={setTagInputValue}
             getTagInputValue={getTagInputValue}
             removeTagInputValue={removeTagInputValue}
@@ -240,7 +240,7 @@ const Tags = ({ type, tags, topicId, noteId }) => {
       display the plus icon if tags are going to be listed */}
       {tags !== null && tags.length > 0 && (
         <NoTagsCreatedYetView
-          inputKeys={Object.keys(tagInputList)}
+          inputValueList={tagInputList}
           setTagInputValue={setTagInputValue}
           getTagInputValue={getTagInputValue}
           removeTagInputValue={removeTagInputValue}
