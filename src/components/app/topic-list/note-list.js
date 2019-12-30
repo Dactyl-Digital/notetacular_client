@@ -67,7 +67,7 @@ const NoteList = ({ topics, topicId, subCategoryId, toggled }) => {
               toggleShowModal(false)
             }}
           >
-            <div id="form-fields">
+            <div className="form-fields">
               <label htmlFor="title">Title</label>
               <input
                 id="title"

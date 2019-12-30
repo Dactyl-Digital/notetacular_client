@@ -151,7 +151,7 @@ const SubCategoryList = ({ notebookId }) => {
                   toggleShowModal(false)
                 }}
               >
-                <div id="form-fields">
+                <div className="form-fields">
                   <label htmlFor="title">Title</label>
                   <input
                     id="title"
@@ -160,7 +160,7 @@ const SubCategoryList = ({ notebookId }) => {
                     onChange={e => setTitle(e.target.value)}
                   />
                 </div>
-                <div id="form-button">
+                <div className="form-button">
                   <Button type="CREATE" size="SMALL">
                     Submit!
                   </Button>

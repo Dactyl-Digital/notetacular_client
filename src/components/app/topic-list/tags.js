@@ -17,8 +17,7 @@ import StyledForm from "../../shared/styled-form"
 const Container = styled.div`
   display: flex;
   align-items: center;
-  max-width: 14rem;
-  border-radius: 25px;
+  max-width: 12rem;
   margin-left: 1rem;
 
   #modal {
@@ -27,38 +26,12 @@ const Container = styled.div`
 
   .tag-list {
     display: flex;
-    justify-content: space-between;
     min-width: 14rem;
     width: 14rem;
     max-width: 14rem;
     border-radius: 25px;
     overflow-x: scroll;
-    border: 2px solid lime;
-  }
-
-  #tag-input-container {
-    display: flex;
-    align-items: center;
-    width: 13.8rem;
-    margin-bottom: 1rem;
-    border: 2px solid #222;
-
-    #xicon-container {
-      display: flex;
-      align-items: center;
-      height: 100%;
-    }
-
-    svg {
-      width: 0.8rem;
-      height: 0.8rem;
-      padding-left: 1rem;
-      margin-bottom: 0;
-    }
-
-    /* #tag-xicon {
-      margin-left: 0.6rem;
-    } */
+    margin-right: 0.4rem;
   }
 `
 
@@ -119,11 +92,11 @@ const NoTagsCreatedYetView = ({
             toggleShowModal(false)
           }}
         >
-          <div>
+          <div id="tag-input-fields-container">
             {inputValueList.map((inputValue, idx) => {
               return (
-                <div id="tag-input-container" key={`tag-${idx}`}>
-                  <div id="form-fields">
+                <div className="tag-input-container" key={`tag-${idx}`}>
+                  <div className="form-fields">
                     <input
                       type="text"
                       value={getTagInputValue({ index: idx })}
@@ -136,16 +109,16 @@ const NoTagsCreatedYetView = ({
                     />
                   </div>
                   <div
-                    id="xicon-container"
+                    className="xicon-container"
                     onClick={() => removeTagInputValue({ index: idx })}
                   >
-                    <XIcon id="tag-xicon" />
+                    <XIcon className="tag-xicon" />
                   </div>
                 </div>
               )
             })}
           </div>
-          <div id="form-button">
+          <div className="form-button">
             <Button type="CREATE" size="SMALL">
               Submit!
             </Button>

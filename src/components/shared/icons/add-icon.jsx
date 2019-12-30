@@ -1,8 +1,9 @@
 import React from "react"
 import StyledSvg from "./styled-svg"
 
-const AddIcon = () => (
+const AddIcon = ({ color }) => (
   <StyledSvg
+    color={color}
     version="1.1"
     id="Capa_1"
     xmlns="http://www.w3.org/2000/svg"

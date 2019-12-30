@@ -62,29 +62,37 @@ const Container = styled.div`
     text-shadow: 0.1rem 0.1rem #1b7171;
     margin: 0;
     margin-left: 1.6rem;
-    border: 2px solid #222;
-    min-width: 10rem;
-    max-width: 14rem;
+    min-width: 11rem;
+    width: 11rem;
+    max-width: 11rem;
+    /* border: 2px solid #222; */
   }
 
   #title-and-tags {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     min-width: 22.4rem;
     max-width: 32.4rem;
-    border: 2px solid blue;
+    /* border: 2px solid blue; */
   }
 
   .title-container {
-    width: 20rem;
-    min-width: 20rem;
-    width: ${props =>
-      (props.type === "NOTE" || props.type === "TOPIC") && `8rem`};
-    min-width: ${props =>
-      (props.type === "NOTE" || props.type === "TOPIC") && `8rem`};
+    position: relative;
+    max-width: 11rem;
     overflow-x: hidden;
     white-space: nowrap;
     padding: 0.1rem 0;
+  }
+
+  .title-container:before {
+    content: "";
+    position: absolute;
+    z-index: 8999;
+    top: 0;
+    left: 1.8rem;
+    width: 12rem;
+    height: 2.2rem;
   }
 
   h3 {
@@ -173,14 +181,14 @@ const ResourceListing = ({
       >
         <div id="title-and-tags">
           {type === "TOPIC" || type === "NOTE" ? (
-            // <div className="title-container">
-            <h3 ref={titleRef}>{title}</h3>
-          ) : (
-            // </div>
-            <Link to={`/app/${link}`}>
-              {/* <div className="title-container"> */}
+            <div className="title-container">
               <h3 ref={titleRef}>{title}</h3>
-              {/* </div> */}
+            </div>
+          ) : (
+            <Link to={`/app/${link}`}>
+              <div className="title-container">
+                <h3 ref={titleRef}>{title}</h3>
+              </div>
             </Link>
           )}
           {(type === "TOPIC" || type === "NOTE") && (

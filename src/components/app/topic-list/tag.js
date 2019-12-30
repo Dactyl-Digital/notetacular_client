@@ -8,7 +8,7 @@ const Container = styled.div`
   display: flex;
   justify-content: space-around;
   align-items: center;
-  padding: 0.4rem 0.4rem;
+  padding: 0.2rem 0.4rem;
   border-radius: 25px;
   font-family: "Blinker", sans-serif;
   color: #fcfcfc;
@@ -18,7 +18,8 @@ const Container = styled.div`
   margin-right: 1rem;
 
   #tag-text-container {
-    min-width: 2.6rem;
+    min-width: 3.8rem;
+    padding-right: 0.2rem;
     white-space: nowrap;
   }
 
@@ -26,13 +27,13 @@ const Container = styled.div`
     margin: 0.1rem;
     color: #fcfcfc;
     color: ${props => (props.type === "NOTE" ? "#11EEF6" : null)};
-    font-size: 1.2rem;
+    font-size: 1rem;
   }
 
   svg {
-    min-width: 0.8rem;
-    width: 0.8rem;
-    height: 0.8rem;
+    min-width: 0.6rem;
+    width: 0.7rem;
+    height: 0.7rem;
   }
 `
 

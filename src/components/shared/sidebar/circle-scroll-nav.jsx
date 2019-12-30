@@ -59,6 +59,13 @@ const A = styled.a`
     height: 0;
     background: lime;
   }
+
+  .resource-title {
+    overflow-x: hidden;
+    white-space: nowrap;
+    min-width: 6rem;
+    max-width: 8rem;
+  }
 `
 
 // Will receive the resourceList object (i.e. notebooks, subCategories, topics) from redux state and the Object.keys array as props
@@ -89,7 +96,9 @@ const CircleScrollNav = props => {
                     : `circle`
                 }
               ></div>
-              <span>{props.resourceList[key].title}</span>
+              <span className="resource-title">
+                {props.resourceList[key].title}
+              </span>
             </A>
           ))}
         </Nav>

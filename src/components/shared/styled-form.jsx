@@ -11,7 +11,7 @@ const StyledForm = styled.form`
   padding: 1.4rem;
   padding-bottom: 0;
 
-  #form-fields {
+  .form-fields {
     display: flex;
     flex-direction: column;
 
@@ -35,6 +35,36 @@ const StyledForm = styled.form`
       background: blue;
     }
   }
+
+  #tag-input-fields-container {
+    overflow-y: scroll;
+
+    .tag-input-container {
+      display: flex;
+      align-items: center;
+      width: 13.8rem;
+      margin-bottom: 1rem;
+      /* border: 4px solid #222; */
+
+      .xicon-container {
+        display: flex;
+        align-items: center;
+        height: 100%;
+      }
+
+      svg {
+        width: 0.7rem;
+        height: 0.7rem;
+        margin-left: 1rem;
+        margin-bottom: 0;
+      }
+
+      /* #tag-xicon {
+      margin-left: 0.6rem;
+    } */
+    }
+  }
+
   button {
     margin-left: 0;
   }
