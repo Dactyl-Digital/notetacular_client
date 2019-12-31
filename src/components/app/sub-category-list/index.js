@@ -171,10 +171,12 @@ const SubCategoryList = ({ notebookId }) => {
           <div id="sub-category-list">
             {keys.map((key, i) => (
               <ResourceListing
+                type="SUB_CATEGORY"
                 key={subCategories[key].id.toString()}
                 title={subCategories[key].title}
                 link={`notebook/${notebookId}/sub-category/${subCategories[key].id}/topics`}
-                // link={`sub-category/${subCategories[key].id}/topics`}
+                notebookId={notebookId}
+                subCategoryId={subCategories[key].id}
                 index={i}
                 active={activeCircle.active === subCategories[key].title}
                 setActiveDisabled={setActiveDisabled}

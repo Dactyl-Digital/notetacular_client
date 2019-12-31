@@ -1,6 +1,8 @@
 export const SET_CREATED_TOPIC = "SET_CREATED_TOPIC"
 export const SET_TOPIC_LIST = "SET_TOPIC_LIST"
 export const LIST_SHARED_TOPICS = "LIST_SHARED_TOPICS"
+export const REMOVE_DELETED_TOPIC = "REMOVE_DELETED_TOPIC"
+export const SET_DELETE_TOPIC_ERROR = "SET_DELETE_TOPIC_ERROR"
 export const SET_ADD_TOPIC_TAGS = "SET_ADD_TOPIC_TAGS"
 export const SET_CREATE_TOPIC_ERROR = "SET_CREATE_TOPIC_ERROR"
 export const SET_TOPIC_LIST_ERROR = "SET_TOPIC_LIST_ERROR"
@@ -53,6 +55,22 @@ export const updateTopicNoteIdList = ({ id, topic_id, sub_category_id }) => ({
     trigger:
       "A note associated with this topic was successfully created, and it is \
         necessary to update the topic's noteIdList otherwise all hell of errors will break loose.",
+  },
+})
+
+export const removeDeletedTopic = ({ sub_category_id, topic_id }) => ({
+  type: REMOVE_DELETED_TOPIC,
+  payload: { sub_category_id, topic_id },
+  meta: {
+    trigger: "Topic was successfully deleted on the serverside.",
+  },
+})
+
+export const setDeleteTopicError = ({ response: { data } }) => ({
+  type: SET_DELETE_TOPIC_ERROR,
+  payload: data,
+  meta: {
+    trigger: "Topic failed to be deleted on the serverside.",
   },
 })
 

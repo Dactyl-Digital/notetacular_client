@@ -5,13 +5,15 @@ import {
   setCreateTopicError,
   setTopicList,
   setTopicListError,
+  removeDeletedTopic,
+  setDeleteTopicError,
   setAddedTopicTags,
   setAddedTopicTagsError,
   setRemovedTopicTag,
   setRemoveTopicTagError,
 } from "../../store/actions/topic"
 import {
-  CREATE_TOPIC_URL,
+  TOPIC_URL,
   LIST_TOPICS_URL,
   ADD_TOPIC_TAGS_URL,
   REMOVE_TOPIC_TAG_URL,
@@ -21,7 +23,7 @@ export const createTopic = dispatch => createTopicData => {
   dispatch(
     apiRequest({
       method: "POST",
-      url: CREATE_TOPIC_URL,
+      url: TOPIC_URL,
       payload: createTopicData,
       onSuccess: createTopicSuccess(dispatch),
       onError: createTopicError(dispatch),
@@ -57,6 +59,29 @@ const listTopicsSuccess = dispatch => response => {
 
 const listTopicsError = dispatch => error => {
   dispatch(setTopicListError(error))
+}
+
+export const deleteTopic = dispatch => ({ sub_category_id, topic_id }) => {
+  dispatch(
+    apiRequest({
+      method: "DELETE",
+      url: `${TOPIC_URL}/${topic_id}`,
+      payload: {},
+      onSuccess: deleteTopicSuccess({ sub_category_id, topic_id })(dispatch),
+      onError: deleteTopicError(dispatch),
+    })
+  )
+}
+
+const deleteTopicSuccess = ({
+  sub_category_id,
+  topic_id,
+}) => dispatch => _response => {
+  dispatch(removeDeletedTopic({ sub_category_id, topic_id }))
+}
+
+const deleteTopicError = dispatch => error => {
+  dispatch(setDeleteTopicError(error))
 }
 
 export const addTopicTags = dispatch => data => {
@@ -106,6 +131,7 @@ export function useTopicActions() {
   return {
     createTopic: createTopic(dispatch),
     listTopics: listTopics(dispatch),
+    deleteTopic: deleteTopic(dispatch),
     addTopicTags: addTopicTags(dispatch),
     removeTopicTag: removeTopicTag(dispatch),
   }

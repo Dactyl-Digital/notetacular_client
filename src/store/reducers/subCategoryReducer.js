@@ -2,6 +2,8 @@ import {
   SET_CREATED_SUB_CATEGORY,
   SET_SUB_CATEGORY_LIST,
   LIST_SHARED_SUB_CATEGORIES,
+  REMOVE_DELETED_SUB_CATEGORY,
+  SET_DELETE_SUB_CATEGORY_ERROR,
   SET_CREATE_SUB_CATEGORY_ERROR,
   SET_SUB_CATEGORY_LIST_ERROR,
   SET_LIST_SHARED_SUB_CATEGORY_ERROR,
@@ -39,6 +41,7 @@ export const subCategoryInitialState = {
   sharedSubCategories: {},
   createSubCategoryError: null,
   subCategoryListError: null,
+  deleteSubCategoryError: null,
   listSharedSubCategoriesError: null,
 }
 
@@ -161,6 +164,27 @@ export default function subCategoryReducer(
   if (type === SET_SUB_CATEGORY_LIST) {
     return subCategoryListNewState(subCategoryState, payload)
   }
+  if (type === REMOVE_DELETED_SUB_CATEGORY) {
+    const { notebook_id, sub_category_id } = payload
+    delete subCategoryState.parentNotebooksOfSubCategories[notebook_id]
+      .subCategories[sub_category_id]
+    return {
+      ...subCategoryState,
+      parentNotebooksOfSubCategories: {
+        ...subCategoryState.parentNotebooksOfSubCategories,
+        [notebook_id]: {
+          ...subCategoryState.parentNotebooksOfSubCategories[notebook_id],
+          sub_categories: {
+            ...subCategoryState.parentNotebooksOfSubCategories[notebook_id]
+              .sub_categories,
+          },
+          listOffset:
+            subCategoryState.parentNotebooksOfSubCategories[notebook_id]
+              .listOffset - 1,
+        },
+      },
+    }
+  }
   // if (type === LIST_SHARED_SUB_CATEGORIES) {
   //   return { ...subCategoryState, successfulSignup: true }
   // }
@@ -169,6 +193,9 @@ export default function subCategoryReducer(
   }
   if (type === SET_SUB_CATEGORY_LIST_ERROR) {
     return { ...subCategoryState, subCategoryListError: payload }
+  }
+  if (type === SET_DELETE_SUB_CATEGORY_ERROR) {
+    return { ...subCategoryState, deleteSubCategoryError: payload }
   }
   // if (type === SET_LIST_SHARED_subCategoryS_ERROR) {
   //   return { ...subCategoryState, signinError: payload.errors }

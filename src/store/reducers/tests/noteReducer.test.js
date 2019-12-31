@@ -3,6 +3,7 @@ import {
   setCreatedNote,
   setCreateNoteError,
   setNoteList,
+  removeDeletedNote,
 } from "../../actions/note"
 import {
   createNoteResponse,
@@ -35,6 +36,7 @@ describe("noteReducer", () => {
       sharedNotes: {},
       createNoteError: null,
       noteListError: null,
+      deleteNoteError: null,
       listSharedNotesError: null,
       updateNoteContentError: null,
     })
@@ -69,6 +71,36 @@ describe("noteReducer", () => {
       sharedNotes: {},
       createNoteError: null,
       noteListError: null,
+      deleteNoteError: null,
+      listSharedNotesError: null,
+      updateNoteContentError: null,
+    })
+  })
+
+  it.only("setNoteList should remove the deleted note from noteState", () => {
+    const noteState = noteReducer(undefined, setNoteList(listNotesResponse))
+    expect(
+      noteReducer(noteState, removeDeletedNote({ topic_id: "1", note_id: "2" }))
+    ).toEqual({
+      parentTopicsOfNotes: {
+        "1": {
+          notesPaginationEnd: true,
+          notes: {
+            "1": {
+              id: 1,
+              topic_id: 1,
+              title: "Note1",
+              note_timer_id_list: [1, 2],
+            },
+          },
+          listOffset: 1,
+        },
+      },
+      listSharedNotesOffset: 0,
+      sharedNotes: {},
+      createNoteError: null,
+      noteListError: null,
+      deleteNoteError: null,
       listSharedNotesError: null,
       updateNoteContentError: null,
     })

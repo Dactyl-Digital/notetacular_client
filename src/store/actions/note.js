@@ -3,6 +3,8 @@ export const SET_NOTE_LIST = "SET_NOTE_LIST"
 export const LIST_SHARED_NOTES = "LIST_SHARED_NOTES"
 export const SET_CREATE_NOTE_ERROR = "SET_CREATE_NOTE_ERROR"
 export const SET_NOTE_LIST_ERROR = "SET_NOTE_LIST_ERROR"
+export const REMOVE_DELETED_NOTE = "REMOVE_DELETED_NOTE"
+export const SET_DELETE_NOTE_ERROR = "SET_DELETE_NOTE_ERROR"
 export const SET_LIST_SHARED_NOTE_ERROR = "SET_LIST_SHARED_NOTE_ERROR"
 export const SET_UPDATE_NOTE_CONTENT = "SET_UPDATE_NOTE_CONTENT"
 export const SET_UPDATE_NOTE_CONTENT_ERROR = "SET_UPDATE_NOTE_CONTENT_ERROR"
@@ -44,6 +46,22 @@ export const setNoteListError = ({ response: { data } }) => ({
   payload: data,
   meta: {
     trigger: "Server failed to list notes.",
+  },
+})
+
+export const removeDeletedNote = ({ topic_id, note_id }) => ({
+  type: REMOVE_DELETED_NOTE,
+  payload: { topic_id, note_id },
+  meta: {
+    trigger: "Note was successfully deleted on the serverside.",
+  },
+})
+
+export const setDeleteNoteError = ({ response: { data } }) => ({
+  type: SET_DELETE_NOTE_ERROR,
+  payload: data,
+  meta: {
+    trigger: "Note failed to be deleted on the serverside.",
   },
 })
 

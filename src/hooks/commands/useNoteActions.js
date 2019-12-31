@@ -5,6 +5,8 @@ import {
   setCreateNoteError,
   setNoteList,
   setNoteListError,
+  removeDeletedNote,
+  setDeleteNoteError,
   setUpdateNoteContent,
   setUpdateNoteContentError,
   setAddedNoteTags,
@@ -14,7 +16,7 @@ import {
 } from "../../store/actions/note"
 import { updateTopicNoteIdList } from "../../store/actions/topic"
 import {
-  CREATE_NOTE_URL,
+  NOTE_URL,
   LIST_NOTES_URL,
   UPDATE_NOTE_CONTENT_URL,
   ADD_NOTE_TAGS_URL,
@@ -28,7 +30,7 @@ export const createNote = dispatch => ({
   dispatch(
     apiRequest({
       method: "POST",
-      url: CREATE_NOTE_URL,
+      url: NOTE_URL,
       payload: createNoteData,
       onSuccess: createNoteSuccess({ sub_category_id })(dispatch),
       onError: createNoteError(dispatch),
@@ -43,6 +45,26 @@ const createNoteSuccess = ({ sub_category_id }) => dispatch => response => {
 
 const createNoteError = dispatch => error => {
   dispatch(setCreateNoteError(error))
+}
+
+export const deleteNote = dispatch => ({ topic_id, note_id }) => {
+  dispatch(
+    apiRequest({
+      method: "DELETE",
+      url: `${NOTE_URL}/${note_id}`,
+      payload: {},
+      onSuccess: deleteNoteSuccess({ topic_id, note_id })(dispatch),
+      onError: deleteNoteError(dispatch),
+    })
+  )
+}
+
+const deleteNoteSuccess = ({ topic_id, note_id }) => dispatch => _response => {
+  dispatch(removeDeletedNote({ topic_id, note_id }))
+}
+
+const deleteNoteError = dispatch => error => {
+  dispatch(setDeleteNoteError(error))
 }
 
 // Listing notes requires this to be sent on the request body:
@@ -101,7 +123,6 @@ const updateNoteContentError = dispatch => error => {
 }
 
 export const addNoteTags = dispatch => data => {
-  console.log("Dispatching addNoteTags API REQUEST")
   dispatch(
     apiRequest({
       method: "POST",
@@ -147,6 +168,7 @@ export function useNoteActions() {
   return {
     createNote: createNote(dispatch),
     listNotes: listNotes(dispatch),
+    deleteNote: deleteNote(dispatch),
     updateNoteContent: updateNoteContent(dispatch),
     addNoteTags: addNoteTags(dispatch),
     removeNoteTag: removeNoteTag(dispatch),

@@ -2,6 +2,8 @@ import {
   SET_CREATED_NOTE,
   SET_NOTE_LIST,
   LIST_SHARED_NOTES,
+  REMOVE_DELETED_NOTE,
+  SET_DELETE_NOTE_ERROR,
   SET_ADD_NOTE_TAGS,
   SET_CREATE_NOTE_ERROR,
   SET_NOTE_LIST_ERROR,
@@ -38,6 +40,7 @@ export const noteInitialState = {
   createNoteError: null,
   noteListError: null,
   listSharedNotesError: null,
+  deleteNoteError: null,
   updateNoteContentError: null,
 }
 
@@ -235,6 +238,23 @@ export default function noteReducer(
   if (type === SET_NOTE_LIST) {
     return noteListNewState(noteState, payload)
   }
+  if (type === REMOVE_DELETED_NOTE) {
+    const { topic_id, note_id } = payload
+    delete noteState.parentTopicsOfNotes[topic_id].notes[note_id]
+    return {
+      ...noteState,
+      parentTopicsOfNotes: {
+        ...noteState.parentTopicsOfNotes,
+        [topic_id]: {
+          ...noteState.parentTopicsOfNotes[topic_id],
+          notes: {
+            ...noteState.parentTopicsOfNotes[topic_id].notes,
+          },
+          listOffset: noteState.parentTopicsOfNotes[topic_id].listOffset - 1,
+        },
+      },
+    }
+  }
   if (type === SET_UPDATE_NOTE_CONTENT) {
     const {
       data: { data },
@@ -284,6 +304,9 @@ export default function noteReducer(
   }
   if (type === SET_NOTE_LIST_ERROR) {
     return { ...noteState, noteListError: payload }
+  }
+  if (type === SET_DELETE_NOTE_ERROR) {
+    return { ...noteState, deleteNoteError: payload }
   }
   if (type === SET_UPDATE_NOTE_CONTENT_ERROR) {
     return { ...noteState, updateNoteContentError: payload }

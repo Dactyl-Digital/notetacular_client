@@ -56,6 +56,7 @@ const NoteListing = ({
         title={title}
         tags={tags}
         noteId={id}
+        topicId={topicId}
         handleArrowClick={() => setShowEditor(!showEditor)}
       />
       {/* TODO: create toggle for showing the editor */}

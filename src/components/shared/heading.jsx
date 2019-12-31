@@ -1,6 +1,6 @@
 import React from "react"
 import styled from "styled-components"
-import SearchIcon from "./icons/search-icon"
+import Search from "./search"
 
 const Container = styled.div`
   display: flex;
@@ -22,7 +22,7 @@ const Heading = ({ title }) => {
   return (
     <Container>
       <h1>{title}</h1>
-      <SearchIcon />
+      <Search />
     </Container>
   )
 }

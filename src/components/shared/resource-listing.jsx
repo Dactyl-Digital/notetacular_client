@@ -2,6 +2,9 @@ import React, { useRef, useState, useEffect, lazy, Suspense } from "react"
 import { Link } from "gatsby"
 import styled from "styled-components"
 import { useNotebookActions } from "../../hooks/commands/useNotebookActions"
+import { useSubCategoryActions } from "../../hooks/commands/useSubCategoryActions"
+import { useTopicActions } from "../../hooks/commands/useTopicActions"
+import { useNoteActions } from "../../hooks/commands/useNoteActions"
 import Tags from "../app/topic-list/tags"
 import TrashIcon from "./icons/trash-icon"
 import ArrowIcon from "./icons/arrow-icon"
@@ -34,6 +37,7 @@ const Container = styled.div`
         ? `0rem 0.1rem 1rem rgba(27, 113, 113, 30%)`
         : `0rem 0.1rem 1rem rgba(17, 238, 246, 30%)`};
   }
+
   &:before {
     content: "";
     position: absolute;
@@ -46,9 +50,11 @@ const Container = styled.div`
     background: #11eef6;
     border-radius: 5px 0 0 5px;
   }
+
   a {
     text-decoration: none;
   }
+
   h3 {
     text-overflow: ellipsis;
     font-family: "Blinker", sans-serif;
@@ -141,6 +147,9 @@ const ResourceListing = ({
   setActiveCircle,
 }) => {
   const { deleteNotebook } = useNotebookActions()
+  const { deleteSubCategory } = useSubCategoryActions()
+  const { deleteTopic } = useTopicActions()
+  const { deleteNote } = useNoteActions()
   const [toggled, setToggled] = useState(false)
   // const [titleRightPosition, setTitleRightPosition] = useState(null)
   const listingEl = useRef(null)
@@ -200,13 +209,30 @@ const ResourceListing = ({
           <div
             onClick={() => {
               if (type === "NOTEBOOK") {
+                // TODO... Still need to implement the redux actions for this.
+                // Also, when deleting a ntoe with the editor open... there's a
+                // useEffect on mount that posts update content which will cause
+                // an error on the backend because it's a deleted note now...
+                // Fix that.
                 deleteNotebook({ notebook_id: notebookId })
               }
+              if (type === "SUB_CATEGORY") {
+                deleteSubCategory({
+                  notebook_id: notebookId,
+                  sub_category_id: subCategoryId,
+                })
+              }
               if (type === "TOPIC") {
-                // removeTopicTag({ topic_id: topicId, tag: children })
+                deleteTopic({
+                  sub_category_id: subCategoryId,
+                  topic_id: topicId,
+                })
               }
               if (type === "NOTE") {
-                // removeNoteTag({ note_id: noteId, tag: children })
+                deleteNote({
+                  topic_id: topicId,
+                  note_id: noteId,
+                })
               }
             }}
           >

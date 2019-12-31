@@ -2,6 +2,8 @@ import {
   SET_CREATED_TOPIC,
   SET_TOPIC_LIST,
   LIST_SHARED_TOPICS,
+  REMOVE_DELETED_TOPIC,
+  SET_DELETE_TOPIC_ERROR,
   SET_ADD_TOPIC_TAGS,
   SET_REMOVED_TOPIC_TAG,
   SET_CREATE_TOPIC_ERROR,
@@ -25,6 +27,7 @@ export const topicInitialState = {
   sharedTopics: {},
   createTopicError: null,
   topicListError: null,
+  deleteTopicError: null,
   listSharedTopicsError: null,
 }
 
@@ -211,6 +214,30 @@ export default function topicReducer(
   }
   if (type === SET_TOPIC_LIST_ERROR) {
     return { ...topicState, topicListError: payload }
+  }
+  if (type === SET_DELETE_TOPIC_ERROR) {
+    return { ...topicState, deleteTopicError: payload }
+  }
+  if (type === REMOVE_DELETED_TOPIC) {
+    const { sub_category_id, topic_id } = payload
+    delete topicState.parentSubCategoriesOfTopics[sub_category_id].topics[
+      topic_id
+    ]
+    return {
+      ...topicState,
+      parentSubCategoriesOfTopics: {
+        ...topicState.parentSubCategoriesOfTopics,
+        [sub_category_id]: {
+          ...topicState.parentSubCategoriesOfTopics[sub_category_id],
+          topics: {
+            ...topicState.parentSubCategoriesOfTopics[sub_category_id].topics,
+          },
+          listOffset:
+            topicState.parentSubCategoriesOfTopics[sub_category_id].listOffset -
+            1,
+        },
+      },
+    }
   }
   if (type === UPDATE_TOPIC_NOTE_ID_LIST) {
     const spreadPrevIfArray = ({ notes }) => (Array.isArray(notes) ? notes : [])

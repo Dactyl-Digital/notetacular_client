@@ -5,17 +5,16 @@ import {
   setCreateSubCategoryError,
   setSubCategoryList,
   setSubCategoryListError,
+  removeDeletedSubCategory,
+  setDeleteSubCategoryError,
 } from "../../store/actions/subCategory"
-import {
-  CREATE_SUB_CATEGORY_URL,
-  LIST_SUB_CATEGORIES_URL,
-} from "../../api-endpoints"
+import { SUB_CATEGORY_URL, LIST_SUB_CATEGORIES_URL } from "../../api-endpoints"
 
 export const createSubCategory = dispatch => createSubCategoryData => {
   dispatch(
     apiRequest({
       method: "POST",
-      url: CREATE_SUB_CATEGORY_URL,
+      url: SUB_CATEGORY_URL,
       payload: createSubCategoryData,
       onSuccess: createSubCategorySuccess(dispatch),
       onError: createSubCategoryError(dispatch),
@@ -56,11 +55,40 @@ const listSubCategoriesError = dispatch => error => {
   dispatch(setSubCategoryListError(error))
 }
 
+export const deleteSubCategory = dispatch => ({
+  notebook_id,
+  sub_category_id,
+}) => {
+  dispatch(
+    apiRequest({
+      method: "DELETE",
+      url: `${SUB_CATEGORY_URL}/${sub_category_id}`,
+      payload: {},
+      onSuccess: deleteSubCategorySuccess({ notebook_id, sub_category_id })(
+        dispatch
+      ),
+      onError: deleteSubCategoryError(dispatch),
+    })
+  )
+}
+
+const deleteSubCategorySuccess = ({
+  notebook_id,
+  sub_category_id,
+}) => dispatch => _response => {
+  dispatch(removeDeletedSubCategory({ notebook_id, sub_category_id }))
+}
+
+const deleteSubCategoryError = dispatch => error => {
+  dispatch(setDeleteSubCategoryError(error))
+}
+
 export function useSubCategoryActions() {
   const dispatch = useDispatch()
 
   return {
     createSubCategory: createSubCategory(dispatch),
     listSubCategories: listSubCategories(dispatch),
+    deleteSubCategory: deleteSubCategory(dispatch),
   }
 }
