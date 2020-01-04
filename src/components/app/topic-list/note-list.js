@@ -8,6 +8,13 @@ import CreateResourceModal from "../../shared/create-resource-modal"
 import Button from "../../shared/button"
 import StyledForm from "../../shared/styled-form"
 
+// TODO (future feature):
+// NOTE: Currently, when deleting a note, it'll leave a gap such that
+// if you have notes w/ order (in the db) of 0, 1, 2
+// and the note with the order "1" is deleted. The other notes will
+// have order 0, 2. And the next note created after that will be 3.
+// If you want to implement click-and-drag in the future. The above
+// will need to be accounted for.
 const Container = styled.div`
   /* button {
     opacity: 0%;

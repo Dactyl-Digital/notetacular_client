@@ -7,6 +7,8 @@ export const SIGNUP_URL = `${API_URL}/signup`
 export const LOGIN_URL = `${API_URL}/login`
 export const LOGOUT_URL = `${API_URL}/logout`
 
+export const SEARCH_URL = `${API_URL}/note/search`
+
 // Notebook Action Endpoints
 export const NOTEBOOK_URL = `${API_URL}/notebook`
 export const LIST_NOTEBOOKS_URL = `${API_URL}/notebook?limit=20&offset=`

@@ -5,6 +5,7 @@ import Button from "./button"
 
 const Container = styled.div`
   margin-top: 1.6rem;
+  margin-top: ${props => props.resource === "Timers" && 0};
 `
 
 const Overlay = styled.div`
@@ -49,7 +50,7 @@ const Modal = ({ children, resource, IconComponent, buttonType }) => {
   // Check that this.el is not null before using ReactDOM.createPortal
   if (el) {
     return (
-      <Container id="modal">
+      <Container id="modal" resource={resource}>
         {buttonType === "ICON" && (
           <div className="toggle-modal-btn" onClick={toggleShowModal}>
             <IconComponent />

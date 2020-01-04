@@ -24,6 +24,10 @@ const Container = styled.div`
     min-width: 32rem;
     height: 100vh;
     overflow-y: scroll;
+
+    #topic-list {
+      margin-bottom: 2rem;
+    }
   }
 `
 
@@ -41,18 +45,8 @@ const TopicList = ({ notebookId, subCategoryId }) => {
   const [scrollTop, setScrollTop] = useState(0)
   const listEl = useRef(null)
 
-  // // TODO: Genericize this b, make a reusable hook... as this is
-  // // repeated in notebook-list and sub-category-list
-  // useEffect(() => {
-  //   const topicIdList = subCategories[subCategoryId].topics
-  //   if (topicIdList.length > 0 && Object.keys(topics).length === 0) {
-  //     listTopics({
-  //       offset: listTopicsOffset,
-  //       topic_id_list: topicIdList,
-  //     })
-  //   }
-  // }, [])
-
+  // TODO: Genericize this b, make a reusable hook... as this is
+  // repeated in notebook-list and sub-category-list
   useEffect(() => {
     let hash
     if (typeof window !== "undefined") {
@@ -71,9 +65,11 @@ const TopicList = ({ notebookId, subCategoryId }) => {
     }
     listEl.current.addEventListener("scroll", handleScroll)
 
-    // const topicIdList =
-    //   parentNotebooksOfSubCategories[notebookId].subCategories[subCategoryId]
-    //     .topics
+    if (!parentNotebooksOfSubCategories.hasOwnProperty(notebookId)) {
+      // IMMEDIATE TODO:
+      // FIRE off API request to get listTopicsOfAssociatedParentResource({subCategoryId})
+      return
+    }
 
     const topicIdList = parentNotebooksOfSubCategories.hasOwnProperty(
       notebookId
@@ -211,4 +207,4 @@ const TopicList = ({ notebookId, subCategoryId }) => {
   )
 }
 
-export default TopicList
+export default React.memo(TopicList)

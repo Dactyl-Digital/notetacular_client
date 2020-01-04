@@ -8,7 +8,7 @@ import {
   SET_SUB_CATEGORY_LIST_ERROR,
   SET_LIST_SHARED_SUB_CATEGORY_ERROR,
 } from "../actions/subCategory"
-import { checkProperty } from "./helpers"
+import { checkProperty, checkStorageExpiry } from "./helpers"
 
 // NOTE: This structure is meant to facilitate rendering the notes
 // for each topic in the topicList view.
@@ -29,7 +29,7 @@ import { checkProperty } from "./helpers"
 
 const parentNotebooksOfSubCategories = JSON.parse(
   typeof localStorage !== "undefined"
-    ? localStorage.getItem("parentNotebooksOfSubCategories")
+    ? checkStorageExpiry("parentNotebooksOfSubCategories")
     : null
 )
 

@@ -10,7 +10,8 @@ import TrashIcon from "./icons/trash-icon"
 import ArrowIcon from "./icons/arrow-icon"
 const NoteList = lazy(() => import("../app/topic-list/note-list"))
 // SOLUTION!!! -> To the quill "document is undefined" at gatsby build time!!!
-// NOTE: Causes an error when running in dev though...
+// NOTE: Causes an error when running in dev though... -> UPDATE: Had to use
+// the Suspense component to make it work.
 // const NoteList = React.lazy(() => import("../app/topic-list/note-list"))
 // import NoteList from "../app/topic-list/note-list"
 
@@ -86,7 +87,7 @@ const Container = styled.div`
   .title-container {
     position: relative;
     max-width: 11rem;
-    overflow-x: hidden;
+    overflow: hidden;
     white-space: nowrap;
     padding: 0.1rem 0;
   }
@@ -139,6 +140,7 @@ const ResourceListing = ({
   topicId,
   noteId,
   handleDelete,
+  showEditor,
   handleArrowClick,
   active,
   index,
@@ -245,7 +247,7 @@ const ResourceListing = ({
                 handleArrowClick ? handleArrowClick : () => setToggled(!toggled)
               }
             >
-              <ArrowIcon toggled={toggled} />
+              <ArrowIcon toggled={toggled || showEditor} />
             </div>
           ) : null}
         </div>

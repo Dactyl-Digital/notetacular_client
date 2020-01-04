@@ -6,19 +6,19 @@ import {
   SET_NOTEBOOK_LIST_ERROR,
   SET_LIST_SHARED_NOTEBOOKS_ERROR,
 } from "../actions/notebook"
-// import {helperFunction} from '../helpers'
+import { checkStorageExpiry } from "./helpers"
 
 const listNotebooksOffset = JSON.parse(
   typeof localStorage !== "undefined"
-    ? localStorage.getItem("listNotebooksOffset")
+    ? checkStorageExpiry("listNotebooksOffset")
     : null
 )
 const notebooks = JSON.parse(
-  typeof localStorage !== "undefined" ? localStorage.getItem("notebooks") : null
+  typeof localStorage !== "undefined" ? checkStorageExpiry("notebooks") : null
 )
 const notebooksPaginationEnd = JSON.parse(
   typeof localStorage !== "undefined"
-    ? localStorage.getItem("notebooksPaginationEnd")
+    ? checkStorageExpiry("notebooksPaginationEnd")
     : null
 )
 

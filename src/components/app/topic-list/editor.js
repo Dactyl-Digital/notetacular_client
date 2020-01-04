@@ -13,6 +13,10 @@ const Container = styled.div`
 
   .ql-toolbar {
     display: ${props => (props.readOnly ? `none` : `block`)};
+    position: sticky;
+    top: -2rem;
+    z-index: 8998;
+    background: #fcfcfc;
   }
 
   .ql-editor {
@@ -160,8 +164,6 @@ const Editor = ({
 
   const handleOptionClick = option => {
     if (option === "TOGGLE_READ_ONLY") setReadOnly(!readOnly)
-    if (option === "DELETE")
-      console.log("Implement are you sure? Followed by API delete to backend.")
   }
 
   // console.log(`readOnly: ${readOnly}`)

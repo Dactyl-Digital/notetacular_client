@@ -2,7 +2,6 @@ import React from "react"
 import styled from "styled-components"
 
 const StyledSvg = styled.svg`
-  position: relative;
   width: 1.2rem;
   height: 1.2rem;
   fill: #656565;
@@ -10,19 +9,20 @@ const StyledSvg = styled.svg`
   margin-right: ${props => props.marginRight && `${props.marginRight}rem`};
 
   g {
+    position: relative;
     width: ${props => props.type === "CLOCK" && `4rem`};
     height: ${props => props.type === "CLOCK" && `4rem`};
-  }
 
-  &:after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 1rem;
-    height: 1rem;
-    background: #656565;
-    /* opacity: 0.5; */
+    &:after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 2rem;
+      height: 2rem;
+      background: #656565;
+      /* opacity: 0.5; */
+    }
   }
 
   &:hover {

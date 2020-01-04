@@ -13,14 +13,6 @@ import SubCategoryList from "../components/app/sub-category-list"
 import TopicList from "../components/app/topic-list"
 // const TopicList = React.lazy(() => import("../components/app/topic-list"))
 
-const TestComp = () => {
-  return (
-    <>
-      <h1>If this shows then something is fucked...</h1>
-    </>
-  )
-}
-
 const App = () => {
   if (typeof window !== "undefined") {
     return (
@@ -28,7 +20,6 @@ const App = () => {
         <Router>
           <Signup path="/app/signup/" />
           <Login path="/app/login/" />
-          <TestComp path="/app/test/" />
           <EmailVerification path="/app/api/verify-email/*" />
           {/* <PrivateRoute path="/app/" component={RecentlyUpdatedNotebooks} /> */}
           {/* TODO: Utilize path params for dynamic linking */}

@@ -11,11 +11,11 @@ import {
   SET_LIST_SHARED_TOPIC_ERROR,
   UPDATE_TOPIC_NOTE_ID_LIST,
 } from "../actions/topic"
-import { checkProperty } from "./helpers"
+import { checkProperty, checkStorageExpiry } from "./helpers"
 
 const parentSubCategoriesOfTopics = JSON.parse(
   typeof localStorage !== "undefined"
-    ? window.localStorage.getItem("parentSubCategoriesOfTopics")
+    ? checkStorageExpiry("parentSubCategoriesOfTopics")
     : null
 )
 
@@ -162,6 +162,7 @@ const normalize = key => (noteState, { data }) =>
             ...acc[resource.sub_category_id].topics,
             [resource.id]: resource,
           },
+          listOffset: data[key].length,
         },
       }
     }
@@ -247,6 +248,10 @@ export default function topicReducer(
       parentSubCategoriesOfTopics: {
         ...topicState.parentSubCategoriesOfTopics,
         [payload.sub_category_id]: {
+          ...topicState.parentSubCategoriesOfTopics[payload.sub_category_id]
+            .listOffset,
+          ...topicState.parentSubCategoriesOfTopics[payload.sub_category_id]
+            .topicsPaginationEnd,
           topics: {
             ...topicState.parentSubCategoriesOfTopics[payload.sub_category_id]
               .topics,

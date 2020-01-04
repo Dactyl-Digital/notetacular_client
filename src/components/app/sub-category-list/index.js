@@ -26,9 +26,18 @@ const Container = styled.div`
     min-width: 32rem;
     height: 100vh;
     overflow-y: scroll;
+
+    #sub-category-list {
+      margin-bottom: 2rem;
+    }
   }
 `
 
+// TODO:
+// When navigating to this page before listNotebooks has been called
+// and there are no notebooks present with a subCategoryIdList in the redux store...
+// Then you'll want to retrieve the list of subCategories with the foreign key reference
+// to that notebookId.
 const SubCategoryList = ({ notebookId }) => {
   const { notebooks } = useNotebook()
   const { parentNotebooksOfSubCategories } = useSubCategory()
@@ -59,16 +68,14 @@ const SubCategoryList = ({ notebookId }) => {
       }, 5000)
     }
     listEl.current.addEventListener("scroll", handleScroll)
-    const subCategoryIdList = notebooks[notebookId].sub_categories
-    // TODO: Implement the condition which will check the paginationEnd.
-    // if (subCategoryIdList.length > 0) {
-    //   listSubCategories({
-    //     offset: 0,
-    //     sub_category_id_list: subCategoryIdList,
-    //   })
-    // }
+    let subCategoryIdList
+    if (notebooks.hasOwnProperty(notebookId)) {
+      subCategoryIdList = notebooks[notebookId].sub_categories
+    } else {
+      // IMMEDIATE TODO:
+      // FIRE off API request to get listSubCategoriesOfAssociatedParentResource({notebookId})
+    }
 
-    console.dir(parentNotebooksOfSubCategories)
     if (parentNotebooksOfSubCategories.hasOwnProperty(notebookId)) {
       if (
         !parentNotebooksOfSubCategories[notebookId].subCategoriesPaginationEnd

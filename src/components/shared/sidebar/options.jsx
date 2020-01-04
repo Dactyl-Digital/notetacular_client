@@ -68,6 +68,10 @@ const Container = styled.div`
         color: #fcfcfc;
         text-decoration: none;
       }
+
+      &:hover {
+        cursor: pointer;
+      }
     }
   }
 `
@@ -98,26 +102,23 @@ const Options = () => {
       {/* {showOptions && ( */}
       <div id="options-menu-container">
         <ul>
-          <li>
+          {/* <li>
             <Link to="/app/account">Your Account</Link>
-          </li>
-          <li>
-            <div
-              onClick={() => {
-                // TODO: Implement useAuthAction -> logoutUser
-                // and handle localStorage.removeItem("authenticated") inside
-                // of the store.subscribe handleChange function
-                if (authenticated) {
-                  logoutUser()
-                }
-              }}
-            >
-              Log Out
-            </div>
+          </li> */}
+          <li
+            onClick={() => {
+              // TODO: Implement useAuthAction -> logoutUser
+              // and handle localStorage.removeItem("authenticated") inside
+              // of the store.subscribe handleChange function
+              if (authenticated) {
+                logoutUser()
+              }
+            }}
+          >
+            Log Out
           </li>
         </ul>
       </div>
-      {/* )} */}
     </Container>
   )
 }

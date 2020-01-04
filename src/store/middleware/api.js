@@ -5,7 +5,6 @@ const API_REQUEST = "API_REQUEST"
 const VALID_SESSION = "VALID_SESSION"
 
 const invalidSession = ({ response: { data } }) => {
-  console.log("invalidSession running")
   if (data.hasOwnProperty("message") && data.message === "Invalid session") {
     return {
       type: "INVALID_SESSION",
@@ -39,6 +38,7 @@ const makeRequest = (
       .catch(function(error) {
         console.log("the error in GET")
         console.log(error)
+        console.dir(error)
         if (
           error.hasOwnProperty("message") &&
           error.message === "Network Error"

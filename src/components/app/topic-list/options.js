@@ -3,9 +3,10 @@ import styled from "styled-components"
 import { useNote } from "../../../hooks/queries/useNote"
 import { useNoteTimerActions } from "../../../hooks/commands/useNoteTimerActions"
 import { useNoteTimer } from "../../../hooks/queries/useNoteTimer"
-import pencilIcon from "../../../assets/icons/pencil-edit-button.svg"
-import bookIcon from "../../../assets/icons/open-book.svg"
-import trashIcon from "../../../assets/icons/bin.svg"
+// import pencilIcon from "../../../assets/icons/pencil-edit-button.svg"
+// import bookIcon from "../../../assets/icons/open-book.svg"
+import PencilIcon from "../../shared/icons/pencil-icon"
+import BookIcon from "../../shared/icons/book-icon"
 import ClockIcon from "../../shared/icons/clock-icon"
 import CreateResourceModal from "../../shared/create-resource-modal"
 import Button from "../../shared/button"
@@ -14,10 +15,10 @@ import NoteTimers from "./note-timers"
 
 const Container = styled.div`
   padding: 0.6rem 0;
-  border: 2px solid #222;
+  /* border: 2px solid #222; */
   width: 100%;
-  border-left: 1px solid #aaa;
-  border-right: 1px solid #aaa;
+  border: 1px solid #aaa;
+  /* border-right: 1px solid #aaa; */
 
   .options-icons-container {
     display: flex;
@@ -97,10 +98,8 @@ const Options = ({
     <Container>
       <div className="options-icons-container">
         <div onClick={() => handleOptionClick("TOGGLE_READ_ONLY")}>
-          {readOnly ? <img src={pencilIcon} /> : <img src={bookIcon} />}
-        </div>
-        <div onClick={() => handleOptionClick("DELETE")}>
-          <img src={trashIcon} />
+          {/* {readOnly ? <img src={pencilIcon} /> : <img src={bookIcon} />} */}
+          {readOnly ? <PencilIcon /> : <BookIcon />}
         </div>
         <CreateResourceModal
           resource="Timers"

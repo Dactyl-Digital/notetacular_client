@@ -27,6 +27,10 @@ const Container = styled.div`
     min-width: 32rem;
     height: 100vh;
     overflow-y: scroll;
+
+    #notebook-list {
+      margin-bottom: 2rem;
+    }
   }
 `
 

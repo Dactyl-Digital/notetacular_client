@@ -38,23 +38,36 @@ const PrivateRoute = ({ component: Component, location, ...rest }) => {
   // TODO: Add a time expiry for the state persisted to localstorage
   // to be refreshed/rejected from being hydrated into redux state.
   const handleSaveReduxState = () => {
-    // localStorage.setItem(
-    //   "listNotebooksOffset",
-    //   JSON.stringify(listNotebooksOffset)
-    // )
-    // localStorage.setItem("notebooks", JSON.stringify(notebooks))
-    // localStorage.setItem(
-    //   "notebooksPaginationEnd",
-    //   JSON.stringify(notebooksPaginationEnd)
-    // )
-    // localStorage.setItem(
-    //   "parentNotebooksOfSubCategories",
-    //   JSON.stringify(parentNotebooksOfSubCategories)
-    // )
-    // localStorage.setItem(
-    //   "parentSubCategoriesOfTopics",
-    //   JSON.stringify(parentSubCategoriesOfTopics)
-    // )
+    if (localStorage !== "undefined") {
+      const expiry = localStorage.getItem("storageExpiry")
+      if (expiry === null) {
+        const fifteenMinutes = 60000 * 15
+        const fifteenMinutesInTheFuture = new Date(Date.now() + fifteenMinutes)
+        localStorage.setItem(
+          "storageExpiry",
+          fifteenMinutesInTheFuture.getTime()
+        )
+        localStorage.setItem(
+          "listNotebooksOffset",
+          JSON.stringify(listNotebooksOffset)
+        )
+        localStorage.setItem("notebooks", JSON.stringify(notebooks))
+        localStorage.setItem(
+          "notebooksPaginationEnd",
+          JSON.stringify(notebooksPaginationEnd)
+        )
+        localStorage.setItem(
+          "parentNotebooksOfSubCategories",
+          JSON.stringify(parentNotebooksOfSubCategories)
+        )
+        localStorage.setItem(
+          "parentSubCategoriesOfTopics",
+          JSON.stringify(parentSubCategoriesOfTopics)
+        )
+      } else if (expiry < Date.now()) {
+        localStorage.setItem("storageExpiry", null)
+      }
+    }
   }
 
   if (!authenticated && location.pathname !== `/app/login`) {

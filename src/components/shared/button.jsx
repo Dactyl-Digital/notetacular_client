@@ -20,6 +20,13 @@ const StyledButton = styled.button`
     props.type === "CREATE" || props.type === "ADD" ? "#11EEF6" : "#FF5555"};
   box-shadow: 0rem 0.1rem 1rem rgba(27, 113, 113, 30%);
 
+  &:hover {
+    cursor: pointer;
+    transition: transform, box-shadow 0.6s;
+    transform: translateY(-0.05rem);
+    box-shadow: 0rem 0.4rem 1.4rem rgba(27, 113, 113, 30%);
+  }
+
   span {
     display: flex;
     align-items: center;
