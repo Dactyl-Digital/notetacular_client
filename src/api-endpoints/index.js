@@ -12,6 +12,7 @@ export const SEARCH_URL = `${API_URL}/note/search`
 // Notebook Action Endpoints
 export const NOTEBOOK_URL = `${API_URL}/notebook`
 export const LIST_NOTEBOOKS_URL = `${API_URL}/notebook?limit=20&offset=`
+export const LIST_NOTEBOOKS_SUB_CATEGORIES_URL = `${API_URL}/notebook/sub-categories`
 
 // Sub Category Action Endpoints
 export const SUB_CATEGORY_URL = `${API_URL}/sub-category`

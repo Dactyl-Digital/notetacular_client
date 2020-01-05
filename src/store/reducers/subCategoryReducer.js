@@ -1,6 +1,8 @@
 import {
   SET_CREATED_SUB_CATEGORY,
   SET_SUB_CATEGORY_LIST,
+  SET_NOTEBOOKS_SUB_CATEGORIES,
+  SET_NOTEBOOKS_SUB_CATEGORIES_ERROR,
   LIST_SHARED_SUB_CATEGORIES,
   REMOVE_DELETED_SUB_CATEGORY,
   SET_DELETE_SUB_CATEGORY_ERROR,
@@ -8,7 +10,7 @@ import {
   SET_SUB_CATEGORY_LIST_ERROR,
   SET_LIST_SHARED_SUB_CATEGORY_ERROR,
 } from "../actions/subCategory"
-import { checkProperty, checkStorageExpiry } from "./helpers"
+import { checkProperty } from "./helpers"
 
 // NOTE: This structure is meant to facilitate rendering the notes
 // for each topic in the topicList view.
@@ -27,20 +29,13 @@ import { checkProperty, checkStorageExpiry } from "./helpers"
 //   },
 // },
 
-const parentNotebooksOfSubCategories = JSON.parse(
-  typeof localStorage !== "undefined"
-    ? checkStorageExpiry("parentNotebooksOfSubCategories")
-    : null
-)
-
 export const subCategoryInitialState = {
-  parentNotebooksOfSubCategories: parentNotebooksOfSubCategories
-    ? parentNotebooksOfSubCategories
-    : {},
+  parentNotebooksOfSubCategories: {},
   listSharedSubCategoriesOffset: 0,
   sharedSubCategories: {},
   createSubCategoryError: null,
   subCategoryListError: null,
+  notebookSubCategoriesError: null,
   deleteSubCategoryError: null,
   listSharedSubCategoriesError: null,
 }
@@ -164,6 +159,9 @@ export default function subCategoryReducer(
   if (type === SET_SUB_CATEGORY_LIST) {
     return subCategoryListNewState(subCategoryState, payload)
   }
+  if (type === SET_NOTEBOOKS_SUB_CATEGORIES) {
+    return subCategoryListNewState(subCategoryState, payload)
+  }
   if (type === REMOVE_DELETED_SUB_CATEGORY) {
     const { notebook_id, sub_category_id } = payload
     delete subCategoryState.parentNotebooksOfSubCategories[notebook_id]
@@ -193,6 +191,9 @@ export default function subCategoryReducer(
   }
   if (type === SET_SUB_CATEGORY_LIST_ERROR) {
     return { ...subCategoryState, subCategoryListError: payload }
+  }
+  if (type === SET_NOTEBOOKS_SUB_CATEGORIES_ERROR) {
+    return { ...subCategoryState, notebookSubCategoriesError: payload }
   }
   if (type === SET_DELETE_SUB_CATEGORY_ERROR) {
     return { ...subCategoryState, deleteSubCategoryError: payload }

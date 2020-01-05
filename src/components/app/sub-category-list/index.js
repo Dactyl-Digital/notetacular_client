@@ -41,7 +41,11 @@ const Container = styled.div`
 const SubCategoryList = ({ notebookId }) => {
   const { notebooks } = useNotebook()
   const { parentNotebooksOfSubCategories } = useSubCategory()
-  const { createSubCategory, listSubCategories } = useSubCategoryActions()
+  const {
+    createSubCategory,
+    listSubCategories,
+    listNotebooksSubCategories,
+  } = useSubCategoryActions()
   const [title, setTitle] = useState("")
   const [activeCircle, setActiveCircle] = useState({
     active: null,
@@ -72,8 +76,13 @@ const SubCategoryList = ({ notebookId }) => {
     if (notebooks.hasOwnProperty(notebookId)) {
       subCategoryIdList = notebooks[notebookId].sub_categories
     } else {
+      // NOTE: The case when the user copies and pastes the link into the browser.
       // IMMEDIATE TODO:
       // FIRE off API request to get listSubCategoriesOfAssociatedParentResource({notebookId})
+      console.log(
+        "listNotebooksSubCategories({notebookId, limit: 20, offset: 0})"
+      )
+      return listNotebooksSubCategories({ notebookId, limit: 20, offset: 0 })
     }
 
     if (parentNotebooksOfSubCategories.hasOwnProperty(notebookId)) {

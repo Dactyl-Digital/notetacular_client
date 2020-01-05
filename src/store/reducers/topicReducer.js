@@ -11,18 +11,10 @@ import {
   SET_LIST_SHARED_TOPIC_ERROR,
   UPDATE_TOPIC_NOTE_ID_LIST,
 } from "../actions/topic"
-import { checkProperty, checkStorageExpiry } from "./helpers"
-
-const parentSubCategoriesOfTopics = JSON.parse(
-  typeof localStorage !== "undefined"
-    ? checkStorageExpiry("parentSubCategoriesOfTopics")
-    : null
-)
+import { checkProperty } from "./helpers"
 
 export const topicInitialState = {
-  parentSubCategoriesOfTopics: parentSubCategoriesOfTopics
-    ? parentSubCategoriesOfTopics
-    : {},
+  parentSubCategoriesOfTopics: {},
   listSharedTopicsOffset: 0,
   sharedTopics: {},
   createTopicError: null,
@@ -248,10 +240,7 @@ export default function topicReducer(
       parentSubCategoriesOfTopics: {
         ...topicState.parentSubCategoriesOfTopics,
         [payload.sub_category_id]: {
-          ...topicState.parentSubCategoriesOfTopics[payload.sub_category_id]
-            .listOffset,
-          ...topicState.parentSubCategoriesOfTopics[payload.sub_category_id]
-            .topicsPaginationEnd,
+          ...topicState.parentSubCategoriesOfTopics[payload.sub_category_id],
           topics: {
             ...topicState.parentSubCategoriesOfTopics[payload.sub_category_id]
               .topics,

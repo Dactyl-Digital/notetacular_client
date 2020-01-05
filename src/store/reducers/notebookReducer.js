@@ -1,33 +1,18 @@
 import {
   SET_CREATED_NOTEBOOK,
+  SET_NOTEBOOK,
   SET_NOTEBOOK_LIST,
   LIST_SHARED_NOTEBOOKS,
   SET_CREATE_NOTEBOOK_ERROR,
   SET_NOTEBOOK_LIST_ERROR,
   SET_LIST_SHARED_NOTEBOOKS_ERROR,
 } from "../actions/notebook"
-import { checkStorageExpiry } from "./helpers"
-
-const listNotebooksOffset = JSON.parse(
-  typeof localStorage !== "undefined"
-    ? checkStorageExpiry("listNotebooksOffset")
-    : null
-)
-const notebooks = JSON.parse(
-  typeof localStorage !== "undefined" ? checkStorageExpiry("notebooks") : null
-)
-const notebooksPaginationEnd = JSON.parse(
-  typeof localStorage !== "undefined"
-    ? checkStorageExpiry("notebooksPaginationEnd")
-    : null
-)
+// import { helperFn } from "./helpers"
 
 export const notebookInitialState = {
-  listNotebooksOffset: listNotebooksOffset ? listNotebooksOffset : 0,
-  notebooks: notebooks ? notebooks : {},
-  notebooksPaginationEnd: notebooksPaginationEnd
-    ? notebooksPaginationEnd
-    : false,
+  listNotebooksOffset: 0,
+  notebooks: {},
+  notebooksPaginationEnd: false,
   listSharedNotebooksOffset: 0,
   sharedNotebooks: {},
   createNotebookError: null,
@@ -35,11 +20,15 @@ export const notebookInitialState = {
   listSharedNotebooksError: null,
 }
 
-const normalizeSingle = ({ data }) => ({
-  [data.id]: {
-    ...data,
-  },
-})
+const normalizeSingle = ({ data }) => {
+  console.log("WTF is data")
+  console.log(data)
+  return {
+    [data.id]: {
+      ...data,
+    },
+  }
+}
 
 // TODO: Move this into a helper folder.
 const normalize = key => ({ data }) =>
@@ -55,12 +44,18 @@ export default function notebookReducer(
   { type, payload }
 ) {
   if (type === SET_CREATED_NOTEBOOK) {
-    const result = {
+    return {
       ...notebookState,
       notebooks: { ...notebookState.notebooks, ...normalizeSingle(payload) },
     }
-
-    return result
+  }
+  if (type === SET_NOTEBOOK) {
+    console.log("wtf is payload")
+    console.log(payload)
+    return {
+      ...notebookState,
+      notebooks: { ...notebookState.notebooks, ...normalizeSingle(payload) },
+    }
   }
   if (type === SET_NOTEBOOK_LIST) {
     return notebookListNewState(notebookState, payload)

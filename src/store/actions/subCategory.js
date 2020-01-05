@@ -1,6 +1,9 @@
 export const SET_CREATED_SUB_CATEGORY = "SET_CREATED_SUB_CATEGORY"
 export const SET_SUB_CATEGORY_LIST = "SET_SUB_CATEGORY_LIST"
 export const LIST_SHARED_SUB_CATEGORIES = "LIST_SHARED_SUB_CATEGORIES"
+export const SET_NOTEBOOKS_SUB_CATEGORIES = "SET_NOTEBOOKS_SUB_CATEGORIES"
+export const SET_NOTEBOOKS_SUB_CATEGORIES_ERROR =
+  "SET_NOTEBOOKS_SUB_CATEGORIES_ERROR"
 export const REMOVE_DELETED_SUB_CATEGORY = "REMOVE_DELETED_SUB_CATEGORY"
 export const SET_DELETE_SUB_CATEGORY_ERROR = "SET_DELETE_SUB_CATEGORY_ERROR"
 export const SET_CREATE_SUB_CATEGORY_ERROR = "SET_CREATE_SUB_CATEGORY_ERROR"
@@ -33,6 +36,28 @@ export const setSubCategoryList = ({ data }) => ({
     trigger:
       "POST to /api/sub-category was successful and created sub category will be added to \
               the reducer's sub categories.",
+  },
+})
+
+// NOTE: The distinction between setNotebooksSubCategoryList and
+// setSubCategoryList is that setNotebooksSubCategories needs
+// to facilitate when the user navigates directly to
+// /notebooks/1/sub-categories for example.
+export const setNotebooksSubCategories = ({ data }) => ({
+  type: SET_NOTEBOOKS_SUB_CATEGORIES,
+  payload: data,
+  meta: {
+    trigger:
+      "GET to /api/notebook/sub-categories was successful and sub_categories list will be added to \
+              the reducer's sub categories.",
+  },
+})
+
+export const setNotebooksSubCategoriesError = ({ response: { data } }) => ({
+  type: SET_NOTEBOOKS_SUB_CATEGORIES_ERROR,
+  payload: data,
+  meta: {
+    trigger: "GET to /api/notebook/sub-categories failed.",
   },
 })
 

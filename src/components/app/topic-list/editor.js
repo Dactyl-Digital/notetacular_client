@@ -13,7 +13,7 @@ const Container = styled.div`
 
   .ql-toolbar {
     display: ${props => (props.readOnly ? `none` : `block`)};
-    position: sticky;
+    /* position: sticky; */
     top: -2rem;
     z-index: 8998;
     background: #fcfcfc;
@@ -21,6 +21,11 @@ const Container = styled.div`
 
   .ql-editor {
     min-height: 10rem;
+    max-height: 16rem;
+    /* NOTE: Opted for this rather than making the ql-toolbar position: sticky;
+    because the page will jump up to the top when highlighting/pasting something
+    into the editor. */
+    overflow-y: scroll;
   }
 
   .options-btn {
