@@ -1,10 +1,13 @@
 import { useDispatch } from "react-redux"
 import { apiRequest } from "../../store/actions/api"
+import { setSubCategory } from "../../store/actions/subCategory"
 import {
   setCreatedTopic,
   setCreateTopicError,
   setTopicList,
   setTopicListError,
+  setSubCategoryTopics,
+  setSubCategoryTopicsError,
   removeDeletedTopic,
   setDeleteTopicError,
   setAddedTopicTags,
@@ -17,6 +20,7 @@ import {
   LIST_TOPICS_URL,
   ADD_TOPIC_TAGS_URL,
   REMOVE_TOPIC_TAG_URL,
+  LIST_SUB_CATEGORY_TOPICS_URL,
 } from "../../api-endpoints"
 
 export const createTopic = dispatch => createTopicData => {
@@ -59,6 +63,37 @@ const listTopicsSuccess = dispatch => response => {
 
 const listTopicsError = dispatch => error => {
   dispatch(setTopicListError(error))
+}
+
+export const listSubCategoryTopics = dispatch => ({
+  subCategoryId,
+  limit,
+  offset,
+}) => {
+  dispatch(
+    apiRequest({
+      method: "GET",
+      url: LIST_SUB_CATEGORY_TOPICS_URL,
+      payload: { sub_category_id: subCategoryId, limit, offset },
+      onSuccess: listSubCategoryTopicsSuccess(dispatch),
+      onError: listSubCategoryTopicsError(dispatch),
+    })
+  )
+}
+
+export const listSubCategoryTopicsSuccess = dispatch => response => {
+  dispatch(setSubCategory({ data: { data: response.data.data.sub_category } }))
+  dispatch(
+    setSubCategoryTopics({
+      data: {
+        data: { topics: response.data.data.topics },
+      },
+    })
+  )
+}
+
+export const listSubCategoryTopicsError = dispatch => error => {
+  dispatch(setSubCategoryTopicsError(error))
 }
 
 export const deleteTopic = dispatch => ({ sub_category_id, topic_id }) => {
@@ -131,6 +166,7 @@ export function useTopicActions() {
   return {
     createTopic: createTopic(dispatch),
     listTopics: listTopics(dispatch),
+    listSubCategoryTopics: listSubCategoryTopics(dispatch),
     deleteTopic: deleteTopic(dispatch),
     addTopicTags: addTopicTags(dispatch),
     removeTopicTag: removeTopicTag(dispatch),

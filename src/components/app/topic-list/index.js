@@ -34,7 +34,7 @@ const Container = styled.div`
 const TopicList = ({ notebookId, subCategoryId }) => {
   const { parentNotebooksOfSubCategories } = useSubCategory()
   const { parentSubCategoriesOfTopics } = useTopic()
-  const { createTopic, listTopics } = useTopicActions()
+  const { createTopic, listTopics, listSubCategoryTopics } = useTopicActions()
   const [title, setTitle] = useState("")
 
   const [activeCircle, setActiveCircle] = useState({
@@ -66,9 +66,8 @@ const TopicList = ({ notebookId, subCategoryId }) => {
     listEl.current.addEventListener("scroll", handleScroll)
 
     if (!parentNotebooksOfSubCategories.hasOwnProperty(notebookId)) {
-      // IMMEDIATE TODO:
-      // FIRE off API request to get listTopicsOfAssociatedParentResource({subCategoryId})
-      return
+      // NOTE: The case when the user copies and pastes the link into the browser.
+      return listSubCategoryTopics({ subCategoryId, limit: 20, offset: 0 })
     }
 
     const topicIdList = parentNotebooksOfSubCategories.hasOwnProperty(

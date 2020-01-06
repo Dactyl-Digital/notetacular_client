@@ -77,11 +77,6 @@ const SubCategoryList = ({ notebookId }) => {
       subCategoryIdList = notebooks[notebookId].sub_categories
     } else {
       // NOTE: The case when the user copies and pastes the link into the browser.
-      // IMMEDIATE TODO:
-      // FIRE off API request to get listSubCategoriesOfAssociatedParentResource({notebookId})
-      console.log(
-        "listNotebooksSubCategories({notebookId, limit: 20, offset: 0})"
-      )
       return listNotebooksSubCategories({ notebookId, limit: 20, offset: 0 })
     }
 

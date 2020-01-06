@@ -1,6 +1,8 @@
 import {
   SET_CREATED_TOPIC,
   SET_TOPIC_LIST,
+  SET_SUB_CATEGORY_TOPICS,
+  SET_SUB_CATEGORY_TOPICS_ERROR,
   LIST_SHARED_TOPICS,
   REMOVE_DELETED_TOPIC,
   SET_DELETE_TOPIC_ERROR,
@@ -21,6 +23,7 @@ export const topicInitialState = {
   topicListError: null,
   deleteTopicError: null,
   listSharedTopicsError: null,
+  setSubCategoryTopicsError: null,
 }
 
 const normalizeSingle = ({ parentSubCategoriesOfTopics }, { data }) => {
@@ -168,8 +171,6 @@ export default function topicReducer(
   { type, payload }
 ) {
   if (type === SET_CREATED_TOPIC) {
-    console.log("result of normalizeSingle(topicState, payload): ")
-    console.log(normalizeSingle(topicState, payload))
     return {
       ...topicState,
       parentSubCategoriesOfTopics: {
@@ -179,6 +180,10 @@ export default function topicReducer(
     }
   }
   if (type === SET_TOPIC_LIST) {
+    return topicListNewState(topicState, payload)
+  }
+  if (type === SET_SUB_CATEGORY_TOPICS) {
+    // IMPLEMENT! And now hope it works!
     return topicListNewState(topicState, payload)
   }
   // if (type === LIST_SHARED_SUB_CATEGORIES) {
@@ -210,6 +215,9 @@ export default function topicReducer(
   }
   if (type === SET_DELETE_TOPIC_ERROR) {
     return { ...topicState, deleteTopicError: payload }
+  }
+  if (type === SET_SUB_CATEGORY_TOPICS_ERROR) {
+    return { ...topicState, setSubCategoryTopicsError: payload }
   }
   if (type === REMOVE_DELETED_TOPIC) {
     const { sub_category_id, topic_id } = payload

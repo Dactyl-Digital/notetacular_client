@@ -1,5 +1,6 @@
 import {
   SET_CREATED_SUB_CATEGORY,
+  SET_SUB_CATEGORY,
   SET_SUB_CATEGORY_LIST,
   SET_NOTEBOOKS_SUB_CATEGORIES,
   SET_NOTEBOOKS_SUB_CATEGORIES_ERROR,
@@ -151,7 +152,16 @@ export default function subCategoryReducer(
     return {
       ...subCategoryState,
       parentNotebooksOfSubCategories: {
-        ...subCategoryState.parentNotebooksSubCaparentNotebooksOfSubCategoriescs,
+        ...subCategoryState.parentNotebooksOfSubCategories,
+        ...normalizeSingle(subCategoryState, payload),
+      },
+    }
+  }
+  if (type === SET_SUB_CATEGORY) {
+    return {
+      ...subCategoryState,
+      parentNotebooksOfSubCategories: {
+        ...subCategoryState.parentNotebooksOfSubCategories,
         ...normalizeSingle(subCategoryState, payload),
       },
     }

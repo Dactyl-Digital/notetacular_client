@@ -1,5 +1,6 @@
 export const SET_CREATED_SUB_CATEGORY = "SET_CREATED_SUB_CATEGORY"
 export const SET_SUB_CATEGORY_LIST = "SET_SUB_CATEGORY_LIST"
+export const SET_SUB_CATEGORY = "SET_SUB_CATEGORY"
 export const LIST_SHARED_SUB_CATEGORIES = "LIST_SHARED_SUB_CATEGORIES"
 export const SET_NOTEBOOKS_SUB_CATEGORIES = "SET_NOTEBOOKS_SUB_CATEGORIES"
 export const SET_NOTEBOOKS_SUB_CATEGORIES_ERROR =
@@ -26,6 +27,16 @@ export const setCreateSubCategoryError = ({ response: { data } }) => ({
   payload: data,
   meta: {
     trigger: "Server failed to create sub category.",
+  },
+})
+
+export const setSubCategory = ({ data }) => ({
+  type: SET_SUB_CATEGORY,
+  payload: data,
+  meta: {
+    trigger:
+      "GET to /api/sub-category/topics was successful and retrieved sub category will be added to \
+              the reducer's subCategories.",
   },
 })
 

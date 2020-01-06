@@ -90,8 +90,6 @@ export const listNotebooksSubCategories = dispatch => ({
 }
 
 export const listNotebooksSubCategoriesSuccess = dispatch => response => {
-  console.log("response.data.data")
-  console.log(response.data.data.notebook)
   dispatch(setNotebook({ data: { data: response.data.data.notebook } }))
   dispatch(
     setNotebooksSubCategories({

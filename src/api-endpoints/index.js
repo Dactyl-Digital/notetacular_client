@@ -17,6 +17,7 @@ export const LIST_NOTEBOOKS_SUB_CATEGORIES_URL = `${API_URL}/notebook/sub-catego
 // Sub Category Action Endpoints
 export const SUB_CATEGORY_URL = `${API_URL}/sub-category`
 export const LIST_SUB_CATEGORIES_URL = `${API_URL}/sub-category?limit=20&offset=`
+export const LIST_SUB_CATEGORY_TOPICS_URL = `${API_URL}/sub-category/topics`
 
 // Topic Action Endpoints
 export const TOPIC_URL = `${API_URL}/topic`

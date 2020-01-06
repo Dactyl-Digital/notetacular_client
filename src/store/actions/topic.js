@@ -1,5 +1,7 @@
 export const SET_CREATED_TOPIC = "SET_CREATED_TOPIC"
 export const SET_TOPIC_LIST = "SET_TOPIC_LIST"
+export const SET_SUB_CATEGORY_TOPICS = "SET_SUB_CATEGORY_TOPICS"
+export const SET_SUB_CATEGORY_TOPICS_ERROR = "SET_SUB_CATEGORY_TOPICS_ERROR"
 export const LIST_SHARED_TOPICS = "LIST_SHARED_TOPICS"
 export const REMOVE_DELETED_TOPIC = "REMOVE_DELETED_TOPIC"
 export const SET_DELETE_TOPIC_ERROR = "SET_DELETE_TOPIC_ERROR"
@@ -45,6 +47,28 @@ export const setTopicListError = ({ response: { data } }) => ({
   payload: data,
   meta: {
     trigger: "Server failed to list topics.",
+  },
+})
+
+// NOTE: The distinction between setSubCategoryTopics and
+// setTopicList is that setSubCategoryTopics needs
+// to facilitate when the user navigates directly to
+// /notebooks/1/sub-category/2/topics for example.
+export const setSubCategoryTopics = ({ data }) => ({
+  type: SET_SUB_CATEGORY_TOPICS,
+  payload: data,
+  meta: {
+    trigger:
+      "GET to /api/sub-category/topics was successful and topics list will be added to \
+              the reducer's topics.",
+  },
+})
+
+export const setSubCategoryTopicsError = ({ response: { data } }) => ({
+  type: SET_SUB_CATEGORY_TOPICS_ERROR,
+  payload: data,
+  meta: {
+    trigger: "GET to /api/sub-category/topics failed.",
   },
 })
 
