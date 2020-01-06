@@ -25,7 +25,7 @@ const Container = styled.div`
   } */
 `
 
-const NoteList = ({ topics, topicId, subCategoryId, toggled }) => {
+const NoteList = ({ topics, topicId, subCategoryId, showNotes }) => {
   const { parentTopicsOfNotes } = useNote()
   const { createNote, listNotes } = useNoteActions()
   const [title, setTitle] = useState("")
@@ -63,7 +63,7 @@ const NoteList = ({ topics, topicId, subCategoryId, toggled }) => {
   }
 
   return (
-    <Container data-testid="note-list" toggled={toggled}>
+    <Container data-testid="note-list" showNotes={showNotes}>
       <CreateResourceModal action="Create" resource="Note" buttonType="NORMAL">
         {/* TODO: Create a separate component for this form. */}
         {toggleShowModal => (
@@ -98,7 +98,7 @@ const NoteList = ({ topics, topicId, subCategoryId, toggled }) => {
               return (
                 <NoteListing
                   idx={idx}
-                  toggled={toggled}
+                  showNotes={showNotes}
                   key={`${topicId}-${noteId}`}
                   note={parentTopicsOfNotes[topicId].notes[noteId]}
                   topicId={topics[topicId].id}

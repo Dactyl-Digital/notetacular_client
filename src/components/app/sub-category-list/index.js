@@ -182,6 +182,7 @@ const SubCategoryList = ({ notebookId }) => {
           <div id="sub-category-list">
             {keys.map((key, i) => (
               <ResourceListing
+                id={subCategories[key].title}
                 type="SUB_CATEGORY"
                 key={subCategories[key].id.toString()}
                 title={subCategories[key].title}

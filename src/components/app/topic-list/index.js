@@ -13,6 +13,9 @@ import { ActiveCircleContext } from "../notebook-list"
 import Button from "../../shared/button"
 import StyledForm from "../../shared/styled-form"
 
+const extractTopicIdRegex = /\d+/
+const extractNoteIdRegex = /note-\d+$/
+
 const Container = styled.div`
   display: flex;
 
@@ -31,11 +34,49 @@ const Container = styled.div`
   }
 `
 
+const TopicListing = ({
+  id,
+  title,
+  tags,
+  index,
+  type,
+  topics,
+  topicId,
+  subCategoryId,
+  active,
+  setActiveDisabled,
+  scrollTop,
+  setActiveCircle,
+  showNoteList,
+}) => {
+  const [showNotes, setShowNotes] = useState(showNoteList)
+
+  return (
+    <ResourceListing
+      id={id}
+      title={title}
+      tags={tags}
+      index={index}
+      type={type}
+      topics={topics}
+      topicId={topicId}
+      subCategoryId={subCategoryId}
+      active={active}
+      setActiveDisabled={setActiveDisabled}
+      scrollTop={scrollTop}
+      setActiveCircle={setActiveCircle}
+      showNotes={showNotes}
+      setShowNotes={setShowNotes}
+    />
+  )
+}
+
 const TopicList = ({ notebookId, subCategoryId }) => {
   const { parentNotebooksOfSubCategories } = useSubCategory()
   const { parentSubCategoriesOfTopics } = useTopic()
   const { createTopic, listTopics, listSubCategoryTopics } = useTopicActions()
   const [title, setTitle] = useState("")
+  const [activeTopic, setActiveTopic] = useState(null)
 
   const [activeCircle, setActiveCircle] = useState({
     active: null,
@@ -45,6 +86,25 @@ const TopicList = ({ notebookId, subCategoryId }) => {
   const [scrollTop, setScrollTop] = useState(0)
   const listEl = useRef(null)
 
+  const scrollIntoViewWhenLoaded = (id) => {
+    setTimeout(() => {
+      let targetResource = document.getElementById(id)
+      console.log("the id:")
+      console.log(id)
+      console.log("The targetResource:")
+      console.log(targetResource)
+      // NOTE: scrollIntoView worked.... AND I'm willing to settle with that for now!
+      // TODO: CLean this shiz up, uninstall gsap, and add hover style to focused element
+      // manage that state -> i.e. it should become the active div, until user scrolls
+      // then other divs will be newly selected active divs.
+      if(targetResource) {
+        targetResource.scrollIntoView()
+      } else {
+        scrollIntoViewWhenLoaded(id)
+      }
+    }, 2000)
+  }
+
   // TODO: Genericize this b, make a reusable hook... as this is
   // repeated in notebook-list and sub-category-list
   useEffect(() => {
@@ -53,15 +113,16 @@ const TopicList = ({ notebookId, subCategoryId }) => {
       hash = window.location.hash
     }
     if (hash && !activeCircle.active) {
-      const id = hash.slice(1, hash.length)
-      setTimeout(() => {
-        let targetResource = document.getElementById(id)
-        // NOTE: scrollIntoView worked.... AND I'm willing to settle with that for now!
-        // TODO: CLean this shiz up, uninstall gsap, and add hover style to focused element
-        // manage that state -> i.e. it should become the active div, until user scrolls
-        // then other divs will be newly selected active divs.
-        targetResource.scrollIntoView()
-      }, 5000)
+      // TODO: IMPLEMENT SCROLL NOTE INTO VIEW... Will need to handle
+      // toggling editor
+      let id = hash.slice(1, hash.length)
+      if (id.match(/topic-[0-9]+-note-[0-9]+/)) {
+        const [activeTopicId, ...rest] = id.match(extractTopicIdRegex)
+        setActiveTopic(activeTopicId)
+        const [noteId, ...restTwo] = id.match(extractNoteIdRegex)
+        id = noteId
+      }
+      scrollIntoViewWhenLoaded(id)
     }
     listEl.current.addEventListener("scroll", handleScroll)
 
@@ -182,7 +243,8 @@ const TopicList = ({ notebookId, subCategoryId }) => {
             <div id="topic-list">
               {keys.map((key, i) => {
                 return (
-                  <ResourceListing
+                  <TopicListing
+                    id={topics[key].title}
                     key={topics[key].id.toString()}
                     title={topics[key].title}
                     tags={topics[key].tags}
@@ -195,6 +257,7 @@ const TopicList = ({ notebookId, subCategoryId }) => {
                     setActiveDisabled={setActiveDisabled}
                     scrollTop={scrollTop}
                     setActiveCircle={setActiveCircle}
+                    showNoteList={topics[key].id.toString() === activeTopic}
                   />
                 )
               })}

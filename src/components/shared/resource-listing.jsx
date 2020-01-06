@@ -130,6 +130,7 @@ const Container = styled.div`
 `
 
 const ResourceListing = ({
+  id,
   type,
   title,
   link,
@@ -147,12 +148,14 @@ const ResourceListing = ({
   setActiveDisabled,
   scrollTop,
   setActiveCircle,
+  showNotes,
+  setShowNotes
 }) => {
   const { deleteNotebook } = useNotebookActions()
   const { deleteSubCategory } = useSubCategoryActions()
   const { deleteTopic } = useTopicActions()
   const { deleteNote } = useNoteActions()
-  const [toggled, setToggled] = useState(false)
+  // const [toggled, setToggled] = useState(false)
   // const [titleRightPosition, setTitleRightPosition] = useState(null)
   const listingEl = useRef(null)
   const titleRef = useRef(null)
@@ -184,7 +187,7 @@ const ResourceListing = ({
     // and pass that down as a prop to be checked against.
     <>
       <Container
-        id={title}
+        id={id}
         ref={listingEl}
         type={type}
         active={active}
@@ -244,21 +247,21 @@ const ResourceListing = ({
             <div
               // TODO: fix, because this is messy
               onClick={
-                handleArrowClick ? handleArrowClick : () => setToggled(!toggled)
+                handleArrowClick ? handleArrowClick : () => setShowNotes(!showNotes)
               }
             >
-              <ArrowIcon toggled={toggled || showEditor} />
+              <ArrowIcon showNotes={showNotes || showEditor} />
             </div>
           ) : null}
         </div>
       </Container>
-      {type === "TOPIC" && toggled && (
+      {type === "TOPIC" && showNotes && (
         <Suspense fallback={<div>Loading...</div>}>
           <NoteList
             topics={topics}
             topicId={topicId}
             subCategoryId={subCategoryId}
-            toggled={toggled}
+            showNotes={showNotes}
           />
         </Suspense>
       )}

@@ -1,10 +1,12 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import styled from "styled-components"
 import { useNoteActions } from "../../../hooks/commands/useNoteActions"
-import Tags from "./tags"
+// import Tags from "./tags"
 import ResourceListing from "../../shared/resource-listing"
 import Editor from "./editor"
-import dropDownIcon from "../../../assets/icons/right-chevron.svg"
+// import dropDownIcon from "../../../assets/icons/right-chevron.svg"
+
+const extractNoteIdRegex = /\d+$/
 
 const Container = styled.div`
   /* min-width: 14rem; */
@@ -22,19 +24,35 @@ const Container = styled.div`
   transform: translateY(-100%);
   opacity: 0%;
   transition: opacity 0.6s, transform 0.8s ease-in-out;
-  transform: ${props => props.toggled && `translateY(0%)`};
-  opacity: ${props => props.toggled && `100%`};
+  transform: ${props => props.showNotes && `translateY(0%)`};
+  opacity: ${props => props.showNotes && `100%`};
 `
 
 const NoteListing = ({
   idx,
-  toggled,
+  showNotes,
   subCategoryId,
   topicId,
   note: { id, title, tags, content_markdown, note_timers },
 }) => {
   const { updateNoteContent } = useNoteActions()
   const [showEditor, setShowEditor] = useState(false)
+
+  useEffect(() => {
+    let hash
+    if (typeof window !== "undefined") {
+      hash = window.location.hash
+    }
+    let hashStr = hash.slice(1, hash.length)
+    const [noteId, ...rest] = hashStr.match(extractNoteIdRegex)
+    console.log("id")
+    console.log(typeof id)
+    console.log("noteId")
+    console.log(typeof noteId)
+    if (id === Number(noteId)) {
+      setShowEditor(!showEditor)
+    }
+  }, [])
 
   const persistNoteContent = ({ content_text, content_markdown }) => {
     updateNoteContent({
@@ -47,12 +65,13 @@ const NoteListing = ({
   }
 
   return (
-    <Container className="note-listing" idx={idx} toggled={toggled}>
+    <Container className="note-listing" idx={idx} showNotes={showNotes}>
       {/* TODO: Implement API PUT to save text editor contents to the
         database/store it in redux. Otherwise the editor will be clear when
-        showEditor is toggled. */}
+        showEditor is showNotes. */}
       <ResourceListing
         type="NOTE"
+        id={`note-${id}`}
         title={title}
         tags={tags}
         noteId={id}

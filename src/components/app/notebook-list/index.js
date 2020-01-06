@@ -162,6 +162,7 @@ const NotebookList = () => {
           <div id="notebook-list">
             {keys.map((key, i) => (
               <ResourceListing
+                id={notebooks[key].title}
                 type="NOTEBOOK"
                 key={notebooks[key].id.toString()}
                 title={notebooks[key].title}
@@ -176,9 +177,9 @@ const NotebookList = () => {
             ))}
           </div>
           {/* // TODO: Implement scroll loading, and introduce some state // to keep
-        track of whether there are more pages to be // retrieved -> by checking
-        whether the most recent // page fetch retrieved 20 elements, if less,
-        then // there are no more pages to retrieve. */}
+          track of whether there are more pages to be // retrieved -> by checking
+          whether the most recent // page fetch retrieved 20 elements, if less,
+          then // there are no more pages to retrieve. */}
           <button onClick={loadMoreNotebooks}>Load More</button>
           {/* TODO: Create a CreateNotebookModal component */}
         </div>
