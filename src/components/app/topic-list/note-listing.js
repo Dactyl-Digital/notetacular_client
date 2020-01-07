@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react"
 import styled from "styled-components"
 import { useNoteActions } from "../../../hooks/commands/useNoteActions"
-// import Tags from "./tags"
 import ResourceListing from "../../shared/resource-listing"
 import Editor from "./editor"
-// import dropDownIcon from "../../../assets/icons/right-chevron.svg"
 
 const extractNoteIdRegex = /\d+$/
 
@@ -39,18 +37,15 @@ const NoteListing = ({
   const [showEditor, setShowEditor] = useState(false)
 
   useEffect(() => {
-    let hash
     if (typeof window !== "undefined") {
-      hash = window.location.hash
-    }
-    let hashStr = hash.slice(1, hash.length)
-    const [noteId, ...rest] = hashStr.match(extractNoteIdRegex)
-    console.log("id")
-    console.log(typeof id)
-    console.log("noteId")
-    console.log(typeof noteId)
-    if (id === Number(noteId)) {
-      setShowEditor(!showEditor)
+      const { hash } = window.location
+      if (hash) {
+        let hashStr = hash.slice(1, hash.length)
+        const [noteId, ...rest] = hashStr.match(extractNoteIdRegex)
+        if (id === Number(noteId)) {
+          setShowEditor(!showEditor)
+        }
+      }
     }
   }, [])
 

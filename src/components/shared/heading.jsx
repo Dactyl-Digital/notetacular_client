@@ -1,12 +1,12 @@
 import React from "react"
 import styled from "styled-components"
-// import Search from "./search"
+import Search from "./search"
 
 const Container = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 80%;
+  width: 100%;
   padding-right: 1.6rem;
 
   h1 {
@@ -26,7 +26,7 @@ const Heading = ({ title }) => {
       is to show the clicked searchResults note
       amongst a list of all the other notes associated
       w/ the searchResults notes' topic. */}
-      {/* <Search /> */}
+      <Search />
     </Container>
   )
 }

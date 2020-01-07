@@ -1,4 +1,5 @@
 import React, { useState } from "react"
+import { Link } from "gatsby"
 import styled from "styled-components"
 import SearchIcon from "./icons/search-icon"
 import { useSearch } from "../../hooks/queries/useSearch"
@@ -21,10 +22,10 @@ const Container = styled.div`
     left: -14rem;
     z-index: 8998;
     overflow: hidden;
-    max-width: 0rem;
-    transition: max-width 0.6s ease-in-out;
+    /* max-width: 0rem; */
+    /* transition: max-width 0.6s ease-in-out; */
     /* NOTE: Applying a percentage width doesn't trigger the transition */
-    max-width: ${props => props.toggled && `20rem`};
+    /* max-width: ${props => props.toggled && `20rem`}; */
 
     max-height: 0rem;
     transition: max-height 0.6s ease-in-out;
@@ -50,7 +51,12 @@ const Container = styled.div`
   }
 `
 
-const SearchResultsPaginationView = ({ children, searchResults, page }) => (
+const SearchResultsPaginationView = ({
+  children,
+  searchResults,
+  page,
+  clearSearch,
+}) => (
   <>
     {searchResults.map(
       (
@@ -65,14 +71,13 @@ const SearchResultsPaginationView = ({ children, searchResults, page }) => (
         idx
       ) =>
         idx >= page * PAGE_AMOUNT && idx < (page + 1) * PAGE_AMOUNT ? (
-          // TODO: Implement fetching alll of the notes associated under the topic_id
-          //       and scrollTo/focus on the particular note in the UI
-          // Steps to facilitate this process:
-          // 1. Create an endpoint on the backend to fetch a topic by id (w/ a list of all
-          //    associated note_ids)
-          // 2. Follow up with listNotes action to retrieve paginated note results...
           <div id={`search_result-${note_id}-${title}`}>
-            <h4>{title}</h4>
+            <Link
+              to={`/app/notebook/${notebook_id}/sub-category/${sub_category_id}/topics#topic-${topic_id}-note-${note_id}`}
+              onClick={() => clearSearch()}
+            >
+              <h4>{title}</h4>
+            </Link>
             <p>{content_text}</p>
           </div>
         ) : null
@@ -144,6 +149,7 @@ const Search = () => {
               <SearchResultsPaginationView
                 searchResults={searchResults}
                 page={page}
+                clearSearch={clearSearch}
               >
                 <button onClick={handleBack}>Prev</button>
                 <button onClick={handleNext}>Next</button>
