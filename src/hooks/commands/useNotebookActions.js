@@ -1,5 +1,6 @@
 import { useDispatch } from "react-redux"
 import { apiRequest } from "../../store/actions/api"
+import { CREATE_NOTEBOOK, LIST_NOTEBOOKS } from "../../store/actions/ui"
 import {
   setCreatedNotebook,
   setCreateNotebookError,
@@ -16,6 +17,7 @@ export const createNotebook = dispatch => createNotebookData => {
       method: "POST",
       url: NOTEBOOK_URL,
       payload: createNotebookData,
+      loadingResource: CREATE_NOTEBOOK,
       onSuccess: createNotebookSuccess(dispatch),
       onError: createNotebookError(dispatch),
     })
@@ -36,6 +38,7 @@ export const listNotebooks = dispatch => offset => {
       method: "GET",
       url: `${LIST_NOTEBOOKS_URL}${offset}`,
       payload: {},
+      loadingResource: LIST_NOTEBOOKS,
       onSuccess: listNotebooksSuccess(dispatch),
       onError: listNotebooksError(dispatch),
     })

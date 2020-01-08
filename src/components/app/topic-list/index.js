@@ -89,10 +89,6 @@ const TopicList = ({ notebookId, subCategoryId }) => {
   const scrollIntoViewWhenLoaded = (id) => {
     setTimeout(() => {
       let targetResource = document.getElementById(id)
-      console.log("the id:")
-      console.log(id)
-      console.log("The targetResource:")
-      console.log(targetResource)
       // NOTE: scrollIntoView worked.... AND I'm willing to settle with that for now!
       // TODO: CLean this shiz up, uninstall gsap, and add hover style to focused element
       // manage that state -> i.e. it should become the active div, until user scrolls

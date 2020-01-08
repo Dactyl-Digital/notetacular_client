@@ -17,15 +17,25 @@ const invalidSession = ({ response: { data } }) => {
   return VALID_SESSION
 }
 
-const dispatchToggleLoader = (dispatch, bool, { method, url }) =>
-  dispatch(toggleLoader({ loading: bool, trigger: `${method} ${url}` }))
+const dispatchToggleLoader = (
+  dispatch,
+  bool,
+  { method, url, loadingResource }
+) =>
+  dispatch(
+    toggleLoader({
+      loading: bool,
+      loadingResource,
+      trigger: `${method} ${url}`,
+    })
+  )
 
 const makeRequest = (
   dispatch,
-  { payload },
+  { payload, loadingResource },
   { method, url, onSuccess, onError }
 ) => {
-  dispatchToggleLoader(dispatch, true, { method, url })
+  dispatchToggleLoader(dispatch, true, { method, url, loadingResource })
   if (method === "GET") {
     axios
       .get(url, {
@@ -49,7 +59,11 @@ const makeRequest = (
             },
           })
         }
-        dispatchToggleLoader(dispatch, false, { method, url })
+        dispatchToggleLoader(dispatch, false, {
+          method,
+          url,
+          loadingResource: null,
+        })
         const result = invalidSession(error)
         if (result === VALID_SESSION) return onError(error)
         dispatch(result)

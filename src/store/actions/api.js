@@ -18,10 +18,12 @@ export const apiRequest = ({
   method = "GET",
   url,
   payload = {},
+  loadingResource,
   onSuccess,
   onError,
 }) => ({
   type: API_REQUEST,
   payload,
+  loadingResource,
   meta: { method, url, onSuccess, onError },
 })

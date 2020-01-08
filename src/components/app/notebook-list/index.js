@@ -1,7 +1,9 @@
 import React, { useRef, useState, useEffect } from "react"
 import styled from "styled-components"
+import { useUi } from "../../../hooks/queries/useUi"
 import { useNotebook } from "../../../hooks/queries/useNotebook"
 import { useNotebookActions } from "../../../hooks/commands/useNotebookActions"
+import { CREATE_NOTEBOOK, LIST_NOTEBOOKS } from "../../../store/actions/ui"
 import Heading from "../../shared/heading"
 import Sidebar from "../../shared/sidebar"
 import ResourceListing from "../../shared/resource-listing"
@@ -35,6 +37,7 @@ const Container = styled.div`
 `
 
 const NotebookList = () => {
+  const { loading, loadingResource } = useUi()
   const {
     notebooks,
     notebooksPaginationEnd,
@@ -116,6 +119,17 @@ const NotebookList = () => {
 
   const keys = Object.keys(notebooks)
 
+  const handleSuccessOrErrorStatus = toggleShowModal => {
+    if (loading && loadingResource === CREATE_NOTEBOOK) {
+      setTimeout(() => {
+        handleSuccessOrErrorStatus(toggleShowModal)
+      }, 1000)
+    } else {
+      // Only toggle after success/error message has been displayed to the user
+      toggleShowModal(false)
+    }
+  }
+
   return (
     <ActiveCircleContext.Provider
       value={{
@@ -139,42 +153,56 @@ const NotebookList = () => {
                 onSubmit={e => {
                   e.preventDefault()
                   handleCreateNewNotebook()
-                  toggleShowModal(false)
+                  setTimeout(() => {
+                    handleSuccessOrErrorStatus(toggleShowModal)
+                  }, 1000)
                 }}
               >
-                <div className="form-fields">
-                  <label htmlFor="title">Title</label>
-                  <input
-                    id="title"
-                    type="text"
-                    value={title}
-                    onChange={e => setTitle(e.target.value)}
-                  />
-                </div>
-                <div className="form-button">
-                  <Button type="CREATE" size="SMALL">
-                    Submit!
-                  </Button>
-                </div>
+                {loading && loadingResource === CREATE_NOTEBOOK ? (
+                  <h1>Loading...</h1>
+                ) : (
+                  // TODO: Don't display this if create notebook was success.
+                  // Just show the success/error snackbar as a pop up from the top
+                  <>
+                    <div className="form-fields">
+                      <label htmlFor="title">Title</label>
+                      <input
+                        id="title"
+                        type="text"
+                        value={title}
+                        onChange={e => setTitle(e.target.value)}
+                      />
+                    </div>
+                    <div className="form-button">
+                      <Button type="CREATE" size="SMALL">
+                        Submit!
+                      </Button>
+                    </div>
+                  </>
+                )}
               </StyledForm>
             )}
           </CreateResourceModal>
           <div id="notebook-list">
-            {keys.map((key, i) => (
-              <ResourceListing
-                id={notebooks[key].title}
-                type="NOTEBOOK"
-                key={notebooks[key].id.toString()}
-                title={notebooks[key].title}
-                link={`notebook/${notebooks[key].id}/sub-categories`}
-                index={i}
-                notebookId={notebooks[key].id}
-                active={activeCircle.active === notebooks[key].title}
-                setActiveDisabled={setActiveDisabled}
-                scrollTop={scrollTop}
-                setActiveCircle={setActiveCircle}
-              />
-            ))}
+            {loading && loadingResource === LIST_NOTEBOOKS ? (
+              <h1>Loading...</h1>
+            ) : (
+              keys.map((key, i) => (
+                <ResourceListing
+                  id={notebooks[key].title}
+                  type="NOTEBOOK"
+                  key={notebooks[key].id.toString()}
+                  title={notebooks[key].title}
+                  link={`notebook/${notebooks[key].id}/sub-categories`}
+                  index={i}
+                  notebookId={notebooks[key].id}
+                  active={activeCircle.active === notebooks[key].title}
+                  setActiveDisabled={setActiveDisabled}
+                  scrollTop={scrollTop}
+                  setActiveCircle={setActiveCircle}
+                />
+              ))
+            )}
           </div>
           {/* // TODO: Implement scroll loading, and introduce some state // to keep
           track of whether there are more pages to be // retrieved -> by checking

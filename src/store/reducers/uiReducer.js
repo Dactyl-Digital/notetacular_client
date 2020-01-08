@@ -3,11 +3,16 @@ import { SET_LOADING } from "../actions/ui"
 
 export const uiInitialState = {
   loading: false,
+  loadingResource: null,
 }
 
 export default function uiReducer(uiState = uiInitialState, { type, payload }) {
   if (type === SET_LOADING) {
-    return { ...uiState, loading: payload.loading }
+    return {
+      ...uiState,
+      loading: payload.loading,
+      loadingResource: payload.loadingResource,
+    }
   }
   return uiState
 }
