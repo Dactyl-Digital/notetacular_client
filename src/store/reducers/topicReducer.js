@@ -110,27 +110,31 @@ const normalizeSingleUpdate = ({ parentSubCategoriesOfTopics }, { data }) => {
   }
 }
 
-const normalize = key => (noteState, { data }) =>
+const normalize = key => (topicState, { data }) =>
   data[key].reduce((acc, resource, i) => {
     const topicsPaginationEnd = data[key].length !== 20
-    console.log("topicsPaginationEnd: ")
-    console.log(topicsPaginationEnd)
     if (i === 0) {
       // NOTE: Doing this to ensure that listOffset is only incremented once while
       // iterating through the list of notes retrieved from the API.
-      if (acc[resource.sub_category_id]) {
+      if (
+        topicState.parentSubCategoriesOfTopics.hasOwnProperty(
+          resource.sub_category_id
+        )
+      ) {
         // Updating a current topic's notes
         acc = {
           ...acc,
           [resource.sub_category_id]: {
-            ...acc[resource.sub_category_id],
+            ...topicState.parentSubCategoriesOfTopics[resource.sub_category_id],
             topicsPaginationEnd: topicsPaginationEnd,
             topics: {
-              ...acc[resource.sub_category_id].notes,
+              ...topicState.parentSubCategoriesOfTopics[
+                resource.sub_category_id
+              ].topics,
               [resource.id]: resource,
             },
             listOffset:
-              noteState.parentTopicsOfNotes[resource.sub_category_id]
+              topicState.parentSubCategoriesOfTopics[resource.sub_category_id]
                 .listOffset + data[key].length,
           },
         }
@@ -278,8 +282,6 @@ export default function topicReducer(
 
 const topicListNewState = (topicState, payload) => {
   const result = normalizeTopics(topicState, payload)
-  console.log("result of normalizeTopics: ")
-  console.log(result)
 
   return {
     ...topicState,

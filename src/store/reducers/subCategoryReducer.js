@@ -97,7 +97,11 @@ const normalize = key => (subCategoryState, { data }) =>
     if (i === 0) {
       // NOTE: Doing this to ensure that listOffset is only incremented once while
       // iterating through the list of notes retrieved from the API.
-      if (acc[resource.notebook_id]) {
+      if (
+        subCategoryState.parentNotebooksOfSubCategories.hasOwnProperty(
+          resource.notebook_id
+        )
+      ) {
         // Updating a current topic's notes
         acc = {
           ...acc,
@@ -105,12 +109,15 @@ const normalize = key => (subCategoryState, { data }) =>
             ...acc[resource.notebook_id],
             subCategoriesPaginationEnd,
             subCategories: {
-              ...acc[resource.notebook_id].subCategories,
+              ...subCategoryState.parentNotebooksOfSubCategories[
+                resource.notebook_id
+              ].subCategories,
               [resource.id]: resource,
             },
             listOffset:
-              subCategoryState.parentTopicsOfNotes[resource.notebook_id]
-                .listOffset + data[key].length,
+              subCategoryState.parentNotebooksOfSubCategories[
+                resource.notebook_id
+              ].listOffset + data[key].length,
           },
         }
       } else {

@@ -205,7 +205,7 @@ const ResourceListing = ({
               </div>
             </Link>
           )}
-          {(type === "TOPIC" || type === "NOTE") && (
+          {(type === "NOTE") && (
             <Tags tags={tags} type={type} topicId={topicId} noteId={noteId} />
           )}
         </div>

@@ -142,15 +142,15 @@ const normalize = key => (noteState, { data }) =>
     if (i === 0) {
       // NOTE: Doing this to ensure that listOffset is only incremented once while
       // iterating through the list of notes retrieved from the API.
-      if (acc[resource.topic_id]) {
+      if (noteState.parentTopicsOfNotes.hasOwnProperty(resource.topic_id)) {
         // Updating a current topic's notes
         acc = {
           ...acc,
           [resource.topic_id]: {
-            ...acc[resource.topic_id],
+            ...noteState.parentTopicsOfNotes[resource.topic_id],
             notesPaginationEnd,
             notes: {
-              ...acc[resource.topic_id].notes,
+              ...noteState.parentTopicsOfNotes[resource.topic_id].notes,
               [resource.id]: resource,
             },
             listOffset:

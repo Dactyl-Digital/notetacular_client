@@ -41,6 +41,8 @@ const NoteListing = ({
   useEffect(() => {
     if (typeof window !== "undefined") {
       const { hash } = window.location
+      // TODO/NOTE:
+      // An error popped up here... but only once, keep track of this.
       if (hash) {
         let hashStr = hash.slice(1, hash.length)
         const [noteId, ...rest] = hashStr.match(extractNoteIdRegex)

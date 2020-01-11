@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import styled from "styled-components"
 import NoteListing from "./note-listing"
 import { CREATE_NOTE, LIST_NOTES } from "../../../store/actions/ui"
@@ -86,33 +86,83 @@ const CreateNoteForm = ({
 }
 
 const NoteList = ({ topics, topicId, subCategoryId, showNotes }) => {
+  const noteListRef = useRef(null)
   const { loading, loadingResource } = useUi()
   const { parentTopicsOfNotes, createNoteError } = useNote()
   const { createNote, listNotes, clearCreateNoteError } = useNoteActions()
   const [snacks, setSnacks] = useState([])
   const [title, setTitle] = useState("")
+  const [fetchNotes, setFetchNotes] = useState(false)
 
-  const notes = topics[topicId].notes
+  const { notes } = topics[topicId]
   const noteIdList = Array.isArray(notes) ? notes : []
 
-  useEffect(() => {
-    if (parentTopicsOfNotes.hasOwnProperty(topicId)) {
-      // Still more notes available on the backend.
-      if (!parentTopicsOfNotes[topicId].notesPaginationEnd) {
-        listNotes({
-          offset: parentTopicsOfNotes[topicId].listOffset,
-          note_id_list: noteIdList,
-        })
-      }
-    } else {
-      if (noteIdList.length > 0) {
-        listNotes({
-          offset: 0,
-          note_id_list: noteIdList,
-        })
-      }
+  const handleScroll = e => {
+    if (loading && loadingResource === "LIST_NOTES") {
+      e.preventDefault()
     }
-  }, [])
+    const { clientHeight } = e.target
+    const { bottom } = noteListRef.current.getBoundingClientRect()
+
+    if (bottom < clientHeight && !loading) {
+      // Closure being a bitch again. Because the eventListener
+      // is set up in the useEffect hook... And no updates occur.
+      // When the trigger occurs to load new notes, this will still be empty.
+      // listNotes({
+      //   offset: parentTopicsOfNotes[topicId].listOffset,
+      //   note_id_list: noteIdList,
+      // })
+      // SOLUTION: Going to use a useState hook, to trigger loading new notes.
+      setFetchNotes(true)
+      setTimeout(() => {
+        setFetchNotes(false)
+      }, 2000)
+    }
+  }
+
+  let mainContent
+  useEffect(() => {
+    if (!mainContent) {
+      mainContent = document.getElementById("main-content")
+    }
+    // IMMEDIATE TODO: Implement scroll handler for loading more notes
+    // when bottom of list is reached, and notePaginationEnd is false
+
+    // The case where no notes have been fetched yet.
+    if (noteIdList.length > 0 && !parentTopicsOfNotes.hasOwnProperty(topicId)) {
+      listNotes({
+        offset: 0,
+        note_id_list: noteIdList,
+      })
+    } else if (fetchNotes && !parentTopicsOfNotes[topicId].notesPaginationEnd) {
+      listNotes({
+        offset: parentTopicsOfNotes[topicId].listOffset,
+        note_id_list: noteIdList,
+      })
+    }
+    // if (parentTopicsOfNotes.hasOwnProperty(topicId)) {
+    //   // Still more notes available on the backend.
+    //   if (!parentTopicsOfNotes[topicId].notesPaginationEnd) {
+    //     listNotes({
+    //       offset: parentTopicsOfNotes[topicId].listOffset,
+    //       note_id_list: noteIdList,
+    //     })
+    //   }
+    // } else {
+    //   if (noteIdList.length > 0) {
+    //     listNotes({
+    //       offset: 0,
+    //       note_id_list: noteIdList,
+    //     })
+    //   }
+    // }
+
+    mainContent.addEventListener("scroll", handleScroll)
+
+    return () => {
+      mainContent.removeEventListener("scroll", handleScroll)
+    }
+  }, [fetchNotes])
 
   const handleCreateNewNote = () => {
     if (createNoteError) {
@@ -137,7 +187,6 @@ const NoteList = ({ topics, topicId, subCategoryId, showNotes }) => {
     <Container data-testid="note-list" showNotes={showNotes}>
       <NotificationSnacks snacks={snacks} />
       <CreateResourceModal action="Create" resource="Note" buttonType="NORMAL">
-        {/* TODO: Create a separate component for this form. */}
         {toggleShowModal => (
           <StyledForm
             onSubmit={e => {
@@ -156,7 +205,7 @@ const NoteList = ({ topics, topicId, subCategoryId, showNotes }) => {
           </StyledForm>
         )}
       </CreateResourceModal>
-      <div className="note-list">
+      <div ref={noteListRef} className="note-list">
         {parentTopicsOfNotes.hasOwnProperty(topicId) &&
           noteIdList.map((noteId, idx) => {
             if (parentTopicsOfNotes[topicId].notes.hasOwnProperty(noteId)) {
@@ -172,6 +221,7 @@ const NoteList = ({ topics, topicId, subCategoryId, showNotes }) => {
               )
             }
           })}
+        {loading && loadingResource === "LIST_NOTES" && <h1>Loading...</h1>}
       </div>
     </Container>
   )
