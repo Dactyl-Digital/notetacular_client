@@ -1,5 +1,6 @@
 import { useDispatch } from "react-redux"
 import { apiRequest } from "../../store/actions/api"
+import { CREATE_NOTE, LIST_NOTES } from "../../store/actions/ui"
 import {
   setCreatedNote,
   setCreateNoteError,
@@ -32,6 +33,7 @@ export const createNote = dispatch => ({
       method: "POST",
       url: NOTE_URL,
       payload: createNoteData,
+      loadingResource: CREATE_NOTE,
       onSuccess: createNoteSuccess({ sub_category_id })(dispatch),
       onError: createNoteError(dispatch),
     })
@@ -75,6 +77,7 @@ export const listNotes = dispatch => ({ offset, note_id_list }) => {
       method: "GET",
       url: `${LIST_NOTES_URL}${offset}`,
       payload: { note_id_list },
+      loadingResource: LIST_NOTES,
       onSuccess: listNotesSuccess(dispatch),
       onError: listNotesError(dispatch),
     })
@@ -167,6 +170,7 @@ export function useNoteActions() {
 
   return {
     createNote: createNote(dispatch),
+    clearCreateNoteError: createNoteError(dispatch),
     listNotes: listNotes(dispatch),
     deleteNote: deleteNote(dispatch),
     updateNoteContent: updateNoteContent(dispatch),

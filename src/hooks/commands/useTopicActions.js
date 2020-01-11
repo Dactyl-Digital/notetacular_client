@@ -1,6 +1,7 @@
 import { useDispatch } from "react-redux"
 import { apiRequest } from "../../store/actions/api"
 import { setSubCategory } from "../../store/actions/subCategory"
+import { CREATE_TOPIC, LIST_TOPICS } from "../../store/actions/ui"
 import {
   setCreatedTopic,
   setCreateTopicError,
@@ -29,6 +30,7 @@ export const createTopic = dispatch => createTopicData => {
       method: "POST",
       url: TOPIC_URL,
       payload: createTopicData,
+      loadingResource: CREATE_TOPIC,
       onSuccess: createTopicSuccess(dispatch),
       onError: createTopicError(dispatch),
     })
@@ -51,6 +53,7 @@ export const listTopics = dispatch => ({ offset, topic_id_list }) => {
       method: "GET",
       url: `${LIST_TOPICS_URL}${offset}`,
       payload: { topic_id_list },
+      loadingResource: LIST_TOPICS,
       onSuccess: listTopicsSuccess(dispatch),
       onError: listTopicsError(dispatch),
     })
@@ -75,6 +78,7 @@ export const listSubCategoryTopics = dispatch => ({
       method: "GET",
       url: LIST_SUB_CATEGORY_TOPICS_URL,
       payload: { sub_category_id: subCategoryId, limit, offset },
+      loadingResource: LIST_TOPICS,
       onSuccess: listSubCategoryTopicsSuccess(dispatch),
       onError: listSubCategoryTopicsError(dispatch),
     })
@@ -165,6 +169,7 @@ export function useTopicActions() {
 
   return {
     createTopic: createTopic(dispatch),
+    clearCreateTopicError: createTopicError(dispatch),
     listTopics: listTopics(dispatch),
     listSubCategoryTopics: listSubCategoryTopics(dispatch),
     deleteTopic: deleteTopic(dispatch),

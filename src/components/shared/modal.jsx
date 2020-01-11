@@ -12,21 +12,29 @@ const Overlay = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  /* TODO: Position searchbar towards the top. */
+  align-items: ${props => props.resource === "Search" && "flex-start"};
   position: absolute;
   top: 0;
   left: 0;
   z-index: 9001;
   width: 100vw;
   height: 100vh;
-  overflow: hidden;
   background: rgba(17, 238, 246, 70%);
+  overflow-x: hidden;
 `
 
 // Use a ternary operator to make sure that the document object is defined
 let portalRoot =
   typeof document !== "undefined" ? document.getElementById("portal") : null
 
-const Modal = ({ children, resource, IconComponent, buttonType }) => {
+const Modal = ({
+  children,
+  resource,
+  IconComponent,
+  buttonType,
+  onModalClose,
+}) => {
   const [el, setEl] = useState(null)
   const [showModal, setShowModal] = useState(false)
   const toggleShowModal = () => setShowModal(!showModal)
@@ -71,7 +79,6 @@ const Modal = ({ children, resource, IconComponent, buttonType }) => {
             Add {resource}
           </Button>
         )}
-        {/* {showModal ? children(toggleShowModal) : null} */}
         {showModal
           ? ReactDOM.createPortal(
               <Overlay

@@ -20,14 +20,16 @@ const Container = styled.div`
 
 const Heading = ({ title }) => {
   return (
-    <Container>
-      <h1>{title}</h1>
-      {/* TODO: Last thing to implement for Search
-      is to show the clicked searchResults note
-      amongst a list of all the other notes associated
-      w/ the searchResults notes' topic. */}
-      <Search />
-    </Container>
+    <>
+      <Container>
+        <h1>{title}</h1>
+        {/* TODO: Last thing to implement for Search
+        is to show the clicked searchResults note
+        amongst a list of all the other notes associated
+        w/ the searchResults notes' topic. */}
+        <Search />
+      </Container>
+    </>
   )
 }
 

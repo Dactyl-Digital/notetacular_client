@@ -10,6 +10,7 @@ export const searchInitialState = {
   offset: 0,
   paginationEnd: false,
   totalResults: 0,
+  retrievedSearchResults: false,
   searchError: null,
 }
 
@@ -33,6 +34,7 @@ export default function searchReducer(
       ],
       offset: searchState.offset + 10,
       totalResults: searchState.totalResults + payload.data.num_rows,
+      retrievedSearchResults: true,
       paginationEnd,
     }
   }

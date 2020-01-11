@@ -34,6 +34,10 @@ const StyledSvg = styled.svg`
   transition: transform 0.4s ease-in-out;
   transform: ${props =>
     props.type === "ARROW" && props.toggled ? `rotateZ(270deg)` : null};
+
+  transform: ${props => (props.arrowType === "NEXT" ? `rotateZ(0deg)` : null)};
+  transform: ${props =>
+    props.arrowType === "PREV" ? `rotateZ(180deg)` : null};
 `
 
 export default StyledSvg

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react"
 import styled from "styled-components"
+import { LIST_NOTE_TIMERS } from "../../../store/actions/ui"
 import { TimerContext } from "./context/timer-context"
+import { useUi } from "../../../hooks/queries/useUi"
 import { useNoteTimerActions } from "../../../hooks/commands/useNoteTimerActions"
 import { useNoteTimer } from "../../../hooks/queries/useNoteTimer"
 import Button from "../../shared/button"
@@ -90,6 +92,7 @@ const NoteTimerDescription = ({
 }
 
 const NoteTimers = ({ noteId, note_timer_id_list, toggleShowModal }) => {
+  const { loading, loadingResource } = useUi()
   const { parentNotesOfNoteTimers } = useNoteTimer()
   const {
     createNoteTimer,
@@ -136,63 +139,68 @@ const NoteTimers = ({ noteId, note_timer_id_list, toggleShowModal }) => {
     <TimerContext.Consumer>
       {({ elapsedSeconds, activeTimer, startTimer, stopTimer }) => (
         <div>
-          {keys.map((key, i) => (
-            <Container idx={i} key={`note-timer-${key}`}>
-              <div className="time-btn-container">
-                <div className="elapsed-time">
+          {loading && loadingResource === LIST_NOTE_TIMERS ? (
+            <h1>Loading...</h1>
+          ) : (
+            keys.map((key, i) => (
+              <Container idx={i} key={`note-timer-${key}`}>
+                <div className="time-btn-container">
+                  <div className="elapsed-time">
+                    {elapsedSeconds !== null &&
+                    activeTimer.noteId === noteId &&
+                    activeTimer.noteTimerId === note_timers[key].id
+                      ? formatTime(elapsedSeconds)
+                      : formatTime(note_timers[key].elapsed_seconds)}
+                  </div>
                   {elapsedSeconds !== null &&
                   activeTimer.noteId === noteId &&
-                  activeTimer.noteTimerId === note_timers[key].id
-                    ? formatTime(elapsedSeconds)
-                    : formatTime(note_timers[key].elapsed_seconds)}
+                  activeTimer.noteTimerId === note_timers[key].id ? (
+                    <Button
+                      size="EXTRA_SMALL"
+                      handleClick={() => {
+                        stopTimer()
+                      }}
+                    >
+                      Stop
+                    </Button>
+                  ) : (
+                    <Button
+                      type="CREATE"
+                      size="EXTRA_SMALL"
+                      handleClick={() => {
+                        toggleShowModal()
+                        startTimer({
+                          currentElapsedSeconds:
+                            note_timers[key].elapsed_seconds,
+                          noteId,
+                          noteTimerId: note_timers[key].id,
+                        })
+                      }}
+                    >
+                      Start
+                    </Button>
+                  )}
                 </div>
-                {elapsedSeconds !== null &&
-                activeTimer.noteId === noteId &&
-                activeTimer.noteTimerId === note_timers[key].id ? (
-                  <Button
-                    size="EXTRA_SMALL"
+                <div className="description-trash-container">
+                  <NoteTimerDescription
+                    noteTimerId={note_timers[key].id}
+                    description={note_timers[key].description}
+                    handleUpdateNoteTimer={handleUpdateNoteTimer}
+                  ></NoteTimerDescription>
+                  {/* TODO: Add padding to the right to line it up w/ XIcon */}
+                  <TrashIcon
+                    marginRight={1.4}
                     handleClick={() => {
-                      stopTimer()
-                    }}
-                  >
-                    Stop
-                  </Button>
-                ) : (
-                  <Button
-                    type="CREATE"
-                    size="EXTRA_SMALL"
-                    handleClick={() => {
-                      toggleShowModal()
-                      startTimer({
-                        currentElapsedSeconds: note_timers[key].elapsed_seconds,
-                        noteId,
-                        noteTimerId: note_timers[key].id,
+                      deleteNoteTimer({
+                        note_id: noteId,
+                        note_timer_id: note_timers[key].id,
                       })
                     }}
-                  >
-                    Start
-                  </Button>
-                )}
-              </div>
-              <div className="description-trash-container">
-                <NoteTimerDescription
-                  noteTimerId={note_timers[key].id}
-                  description={note_timers[key].description}
-                  handleUpdateNoteTimer={handleUpdateNoteTimer}
-                ></NoteTimerDescription>
-                {/* TODO: Add padding to the right to line it up w/ XIcon */}
-                <TrashIcon
-                  marginRight={1.4}
-                  handleClick={() => {
-                    deleteNoteTimer({
-                      note_id: noteId,
-                      note_timer_id: note_timers[key].id,
-                    })
-                  }}
-                />
-              </div>
-            </Container>
-          ))}
+                  />
+                </div>
+              </Container>
+            ))
+          )}
         </div>
       )}
     </TimerContext.Consumer>

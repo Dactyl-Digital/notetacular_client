@@ -1,5 +1,6 @@
 import { useDispatch } from "react-redux"
 import { apiRequest } from "../../store/actions/api"
+import { LIST_SEARCH_RESULTS } from "../../store/actions/ui"
 import {
   clearSearchResults,
   setSearchResults,
@@ -15,6 +16,7 @@ export const search = dispatch => ({ search_text, offset }) => {
       method: "GET",
       url: SEARCH_URL,
       payload: { search_text, offset },
+      loadingResource: LIST_SEARCH_RESULTS,
       onSuccess: searchSuccess(dispatch),
       onError: searchError(dispatch),
     })

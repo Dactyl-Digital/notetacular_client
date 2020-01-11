@@ -1,5 +1,6 @@
 import { useDispatch } from "react-redux"
 import { apiRequest } from "../../store/actions/api"
+import { CREATE_NOTE_TIMER, LIST_NOTE_TIMERS } from "../../store/actions/ui"
 import {
   setCreatedNoteTimer,
   setCreateNoteTimerError,
@@ -18,6 +19,7 @@ export const createNoteTimer = dispatch => createNoteTimerData => {
       method: "POST",
       url: NOTE_TIMER_URL,
       payload: createNoteTimerData,
+      loadingResource: CREATE_NOTE_TIMER,
       onSuccess: createNoteTimerSuccess(dispatch),
       onError: createNoteTimerError(dispatch),
     })
@@ -39,6 +41,7 @@ export const listNoteTimers = dispatch => ({ offset, note_timer_id_list }) => {
       method: "GET",
       url: `${LIST_NOTE_TIMERS_URL}${offset}`,
       payload: { note_timer_id_list },
+      loadingResource: LIST_NOTE_TIMERS,
       onSuccess: listNoteTimersSuccess(dispatch),
       onError: listNoteTimersError(dispatch),
     })

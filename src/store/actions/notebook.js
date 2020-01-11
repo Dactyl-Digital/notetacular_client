@@ -32,7 +32,8 @@ export const setCreateNotebookError = ({ response: { data } }) => ({
   type: SET_CREATE_NOTEBOOK_ERROR,
   payload: data,
   meta: {
-    trigger: "Server failed to create notebook.",
+    trigger:
+      "Server failed to create notebook || User acknowledged/fixed/closed error.",
   },
 })
 

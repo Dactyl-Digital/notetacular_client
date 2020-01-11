@@ -1,52 +1,155 @@
-import React, { useState } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import { Link } from "gatsby"
 import styled from "styled-components"
+import Modal from "./modal"
 import SearchIcon from "./icons/search-icon"
+import XIcon from "./icons/x-icon"
+import ArrowIcon from "./icons/arrow-icon"
+import { LIST_SEARCH_RESULTS } from "../../store/actions/ui"
+import { useUi } from "../../hooks/queries/useUi"
 import { useSearch } from "../../hooks/queries/useSearch"
 import { useSearchActions } from "../../hooks/commands/useSearchActions"
 
 const PAGE_AMOUNT = 10
 
-// TODO:
+// OBSOLETE TODO:
+// Was going to do this. But went with an easier implementation, but stil might mess around with this anim in the future.
 // Implement this style of GSAP animation for the searchbar's toggle.
 // https://greensock.com/forums/topic/17480-gsap-collapsingexpanding-hidden-content/?do=findComment&comment=78853
 
 const Container = styled.div`
-  position: relative;
+  /* border: 2px solid #222; */
+  height: 70vh;
+  min-height: 16rem;
+  max-height: 20rem;
 
   #search-container {
     display: flex;
     flex-direction: column;
-    position: absolute;
-    top: 0;
-    left: -14rem;
-    z-index: 8998;
-    overflow: hidden;
-    /* max-width: 0rem; */
-    /* transition: max-width 0.6s ease-in-out; */
-    /* NOTE: Applying a percentage width doesn't trigger the transition */
-    /* max-width: ${props => props.toggled && `20rem`}; */
+    max-height: 20rem;
+    /* border: 2px solid #222; */
 
-    max-height: 0rem;
-    transition: max-height 0.6s ease-in-out;
-    /* NOTE: Applying a percentage height doesn't trigger the transition */
-    max-height: ${props => props.toggled && `20rem`};
+    #x-icon-container {
+      display: flex;
+      align-items: center;
+      padding-right: 0.6rem;
 
-    border: 2px solid #222;
-
-
-    /* h3 {
-      display: none;
-      display: ${props => props.toggled && `block`};
+      svg {
+        width: 0.8rem;
+        height: 0.8rem;
+      }
     }
 
-    input {
-      display: none;
-      display: ${props => props.toggled && `block`};
-    } */
+    #search-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 60vw;
+      max-width: 36rem;
+      min-width: 18rem;
+      background: #fcfcfc;
+      border-radius: 5px;
+      border-bottom-left-radius: ${props =>
+        props.showingSearchResults && "0px"};
+      border-bottom-right-radius: ${props =>
+        props.showingSearchResults && "0px"};
+      height: 2.4rem;
+      border-bottom: ${props =>
+        props.showingSearchResults && "0.15rem solid rgb(150, 148, 148, 20%)"};
+
+      input {
+        width: 100%;
+        height: 100%;
+        border: 1px solid rgba(0, 0, 0, 0);
+        background: #fcfcfc;
+        color: #656565;
+        font-family: "Blinker", sans-serif;
+        font-weight: 600;
+        font-size: 1.1rem;
+        padding-left: 0.6rem;
+        border-radius: 5px;
+
+        &:focus {
+          outline: none;
+          /* border-top-left-radius: 5px;
+          border-top-right-radius: 5px; */
+        }
+      }
+    }
 
     #search-results {
       overflow-y: scroll;
+      background: #fcfcfc;
+      width: 60vw;
+      max-width: 36rem;
+      min-width: 18rem;
+      padding: 0 1rem;
+      padding-top: 1rem;
+      border-bottom-left-radius: 5px;
+      border-bottom-right-radius: 5px;
+
+      a {
+        text-decoration: none;
+      }
+
+      p {
+        font-size: 0.9rem;
+        font-family: "Blinker", sans-serif;
+        width: 80%;
+      }
+
+      #arrows-container {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.8rem;
+
+        #back-arrow {
+          display: flex;
+          align-items: center;
+
+          span {
+            margin-left: 0.4rem;
+            font-size: 0.7rem;
+          }
+
+          &:hover {
+            cursor: pointer;
+          }
+        }
+
+        #next-arrow {
+          display: flex;
+          align-items: center;
+
+          span {
+            margin-right: 0.4rem;
+            font-size: 0.7rem;
+
+            &:hover {
+              cursor: pointer;
+            }
+          }
+        }
+      }
+    }
+
+    .search-result {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .search-result-title {
+      font-size: 1.1rem;
+      font-family: "Blinker", sans-serif;
+      color: #11eef6;
+      text-shadow: 0.1rem 0.1rem #1b7171;
+    }
+
+    #no-results-found {
+      font-size: 1.2rem;
+      font-weight: 600;
+      font-family: "Blinker", sans-serif;
+      color: #656565;
     }
   }
 `
@@ -71,14 +174,18 @@ const SearchResultsPaginationView = ({
         idx
       ) =>
         idx >= page * PAGE_AMOUNT && idx < (page + 1) * PAGE_AMOUNT ? (
-          <div id={`search_result-${note_id}-${title}`}>
+          <div
+            id={`search_result-${note_id}-${title}`}
+            className="search-result"
+          >
             <Link
               to={`/app/notebook/${notebook_id}/sub-category/${sub_category_id}/topics#topic-${topic_id}-note-${note_id}`}
               onClick={() => clearSearch()}
             >
-              <h4>{title}</h4>
+              <h4 className="search-result-title">{title}</h4>
             </Link>
-            <p>{content_text}</p>
+            {/* FUTURE TODO: Highlight the search term within the search result's context text */}
+            <p>{content_text.slice(0, 60) + "..."}</p>
           </div>
         ) : null
     )}
@@ -88,30 +195,114 @@ const SearchResultsPaginationView = ({
 
 const EmptySearchResults = () => (
   <>
-    <p>No Results Found</p>
+    <p id="no-results-found">No Results Found</p>
   </>
 )
 
+const SearchBar = ({
+  searchVal,
+  setSearchVal,
+  handleInputChange,
+  toggleModal,
+  clearSearch,
+}) => {
+  const inputRef = useRef(null)
+  useEffect(() => {
+    inputRef.current.focus()
+  }, [])
+
+  return (
+    <div id="search-bar">
+      <input
+        ref={inputRef}
+        type="text"
+        value={searchVal}
+        onChange={handleInputChange}
+      ></input>
+      <div
+        id="x-icon-container"
+        onClick={() => {
+          toggleModal(false)
+          clearSearch()
+          setSearchVal("")
+        }}
+      >
+        <XIcon />
+      </div>
+    </div>
+  )
+}
+
+const SearchResults = ({
+  searchResults,
+  retrievedSearchResults,
+  clearSearch,
+  setSearchVal,
+  page,
+  handleBack,
+  handleNext,
+  loading,
+  loadingResource,
+}) => {
+  useEffect(() => {
+    if (retrievedSearchResults) {
+      setSearchVal("")
+      clearSearch()
+    }
+  }, [])
+
+  return (
+    <>
+      {((loading && loadingResource === LIST_SEARCH_RESULTS) ||
+        retrievedSearchResults) && (
+        <div id="search-results">
+          {loading && <h1>Loading...</h1>}
+          {searchResults.length === 0 && retrievedSearchResults && (
+            <EmptySearchResults />
+          )}
+          {searchResults.length !== 0 && (
+            <SearchResultsPaginationView
+              searchResults={searchResults}
+              page={page}
+              clearSearch={clearSearch}
+            >
+              <div id="arrows-container">
+                <div id="back-arrow" onClick={handleBack}>
+                  <ArrowIcon arrowType="PREV" /> <span>Prev</span>
+                </div>
+                <div id="next-arrow" onClick={handleNext}>
+                  <span>Next</span> <ArrowIcon arrowType="NEXT" />
+                </div>
+              </div>
+            </SearchResultsPaginationView>
+          )}
+        </div>
+      )}
+    </>
+  )
+}
+
 const Search = () => {
+  const { loading, loadingResource } = useUi()
   const {
     offset,
     searchResults,
     totalResults,
+    retrievedSearchResults,
     paginationEnd,
     searchError,
   } = useSearch()
   const { clearSearch, search } = useSearchActions()
-  const [toggled, setToggled] = useState(false)
   const [searchVal, setSearchVal] = useState("")
   const [page, setPage] = useState(0)
   const [timeoutFn, setTimeoutFn] = useState(null)
 
   const handleInputChange = e => {
-    if (totalResults !== 0) clearSearch()
+    if (retrievedSearchResults) clearSearch()
     setSearchVal(e.target.value)
     clearTimeout(timeoutFn)
     const val = e.target.value
-    setTimeoutFn(setTimeout(() => search({ search_text: val, offset }), 1000))
+    setTimeoutFn(setTimeout(() => search({ search_text: val, offset }), 500))
   }
 
   const handleBack = () => {
@@ -121,46 +312,54 @@ const Search = () => {
   }
 
   const handleNext = () => {
+    // NOTE: remainderPresent and pages facilitate not allowing the user
+    // to click next to the point where no search results are shown.
+    const remainderPresent = totalResults % PAGE_AMOUNT > 0 && 1
+    const pages = remainderPresent
+      ? Math.floor(totalResults / PAGE_AMOUNT) + remainderPresent
+      : Math.floor(totalResults / PAGE_AMOUNT)
     if (!paginationEnd) {
       // May need to move this elsewhere...
       setPage(page + 1)
       return search({ search_text: searchVal, offset })
     }
-    if (page * PAGE_AMOUNT <= totalResults) {
+    if (page < pages - 1) {
       setPage(page + 1)
     }
   }
 
   return (
-    <Container toggled={toggled}>
-      <div onClick={() => setToggled(!toggled)}>
-        <SearchIcon />
-      </div>
-      <div id="search-container">
-        <h3>Search</h3>
-        <input
-          type="text"
-          value={searchVal}
-          onChange={handleInputChange}
-        ></input>
-        {searchResults.length !== 0 && (
-          <div id="search-results">
-            {totalResults !== 0 ? (
-              <SearchResultsPaginationView
-                searchResults={searchResults}
-                page={page}
-                clearSearch={clearSearch}
-              >
-                <button onClick={handleBack}>Prev</button>
-                <button onClick={handleNext}>Next</button>
-              </SearchResultsPaginationView>
-            ) : (
-              <EmptySearchResults />
-            )}
+    <Modal resource="Search" IconComponent={SearchIcon} buttonType="ICON">
+      {toggleModal => (
+        <Container
+          showingSearchResults={
+            retrievedSearchResults ||
+            (loading && loadingResource === LIST_SEARCH_RESULTS)
+          }
+        >
+          <div id="search-container">
+            <SearchBar
+              searchVal={searchVal}
+              setSearchVal={setSearchVal}
+              handleInputChange={handleInputChange}
+              toggleModal={toggleModal}
+              clearSearch={clearSearch}
+            />
+            <SearchResults
+              searchResults={searchResults}
+              retrievedSearchResults={retrievedSearchResults}
+              clearSearch={clearSearch}
+              setSearchVal={setSearchVal}
+              page={page}
+              handleBack={handleBack}
+              handleNext={handleNext}
+              loading={loading}
+              loadingResource={loadingResource}
+            />
           </div>
-        )}
-      </div>
-    </Container>
+        </Container>
+      )}
+    </Modal>
   )
 }
 

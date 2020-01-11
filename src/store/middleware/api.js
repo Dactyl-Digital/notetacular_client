@@ -42,8 +42,12 @@ const makeRequest = (
         params: payload,
       })
       .then(function(response) {
-        dispatchToggleLoader(dispatch, false, { method, url })
         onSuccess(response)
+        dispatchToggleLoader(dispatch, false, {
+          method,
+          url,
+          loadingResource: null,
+        })
       })
       .catch(function(error) {
         console.log("the error in GET")
@@ -59,13 +63,21 @@ const makeRequest = (
             },
           })
         }
+        const result = invalidSession(error)
+        if (result === VALID_SESSION) {
+          onError(error)
+          dispatchToggleLoader(dispatch, false, {
+            method,
+            url,
+            loadingResource: null,
+          })
+          return
+        }
         dispatchToggleLoader(dispatch, false, {
           method,
           url,
           loadingResource: null,
         })
-        const result = invalidSession(error)
-        if (result === VALID_SESSION) return onError(error)
         dispatch(result)
       })
   }
@@ -77,8 +89,8 @@ const makeRequest = (
     return axios
       .post(url, payload)
       .then(function(response) {
-        dispatchToggleLoader(dispatch, false, { method, url })
         onSuccess(response)
+        dispatchToggleLoader(dispatch, false, { method, url })
       })
       .catch(function(error) {
         // DOC:
@@ -103,9 +115,21 @@ const makeRequest = (
             },
           })
         }
-        dispatchToggleLoader(dispatch, false, { method, url })
         const result = invalidSession(error)
-        if (result === VALID_SESSION) return onError(error)
+        if (result === VALID_SESSION) {
+          onError(error)
+          dispatchToggleLoader(dispatch, false, {
+            method,
+            url,
+            loadingResource: null,
+          })
+          return
+        }
+        dispatchToggleLoader(dispatch, false, {
+          method,
+          url,
+          loadingResource: null,
+        })
         dispatch(result)
       })
   }
@@ -113,8 +137,12 @@ const makeRequest = (
     axios
       .put(url, payload)
       .then(function(response) {
-        dispatchToggleLoader(dispatch, false, { method, url })
         onSuccess(response)
+        dispatchToggleLoader(dispatch, false, {
+          method,
+          url,
+          loadingResource: null,
+        })
       })
       .catch(function(error) {
         console.log("the error in PUT")
@@ -129,9 +157,21 @@ const makeRequest = (
             },
           })
         }
-        dispatchToggleLoader(dispatch, false, { method, url })
         const result = invalidSession(error)
-        if (result === VALID_SESSION) return onError(error)
+        if (result === VALID_SESSION) {
+          onError(error)
+          dispatchToggleLoader(dispatch, false, {
+            method,
+            url,
+            loadingResource: null,
+          })
+          return
+        }
+        dispatchToggleLoader(dispatch, false, {
+          method,
+          url,
+          loadingResource: null,
+        })
         dispatch(result)
       })
   }
@@ -139,8 +179,12 @@ const makeRequest = (
     axios
       .patch(url, payload)
       .then(function(response) {
-        dispatchToggleLoader(dispatch, false, { method, url })
         onSuccess(response)
+        dispatchToggleLoader(dispatch, false, {
+          method,
+          url,
+          loadingResource: null,
+        })
       })
       .catch(function(error) {
         console.log("the error in PATCH")
@@ -155,9 +199,21 @@ const makeRequest = (
             },
           })
         }
-        dispatchToggleLoader(dispatch, false, { method, url })
         const result = invalidSession(error)
-        if (result === VALID_SESSION) return onError(error)
+        if (result === VALID_SESSION) {
+          onError(error)
+          dispatchToggleLoader(dispatch, false, {
+            method,
+            url,
+            loadingResource: null,
+          })
+          return
+        }
+        dispatchToggleLoader(dispatch, false, {
+          method,
+          url,
+          loadingResource: null,
+        })
         dispatch(result)
       })
   }
@@ -165,8 +221,12 @@ const makeRequest = (
     axios
       .delete(url)
       .then(function(response) {
-        dispatchToggleLoader(dispatch, false, { method, url })
         onSuccess(response)
+        dispatchToggleLoader(dispatch, false, {
+          method,
+          url,
+          loadingResource: null,
+        })
       })
       .catch(function(error) {
         console.log("the error in DELETE")
@@ -181,9 +241,21 @@ const makeRequest = (
             },
           })
         }
-        dispatchToggleLoader(dispatch, false, { method, url })
         const result = invalidSession(error)
-        if (result === VALID_SESSION) return onError(error)
+        if (result === VALID_SESSION) {
+          onError(error)
+          dispatchToggleLoader(dispatch, false, {
+            method,
+            url,
+            loadingResource: null,
+          })
+          return
+        }
+        dispatchToggleLoader(dispatch, false, {
+          method,
+          url,
+          loadingResource: null,
+        })
         dispatch(result)
       })
   }

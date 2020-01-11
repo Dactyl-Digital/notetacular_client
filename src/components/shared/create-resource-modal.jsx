@@ -55,6 +55,7 @@ const CreateResourceModal = ({
   IconComponent,
   buttonType,
   addAction,
+  handleOnClose,
 }) => {
   return (
     <Modal
@@ -75,7 +76,15 @@ const CreateResourceModal = ({
               )}
             </div>
 
-            <div id="close-modal-x" onClick={toggleShowModal}>
+            <div
+              id="close-modal-x"
+              onClick={() => {
+                if (handleOnClose) {
+                  handleOnClose()
+                }
+                toggleShowModal()
+              }}
+            >
               <XIcon color="#969494" />
             </div>
           </div>

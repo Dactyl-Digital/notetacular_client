@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useRef } from "react"
 import styled from "styled-components"
+import { useUi } from "../../../hooks/queries/useUi"
 import { useSubCategory } from "../../../hooks/queries/useSubCategory"
 import { useTopic } from "../../../hooks/queries/useTopic"
 import { useTopicActions } from "../../../hooks/commands/useTopicActions"
 // import TopicListing from "./topic-listing"
+import { CREATE_TOPIC, LIST_TOPICS } from "../../../store/actions/ui"
+import NotificationSnacks from "../../shared/notification-snacks"
 import Heading from "../../shared/heading"
 import Sidebar from "../../shared/sidebar"
 import Timer from "./timer"
@@ -12,6 +15,7 @@ import CreateResourceModal from "../../shared/create-resource-modal"
 import { ActiveCircleContext } from "../notebook-list"
 import Button from "../../shared/button"
 import StyledForm from "../../shared/styled-form"
+import { onResourceLoadScrollIntoView } from "../helpers"
 
 const extractTopicIdRegex = /\d+/
 const extractNoteIdRegex = /note-\d+$/
@@ -21,6 +25,9 @@ const Container = styled.div`
 
   #main-content {
     /* TODO: For now this at least looks good on large screens... */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     padding: 0 8vw;
     padding-top: 2rem;
     width: 100%;
@@ -28,11 +35,86 @@ const Container = styled.div`
     height: 100vh;
     overflow-y: scroll;
 
-    #topic-list {
+    #main-content-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      align-self: center;
+      width: 100%;
+      max-width: 44rem;
+      /* border: 2px solid #222; */
+    }
+
+    #heading-modal-container {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+    }
+
+    #resource-list {
+      display: block;
+      flex-direction: column;
+      align-items: center;
       margin-bottom: 2rem;
+      width: 100%;
     }
   }
 `
+
+const CreateTopicForm = ({
+  title,
+  setTitle,
+  createTopicError,
+  toggleShowModal,
+  loading,
+  showSnacks,
+}) => {
+  const [isLoading, setIsLoading] = useState(false)
+  useEffect(() => {
+    if (isLoading !== loading) {
+      if (createTopicError) {
+        setIsLoading(loading)
+        return
+      } else if (loading === false) {
+        toggleShowModal(false)
+        setTitle("")
+        showSnacks({ message: "Topic successfully created!", type: "SUCCESS" })
+        setIsLoading(loading)
+        return
+      }
+    }
+    setIsLoading(loading)
+  }, [isLoading, loading, createTopicError])
+
+  return loading ? (
+    <h1>Loading...</h1>
+  ) : (
+    // TODO: Don't display this if create Topic was success.
+    // Just show the success/error snackbar as a pop up from the top
+    <>
+      <div className="form-fields">
+        <label htmlFor="title">Title</label>
+        <input
+          id="title"
+          type="text"
+          value={title}
+          onChange={e => setTitle(e.target.value)}
+        />
+        {createTopicError && title.length < 4 && (
+          // Works in this case... because there will only ever be one.
+          // But how will I handle this for the signup/login form... or the
+          // tag creation form.
+          <p>{createTopicError.errors[0].message}</p>
+        )}
+      </div>
+      <div className="form-button">
+        <Button type="CREATE" size="SMALL">
+          Submit!
+        </Button>
+      </div>
+    </>
+  )
+}
 
 const TopicListing = ({
   id,
@@ -72,9 +154,16 @@ const TopicListing = ({
 }
 
 const TopicList = ({ notebookId, subCategoryId }) => {
+  const { loading, loadingResource } = useUi()
   const { parentNotebooksOfSubCategories } = useSubCategory()
-  const { parentSubCategoriesOfTopics } = useTopic()
-  const { createTopic, listTopics, listSubCategoryTopics } = useTopicActions()
+  const { parentSubCategoriesOfTopics, createTopicError } = useTopic()
+  const {
+    createTopic,
+    listTopics,
+    listSubCategoryTopics,
+    clearCreateTopicError,
+  } = useTopicActions()
+  const [snacks, setSnacks] = useState([])
   const [title, setTitle] = useState("")
   const [activeTopic, setActiveTopic] = useState(null)
 
@@ -85,21 +174,6 @@ const TopicList = ({ notebookId, subCategoryId }) => {
   const [setActiveDisabled, setSetActiveDisabled] = useState(false)
   const [scrollTop, setScrollTop] = useState(0)
   const listEl = useRef(null)
-
-  const scrollIntoViewWhenLoaded = (id) => {
-    setTimeout(() => {
-      let targetResource = document.getElementById(id)
-      // NOTE: scrollIntoView worked.... AND I'm willing to settle with that for now!
-      // TODO: CLean this shiz up, uninstall gsap, and add hover style to focused element
-      // manage that state -> i.e. it should become the active div, until user scrolls
-      // then other divs will be newly selected active divs.
-      if(targetResource) {
-        targetResource.scrollIntoView()
-      } else {
-        scrollIntoViewWhenLoaded(id)
-      }
-    }, 2000)
-  }
 
   // TODO: Genericize this b, make a reusable hook... as this is
   // repeated in notebook-list and sub-category-list
@@ -112,13 +186,7 @@ const TopicList = ({ notebookId, subCategoryId }) => {
       // TODO: IMPLEMENT SCROLL NOTE INTO VIEW... Will need to handle
       // toggling editor
       let id = hash.slice(1, hash.length)
-      if (id.match(/topic-[0-9]+-note-[0-9]+/)) {
-        const [activeTopicId, ...rest] = id.match(extractTopicIdRegex)
-        setActiveTopic(activeTopicId)
-        const [noteId, ...restTwo] = id.match(extractNoteIdRegex)
-        id = noteId
-      }
-      scrollIntoViewWhenLoaded(id)
+      onResourceLoadScrollIntoView(id)
     }
     listEl.current.addEventListener("scroll", handleScroll)
 
@@ -179,9 +247,18 @@ const TopicList = ({ notebookId, subCategoryId }) => {
     }
   }
 
+  const showSnacks = newSnack => {
+    setSnacks([...snacks, newSnack])
+    setTimeout(() => {
+      setSnacks([])
+    }, 3000)
+  }
+
   const handleCreateNewTopic = () => {
+    if (createTopicError) {
+      clearCreateTopicError({ response: { data: null } })
+    }
     createTopic({ title, sub_category_id: subCategoryId })
-    setTitle("")
   }
 
   // NOTE: This fucking sucks
@@ -203,62 +280,70 @@ const TopicList = ({ notebookId, subCategoryId }) => {
       <Container data-testid="topic-list-page">
         <Sidebar keys={keys} resourceList={topics} />
         <div id="main-content" ref={listEl}>
-          <Heading title="Topics" />
-          <CreateResourceModal
-            action="Create"
-            resource="Topic"
-            buttonType="NORMAL"
-          >
-            {/* TODO: Create a separate component for this form. */}
-            {toggleShowModal => (
-              <StyledForm
-                onSubmit={e => {
-                  e.preventDefault()
-                  handleCreateNewTopic()
-                  toggleShowModal(false)
-                }}
+          <div id="main-content-wrapper">
+            <div id="heading-modal-container">
+              <NotificationSnacks snacks={snacks} />
+              <Heading title="Topics" />
+              <CreateResourceModal
+                action="Create"
+                resource="Topic"
+                buttonType="NORMAL"
+                handleOnClose={
+                  createTopicError &&
+                  (() => clearCreateTopicError({ response: { data: null } }))
+                }
               >
-                <div className="form-fields">
-                  <label htmlFor="title">Title</label>
-                  <input
-                    id="title"
-                    type="text"
-                    value={title}
-                    onChange={e => setTitle(e.target.value)}
-                  />
-                </div>
-                <div className="form-button">
-                  <Button type="CREATE" size="SMALL">
-                    Submit!
-                  </Button>
-                </div>
-              </StyledForm>
-            )}
-          </CreateResourceModal>
-          <Timer>
-            <div id="topic-list">
-              {keys.map((key, i) => {
-                return (
-                  <TopicListing
-                    id={topics[key].title}
-                    key={topics[key].id.toString()}
-                    title={topics[key].title}
-                    tags={topics[key].tags}
-                    index={i}
-                    type="TOPIC"
-                    topics={topics}
-                    topicId={topics[key].id}
-                    subCategoryId={subCategoryId}
-                    active={activeCircle.active === topics[key].title}
-                    setActiveDisabled={setActiveDisabled}
-                    scrollTop={scrollTop}
-                    setActiveCircle={setActiveCircle}
-                    showNoteList={topics[key].id.toString() === activeTopic}
-                  />
-                )
-              })}
+                {/* TODO: Create a separate component for this form. */}
+                {toggleShowModal => (
+                  <StyledForm
+                    onSubmit={e => {
+                      e.preventDefault()
+                      handleCreateNewTopic()
+                    }}
+                  >
+                    <CreateTopicForm
+                      title={title}
+                      setTitle={setTitle}
+                      createTopicError={createTopicError}
+                      toggleShowModal={toggleShowModal}
+                      loading={
+                        loadingResource === CREATE_TOPIC ? loading : false
+                      }
+                      showSnacks={showSnacks}
+                    />
+                  </StyledForm>
+                )}
+              </CreateResourceModal>
             </div>
-          </Timer>
+            <Timer>
+              <div id="resource-list">
+                {loading && loadingResource === LIST_TOPICS ? (
+                  <h1>Loading...</h1>
+                ) : (
+                  keys.map((key, i) => {
+                    return (
+                      <TopicListing
+                        id={topics[key].title}
+                        key={topics[key].id.toString()}
+                        title={topics[key].title}
+                        tags={topics[key].tags}
+                        index={i}
+                        type="TOPIC"
+                        topics={topics}
+                        topicId={topics[key].id}
+                        subCategoryId={subCategoryId}
+                        active={activeCircle.active === topics[key].title}
+                        setActiveDisabled={setActiveDisabled}
+                        scrollTop={scrollTop}
+                        setActiveCircle={setActiveCircle}
+                        showNoteList={topics[key].id.toString() === activeTopic}
+                      />
+                    )
+                  })
+                )}
+              </div>
+            </Timer>
+          </div>
         </div>
       </Container>
     </ActiveCircleContext.Provider>

@@ -78,6 +78,7 @@ export function useNotebookActions() {
 
   return {
     createNotebook: createNotebook(dispatch),
+    clearCreateNotebookError: createNotebookError(dispatch),
     listNotebooks: listNotebooks(dispatch),
     deleteNotebook: deleteNotebook(dispatch),
   }

@@ -67,7 +67,7 @@ export default function notebookReducer(
     return { ...notebookState, createNotebookError: payload }
   }
   if (type === SET_NOTEBOOK_LIST_ERROR) {
-    return { ...notebookState, notebookListError: payload }
+    // return { ...notebookState, notebookListError: payload }
   }
   // if (type === SET_LIST_SHARED_NOTEBOOKS_ERROR) {
   //   return { ...notebookState, signinError: payload.errors }

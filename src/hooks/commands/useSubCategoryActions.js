@@ -2,6 +2,10 @@ import { useDispatch } from "react-redux"
 import { apiRequest } from "../../store/actions/api"
 import { setNotebook } from "../../store/actions/notebook"
 import {
+  CREATE_SUB_CATEGORY,
+  LIST_SUB_CATEGORIES,
+} from "../../store/actions/ui"
+import {
   setCreatedSubCategory,
   setCreateSubCategoryError,
   setSubCategoryList,
@@ -23,6 +27,7 @@ export const createSubCategory = dispatch => createSubCategoryData => {
       method: "POST",
       url: SUB_CATEGORY_URL,
       payload: createSubCategoryData,
+      loadingResource: CREATE_SUB_CATEGORY,
       onSuccess: createSubCategorySuccess(dispatch),
       onError: createSubCategoryError(dispatch),
     })
@@ -48,6 +53,7 @@ export const listSubCategories = dispatch => ({
       method: "GET",
       url: `${LIST_SUB_CATEGORIES_URL}${offset}`,
       payload: { sub_category_id_list },
+      loadingResource: LIST_SUB_CATEGORIES,
       onSuccess: listSubCategoriesSuccess(dispatch),
       onError: listSubCategoriesError(dispatch),
     })
@@ -83,6 +89,7 @@ export const listNotebooksSubCategories = dispatch => ({
       method: "GET",
       url: LIST_NOTEBOOKS_SUB_CATEGORIES_URL,
       payload: { notebook_id: notebookId, limit, offset },
+      loadingResource: LIST_SUB_CATEGORIES,
       onSuccess: listNotebooksSubCategoriesSuccess(dispatch),
       onError: listNotebooksSubCategoriesError(dispatch),
     })
@@ -137,6 +144,7 @@ export function useSubCategoryActions() {
 
   return {
     createSubCategory: createSubCategory(dispatch),
+    clearCreateSubCategoryError: createSubCategoryError(dispatch),
     listSubCategories: listSubCategories(dispatch),
     listNotebooksSubCategories: listNotebooksSubCategories(dispatch),
     deleteSubCategory: deleteSubCategory(dispatch),

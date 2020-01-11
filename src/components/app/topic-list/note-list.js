@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from "react"
 import styled from "styled-components"
 import NoteListing from "./note-listing"
+import { CREATE_NOTE, LIST_NOTES } from "../../../store/actions/ui"
+import { useUi } from "../../../hooks/queries/useUi"
 import { useTopic } from "../../../hooks/queries/useTopic"
 import { useNote } from "../../../hooks/queries/useNote"
 import { useNoteActions } from "../../../hooks/commands/useNoteActions"
+import NotificationSnacks from "../../shared/notification-snacks"
 import CreateResourceModal from "../../shared/create-resource-modal"
 import Button from "../../shared/button"
 import StyledForm from "../../shared/styled-form"
+import { createSuccessMessage } from "../helpers"
 
 // TODO (future feature):
 // NOTE: Currently, when deleting a note, it'll leave a gap such that
@@ -25,9 +29,67 @@ const Container = styled.div`
   } */
 `
 
+const CreateNoteForm = ({
+  title,
+  setTitle,
+  createNoteError,
+  toggleShowModal,
+  loading,
+  showSnacks,
+}) => {
+  const [isLoading, setIsLoading] = useState(false)
+
+  useEffect(() => {
+    if (isLoading !== loading) {
+      if (createNoteError) {
+        setIsLoading(loading)
+        return
+      } else if (loading === false) {
+        toggleShowModal(false)
+        setTitle("")
+        showSnacks({ message: "Note successfully created!", type: "SUCCESS" })
+        setIsLoading(loading)
+        return
+      }
+    }
+    setIsLoading(loading)
+  }, [isLoading, loading, createNoteError])
+
+  return loading ? (
+    <h1>Loading...</h1>
+  ) : (
+    // TODO: Don't display this if create Note was success.
+    // Just show the success/error snackbar as a pop up from the top
+    <>
+      <div className="form-fields">
+        <label htmlFor="title">Title</label>
+        <input
+          id="title"
+          type="text"
+          value={title}
+          onChange={e => setTitle(e.target.value)}
+        />
+        {createNoteError && title.length < 4 && (
+          // Works in this case... because there will only ever be one.
+          // But how will I handle this for the signup/login form... or the
+          // tag creation form.
+          <p>{createNoteError.errors[0].message}</p>
+        )}
+      </div>
+      <div className="form-button">
+        <Button type="CREATE" size="SMALL">
+          Submit!
+        </Button>
+      </div>
+    </>
+  )
+}
+
 const NoteList = ({ topics, topicId, subCategoryId, showNotes }) => {
-  const { parentTopicsOfNotes } = useNote()
-  const { createNote, listNotes } = useNoteActions()
+  const { loading, loadingResource } = useUi()
+  const { parentTopicsOfNotes, createNoteError } = useNote()
+  const { createNote, listNotes, clearCreateNoteError } = useNoteActions()
+  const [snacks, setSnacks] = useState([])
   const [title, setTitle] = useState("")
 
   const notes = topics[topicId].notes
@@ -53,17 +115,27 @@ const NoteList = ({ topics, topicId, subCategoryId, showNotes }) => {
   }, [])
 
   const handleCreateNewNote = () => {
+    if (createNoteError) {
+      clearCreateNoteError({ response: { data: null } })
+    }
     createNote({
       title,
       order: noteIdList.length,
       topic_id: topicId,
       sub_category_id: subCategoryId,
     })
-    setTitle("")
+  }
+
+  const showSnacks = newSnack => {
+    setSnacks([...snacks, newSnack])
+    setTimeout(() => {
+      setSnacks([])
+    }, 3000)
   }
 
   return (
     <Container data-testid="note-list" showNotes={showNotes}>
+      <NotificationSnacks snacks={snacks} />
       <CreateResourceModal action="Create" resource="Note" buttonType="NORMAL">
         {/* TODO: Create a separate component for this form. */}
         {toggleShowModal => (
@@ -71,23 +143,16 @@ const NoteList = ({ topics, topicId, subCategoryId, showNotes }) => {
             onSubmit={e => {
               e.preventDefault()
               handleCreateNewNote()
-              toggleShowModal(false)
             }}
           >
-            <div className="form-fields">
-              <label htmlFor="title">Title</label>
-              <input
-                id="title"
-                type="text"
-                value={title}
-                onChange={e => setTitle(e.target.value)}
-              />
-            </div>
-            <div id="form-button">
-              <Button type="CREATE" size="SMALL">
-                Submit!
-              </Button>
-            </div>
+            <CreateNoteForm
+              title={title}
+              setTitle={setTitle}
+              createNoteError={createNoteError}
+              toggleShowModal={toggleShowModal}
+              loading={loadingResource === CREATE_NOTE ? loading : false}
+              showSnacks={showSnacks}
+            />
           </StyledForm>
         )}
       </CreateResourceModal>

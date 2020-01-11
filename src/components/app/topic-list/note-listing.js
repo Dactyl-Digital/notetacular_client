@@ -4,6 +4,8 @@ import { useNoteActions } from "../../../hooks/commands/useNoteActions"
 import ResourceListing from "../../shared/resource-listing"
 import Editor from "./editor"
 
+// IMMEDIATE TODO: Start implementing LOADING states in the UI for the rest of the resources...
+
 const extractNoteIdRegex = /\d+$/
 
 const Container = styled.div`

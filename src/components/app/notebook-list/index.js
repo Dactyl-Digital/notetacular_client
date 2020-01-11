@@ -4,6 +4,7 @@ import { useUi } from "../../../hooks/queries/useUi"
 import { useNotebook } from "../../../hooks/queries/useNotebook"
 import { useNotebookActions } from "../../../hooks/commands/useNotebookActions"
 import { CREATE_NOTEBOOK, LIST_NOTEBOOKS } from "../../../store/actions/ui"
+import NotificationSnacks from "../../shared/notification-snacks"
 import Heading from "../../shared/heading"
 import Sidebar from "../../shared/sidebar"
 import ResourceListing from "../../shared/resource-listing"
@@ -11,6 +12,7 @@ import ResourceListing from "../../shared/resource-listing"
 import CreateResourceModal from "../../shared/create-resource-modal"
 import Button from "../../shared/button"
 import StyledForm from "../../shared/styled-form"
+import { onResourceLoadScrollIntoView } from "../helpers"
 
 export const ActiveCircleContext = React.createContext({
   active: null,
@@ -23,6 +25,9 @@ const Container = styled.div`
 
   #main-content {
     /* TODO: For now this at least looks good on large screens... */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     padding: 0 8vw;
     padding-top: 2rem;
     width: 100%;
@@ -30,11 +35,89 @@ const Container = styled.div`
     height: 100vh;
     overflow-y: scroll;
 
-    #notebook-list {
+    #main-content-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      align-self: center;
+      width: 100%;
+      max-width: 44rem;
+      /* border: 2px solid #222; */
+    }
+
+    #heading-modal-container {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+    }
+
+    #resource-list {
+      display: block;
+      flex-direction: column;
+      align-items: center;
       margin-bottom: 2rem;
+      width: 100%;
     }
   }
 `
+
+const CreateNotebookForm = ({
+  title,
+  setTitle,
+  createNotebookError,
+  toggleShowModal,
+  loading,
+  showSnacks,
+}) => {
+  const [isLoading, setIsLoading] = useState(false)
+  useEffect(() => {
+    if (isLoading !== loading) {
+      if (createNotebookError) {
+        setIsLoading(loading)
+        return
+      } else if (loading === false) {
+        toggleShowModal(false)
+        setTitle("")
+        showSnacks({
+          message: "Notebook successfully created!",
+          type: "SUCCESS",
+        })
+        setIsLoading(loading)
+        return
+      }
+    }
+    setIsLoading(loading)
+  }, [isLoading, loading, createNotebookError])
+
+  return loading ? (
+    <h1>Loading...</h1>
+  ) : (
+    // TODO: Don't display this if create notebook was success.
+    // Just show the success/error snackbar as a pop up from the top
+    <>
+      <div className="form-fields">
+        <label htmlFor="title">Title</label>
+        <input
+          id="title"
+          type="text"
+          value={title}
+          onChange={e => setTitle(e.target.value)}
+        />
+        {createNotebookError && title.length < 4 && (
+          // Works in this case... because there will only ever be one.
+          // But how will I handle this for the signup/login form... or the
+          // tag creation form.
+          <p>{createNotebookError.errors[0].message}</p>
+        )}
+      </div>
+      <div className="form-button">
+        <Button type="CREATE" size="SMALL">
+          Submit!
+        </Button>
+      </div>
+    </>
+  )
+}
 
 const NotebookList = () => {
   const { loading, loadingResource } = useUi()
@@ -42,8 +125,15 @@ const NotebookList = () => {
     notebooks,
     notebooksPaginationEnd,
     listNotebooksOffset,
+    createNotebookError,
   } = useNotebook()
-  const { createNotebook, listNotebooks } = useNotebookActions()
+  const {
+    createNotebook,
+    listNotebooks,
+    clearCreateNotebookError,
+  } = useNotebookActions()
+  const [snacks, setSnacks] = useState([])
+
   const [title, setTitle] = useState("")
   // Create custom hook for all of these... would that really help anything
   // over just copy pasting into sub-category-list & topic-list?
@@ -62,27 +152,21 @@ const NotebookList = () => {
     }
     if (hash && !activeCircle.active) {
       const id = hash.slice(1, hash.length)
-      setTimeout(() => {
-        let targetResource = document.getElementById(id)
-        // NOTE: scrollIntoView worked.... AND I'm willing to settle with that for now!
-        // TODO: CLean this shiz up, uninstall gsap, and add hover style to focused element
-        // manage that state -> i.e. it should become the active div, until user scrolls
-        // then other divs will be newly selected active divs.
-        targetResource.scrollIntoView()
-        // NOTE: Why did I have this at 5000 before?
-      }, 1000)
+      onResourceLoadScrollIntoView(id)
     }
     listEl.current.addEventListener("scroll", handleScroll)
     // TODO: Implement logic in handleScroll to check if notebooksPaginationEnd is false (when the
     // user is at the bottom of the page),
     // if so then make another listNotebooks request.
+    // IMMEDIATE TODO: Need to keep track of the count of the total
+    // number of results received.
     if (!notebooksPaginationEnd) {
       listNotebooks(listNotebooksOffset)
     }
     return () => {
       listEl.current.removeEventListener("scroll", handleScroll)
     }
-  }, [activeCircle])
+  }, [activeCircle, loading, createNotebookError])
 
   const handleScroll = () => {
     setScrollTop(listEl.current.scrollTop)
@@ -104,8 +188,10 @@ const NotebookList = () => {
   }
 
   const handleCreateNewNotebook = () => {
+    if (createNotebookError) {
+      clearCreateNotebookError({ response: { data: null } })
+    }
     createNotebook({ title })
-    setTitle("")
   }
 
   const loadMoreNotebooks = () => listNotebooks(listNotebooksOffset)
@@ -119,15 +205,11 @@ const NotebookList = () => {
 
   const keys = Object.keys(notebooks)
 
-  const handleSuccessOrErrorStatus = toggleShowModal => {
-    if (loading && loadingResource === CREATE_NOTEBOOK) {
-      setTimeout(() => {
-        handleSuccessOrErrorStatus(toggleShowModal)
-      }, 1000)
-    } else {
-      // Only toggle after success/error message has been displayed to the user
-      toggleShowModal(false)
-    }
+  const showSnacks = newSnack => {
+    setSnacks([...snacks, newSnack])
+    setTimeout(() => {
+      setSnacks([])
+    }, 3000)
   }
 
   return (
@@ -138,78 +220,72 @@ const NotebookList = () => {
       }}
     >
       <Container data-testid="notebook-list-page">
+        <NotificationSnacks snacks={snacks} />
         <Sidebar keys={keys} resourceList={notebooks} />
         <div id="main-content" ref={listEl}>
-          <Heading title="Notebooks" />
-          {/* <CreateNotebookModal /> */}
-          <CreateResourceModal
-            action="Create"
-            resource="Notebook"
-            buttonType="NORMAL"
-          >
-            {/* TODO: Create a separate component for this form. */}
-            {toggleShowModal => (
-              <StyledForm
-                onSubmit={e => {
-                  e.preventDefault()
-                  handleCreateNewNotebook()
-                  setTimeout(() => {
-                    handleSuccessOrErrorStatus(toggleShowModal)
-                  }, 1000)
-                }}
+          <div id="main-content-wrapper">
+            <div id="heading-modal-container">
+              <Heading title="Notebooks" />
+              <CreateResourceModal
+                action="Create"
+                resource="Notebook"
+                buttonType="NORMAL"
+                handleOnClose={
+                  createNotebookError &&
+                  (() => clearCreateNotebookError({ response: { data: null } }))
+                }
               >
-                {loading && loadingResource === CREATE_NOTEBOOK ? (
-                  <h1>Loading...</h1>
-                ) : (
-                  // TODO: Don't display this if create notebook was success.
-                  // Just show the success/error snackbar as a pop up from the top
-                  <>
-                    <div className="form-fields">
-                      <label htmlFor="title">Title</label>
-                      <input
-                        id="title"
-                        type="text"
-                        value={title}
-                        onChange={e => setTitle(e.target.value)}
-                      />
-                    </div>
-                    <div className="form-button">
-                      <Button type="CREATE" size="SMALL">
-                        Submit!
-                      </Button>
-                    </div>
-                  </>
+                {toggleShowModal => (
+                  <StyledForm
+                    onSubmit={e => {
+                      e.preventDefault()
+                      handleCreateNewNotebook()
+                    }}
+                  >
+                    {/* // TODO: Don't display this if create notebook was success. */}
+                    {/* // Just show the success/error snackbar as a pop up from the top */}
+                    <CreateNotebookForm
+                      title={title}
+                      setTitle={setTitle}
+                      createNotebookError={createNotebookError}
+                      toggleShowModal={toggleShowModal}
+                      loading={
+                        loadingResource === CREATE_NOTEBOOK ? loading : false
+                      }
+                      showSnacks={showSnacks}
+                    />
+                  </StyledForm>
                 )}
-              </StyledForm>
-            )}
-          </CreateResourceModal>
-          <div id="notebook-list">
-            {loading && loadingResource === LIST_NOTEBOOKS ? (
-              <h1>Loading...</h1>
-            ) : (
-              keys.map((key, i) => (
-                <ResourceListing
-                  id={notebooks[key].title}
-                  type="NOTEBOOK"
-                  key={notebooks[key].id.toString()}
-                  title={notebooks[key].title}
-                  link={`notebook/${notebooks[key].id}/sub-categories`}
-                  index={i}
-                  notebookId={notebooks[key].id}
-                  active={activeCircle.active === notebooks[key].title}
-                  setActiveDisabled={setActiveDisabled}
-                  scrollTop={scrollTop}
-                  setActiveCircle={setActiveCircle}
-                />
-              ))
-            )}
-          </div>
-          {/* // TODO: Implement scroll loading, and introduce some state // to keep
+              </CreateResourceModal>
+            </div>
+            <div id="resource-list">
+              {loading && loadingResource === LIST_NOTEBOOKS ? (
+                <h1>Loading...</h1>
+              ) : (
+                keys.map((key, i) => (
+                  <ResourceListing
+                    id={notebooks[key].title}
+                    type="NOTEBOOK"
+                    key={notebooks[key].id.toString()}
+                    title={notebooks[key].title}
+                    link={`notebook/${notebooks[key].id}/sub-categories`}
+                    index={i}
+                    notebookId={notebooks[key].id}
+                    active={activeCircle.active === notebooks[key].title}
+                    setActiveDisabled={setActiveDisabled}
+                    scrollTop={scrollTop}
+                    setActiveCircle={setActiveCircle}
+                  />
+                ))
+              )}
+            </div>
+            {/* // TODO: Implement scroll loading, and introduce some state // to keep
           track of whether there are more pages to be // retrieved -> by checking
           whether the most recent // page fetch retrieved 20 elements, if less,
           then // there are no more pages to retrieve. */}
-          <button onClick={loadMoreNotebooks}>Load More</button>
-          {/* TODO: Create a CreateNotebookModal component */}
+            <button onClick={loadMoreNotebooks}>Load More</button>
+            {/* TODO: Create a CreateNotebookModal component */}
+          </div>
         </div>
       </Container>
     </ActiveCircleContext.Provider>
