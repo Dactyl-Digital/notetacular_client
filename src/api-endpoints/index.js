@@ -1,6 +1,7 @@
+// old prod endpoint -> "https://api.notastical.com/api"
 export const API_URL =
   process.env.NODE_ENV === "production"
-    ? "https://api.notastical.com/api"
+    ? "ec2-34-232-97-98.compute-1.amazonaws.com/api"
     : "http://localhost:4000/api"
 
 export const SIGNUP_URL = `${API_URL}/signup`
