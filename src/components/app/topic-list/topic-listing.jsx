@@ -28,9 +28,9 @@ const Container = styled.div`
   }
 `
 
+// This has been replaced... by the monster that is ResourceListing
 const TopicListing = ({ title, tags, notes }) => {
   const [showNotes, setShowNotes] = useState(false)
-  console.log(`DA PUCKING NOTES: ${notes}`)
 
   return (
     <Container>

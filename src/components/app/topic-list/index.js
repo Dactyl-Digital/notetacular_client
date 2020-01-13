@@ -15,7 +15,10 @@ import CreateResourceModal from "../../shared/create-resource-modal"
 import { ActiveCircleContext } from "../notebook-list"
 import Button from "../../shared/button"
 import StyledForm from "../../shared/styled-form"
-import { onResourceLoadScrollIntoView } from "../helpers"
+import {
+  onResourceLoadScrollIntoView,
+  checkFormSubmissionErrors,
+} from "../helpers"
 
 const extractTopicIdRegex = /\d+/
 const extractNoteIdRegex = /note-\d+$/
@@ -67,6 +70,7 @@ const CreateTopicForm = ({
   createTopicError,
   toggleShowModal,
   loading,
+  setSnacks,
   showSnacks,
 }) => {
   const [isLoading, setIsLoading] = useState(false)
@@ -100,12 +104,17 @@ const CreateTopicForm = ({
           value={title}
           onChange={e => setTitle(e.target.value)}
         />
-        {createTopicError && title.length < 4 && (
+        {createTopicError &&
+          title.length < 4 &&
           // Works in this case... because there will only ever be one.
           // But how will I handle this for the signup/login form... or the
           // tag creation form.
-          <p>{createTopicError.errors[0].message}</p>
-        )}
+          checkFormSubmissionErrors(
+            createTopicError,
+            setSnacks,
+            toggleShowModal,
+            message => <p className="input-error">{message}</p>
+          )}
       </div>
       <div className="form-button">
         <Button type="CREATE" size="SMALL">
@@ -156,7 +165,11 @@ const TopicListing = ({
 const TopicList = ({ notebookId, subCategoryId }) => {
   const { loading, loadingResource } = useUi()
   const { parentNotebooksOfSubCategories } = useSubCategory()
-  const { parentSubCategoriesOfTopics, createTopicError } = useTopic()
+  const {
+    parentSubCategoriesOfTopics,
+    createTopicError,
+    topicListError,
+  } = useTopic()
   const {
     createTopic,
     listTopics,
@@ -189,6 +202,10 @@ const TopicList = ({ notebookId, subCategoryId }) => {
       onResourceLoadScrollIntoView(id)
     }
     listEl.current.addEventListener("scroll", handleScroll)
+
+    if (topicListError) {
+      return setSnacks([{ message: topicListError.message, type: "ERROR" }])
+    }
 
     if (!parentNotebooksOfSubCategories.hasOwnProperty(notebookId)) {
       // NOTE: The case when the user copies and pastes the link into the browser.
@@ -226,7 +243,7 @@ const TopicList = ({ notebookId, subCategoryId }) => {
     return () => {
       listEl.current.removeEventListener("scroll", handleScroll)
     }
-  }, [activeCircle])
+  }, [activeCircle, loading, topicListError, createTopicError])
 
   const handleScroll = () => {
     setScrollTop(listEl.current.scrollTop)
@@ -309,6 +326,7 @@ const TopicList = ({ notebookId, subCategoryId }) => {
                       loading={
                         loadingResource === CREATE_TOPIC ? loading : false
                       }
+                      setSnacks={setSnacks}
                       showSnacks={showSnacks}
                     />
                   </StyledForm>

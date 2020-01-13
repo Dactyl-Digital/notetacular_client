@@ -12,3 +12,16 @@ export const onResourceLoadScrollIntoView = id => {
     }
   }, 500)
 }
+
+export const checkFormSubmissionErrors = (
+  error,
+  setSnacks,
+  toggleShowModal,
+  renderHtml
+) => {
+  if (error.hasOwnProperty("errors")) {
+    return renderHtml(error.errors[0].message)
+  }
+  setSnacks([{ message: error.message, type: "ERROR" }])
+  toggleShowModal(false)
+}

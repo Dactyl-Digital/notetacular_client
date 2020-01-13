@@ -4,6 +4,8 @@ import { TimerContext } from "./context/timer-context"
 import { formatTime } from "./helpers"
 import TimerModal from "./timer-modal"
 
+// PRIORITY TODO: Troubleshoot why pause wasn't working last time I messed w/ this...
+
 const Timer = ({ children }) => {
   const { updateNoteTimer } = useNoteTimerActions()
   // const [elapsedSeconds, setElapsedSeconds] = useState(null)
@@ -20,20 +22,24 @@ const Timer = ({ children }) => {
   let timer = action => {
     setTimeout(() => {
       if (action === "PAUSE") {
-        console.log("pausing timer...")
+        if (process.env.NODE_ENV === "development")
+          console.log("pausing timer...")
         setTimerState({
           elapsedSeconds: timerState.elapsedSeconds,
           paused: !timerState.paused,
         })
       } else if (action === "STOP") {
-        console.log("stopping timer...")
+        if (process.env.NODE_ENV === "development")
+          console.log("stopping timer...")
         setTimerState({
           elapsedSeconds: null,
           paused: null,
         })
       } else if (action === "START") {
-        console.log("running timer...")
-        console.log("what is paused state? ", timerState.paused)
+        if (process.env.NODE_ENV === "development") {
+          console.log("running timer...")
+          console.log("what is paused state? ", timerState.paused)
+        }
         setTimerState({
           elapsedSeconds: timerState.elapsedSeconds + 1,
           paused: timerState.paused,
@@ -52,7 +58,8 @@ const Timer = ({ children }) => {
   //   }, 1000)
   // }
   useEffect(() => {
-    console.log("what be timerState in useEffect: ", timerState)
+    if (process.env.NODE_ENV === "development")
+      console.log("what be timerState in useEffect: ", timerState)
     if (activeTimer.noteId && activeTimer.noteTimerId && !timerState.paused) {
       timer("START")
     }
@@ -68,7 +75,8 @@ const Timer = ({ children }) => {
     })
 
   const startTimer = ({ currentElapsedSeconds, noteId, noteTimerId }) => {
-    console.log("what be timerState in startTimer: ", timerState)
+    if (process.env.NODE_ENV === "development")
+      console.log("what be timerState in startTimer: ", timerState)
     if (
       (activeTimer.noteId === null && activeTimer.noteTimerId === null) ||
       timerState.paused === true
@@ -85,7 +93,8 @@ const Timer = ({ children }) => {
   }
 
   const stopTimer = () => {
-    console.log("what be timerState in stopTimer: ", timerState)
+    if (process.env.NODE_ENV === "development")
+      console.log("what be timerState in stopTimer: ", timerState)
     handleUpdateNoteTimer({
       noteId: activeTimer.noteId,
       note_timer_id: activeTimer.noteTimerId,
@@ -99,7 +108,8 @@ const Timer = ({ children }) => {
   }
 
   const pauseTimer = () => {
-    console.log("what be timerState in pauseTimer: ", timerState)
+    if (process.env.NODE_ENV === "development")
+      console.log("what be timerState in pauseTimer: ", timerState)
     clearTimeout(timer)
     timer("PAUSE")
   }

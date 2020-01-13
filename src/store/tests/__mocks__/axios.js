@@ -34,7 +34,6 @@ const mockAxios = {
     }
   },
   post: (url, params) => {
-    console.log("params in mock axios: ", params)
     if (params.fail) {
       return Promise.reject(signupErrorResponse)
     }

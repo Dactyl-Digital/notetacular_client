@@ -214,14 +214,14 @@ export default function topicReducer(
   if (type === SET_CREATE_TOPIC_ERROR) {
     return { ...topicState, createTopicError: payload }
   }
-  if (type === SET_TOPIC_LIST_ERROR) {
+  if (type === SET_TOPIC_LIST_ERROR || type === SET_SUB_CATEGORY_TOPICS_ERROR) {
     return { ...topicState, topicListError: payload }
   }
+  // if (type === SET_SUB_CATEGORY_TOPICS_ERROR) {
+  //   return { ...topicState, setSubCategoryTopicsError: payload }
+  // }
   if (type === SET_DELETE_TOPIC_ERROR) {
     return { ...topicState, deleteTopicError: payload }
-  }
-  if (type === SET_SUB_CATEGORY_TOPICS_ERROR) {
-    return { ...topicState, setSubCategoryTopicsError: payload }
   }
   if (type === REMOVE_DELETED_TOPIC) {
     const { sub_category_id, topic_id } = payload

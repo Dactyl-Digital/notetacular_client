@@ -20,8 +20,6 @@ export const noteTimerInitialState = {
 }
 
 const normalizeSingle = ({ parentNotesOfNoteTimers }, { data }) => {
-  console.log("data in normalizeSingle:")
-  console.log(data)
   const { note_id } = data
   const newNoteTimers = checkProperty({
     obj: parentNotesOfNoteTimers,
@@ -210,8 +208,6 @@ export default function noteTimerReducer(
         ...updateNormalizedSingle(noteTimerState, payload),
       },
     }
-    console.log("the result in set_updated_note_timer")
-    console.log(result)
     return result
   }
   if (type === SET_DELETED_NOTE_TIMER) {

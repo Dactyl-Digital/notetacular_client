@@ -21,8 +21,6 @@ export const notebookInitialState = {
 }
 
 const normalizeSingle = ({ data }) => {
-  console.log("WTF is data")
-  console.log(data)
   return {
     [data.id]: {
       ...data,
@@ -50,8 +48,6 @@ export default function notebookReducer(
     }
   }
   if (type === SET_NOTEBOOK) {
-    console.log("wtf is payload")
-    console.log(payload)
     return {
       ...notebookState,
       notebooks: { ...notebookState.notebooks, ...normalizeSingle(payload) },
@@ -67,7 +63,7 @@ export default function notebookReducer(
     return { ...notebookState, createNotebookError: payload }
   }
   if (type === SET_NOTEBOOK_LIST_ERROR) {
-    // return { ...notebookState, notebookListError: payload }
+    return { ...notebookState, notebookListError: payload }
   }
   // if (type === SET_LIST_SHARED_NOTEBOOKS_ERROR) {
   //   return { ...notebookState, signinError: payload.errors }

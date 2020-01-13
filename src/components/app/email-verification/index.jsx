@@ -11,11 +11,7 @@ const EmailVerification = props => {
     const [VERIFICATION_URL, ..._rest] = props.location.href.match(
       /\/verify-email.*/
     )
-    console.log(
-      "Inside EmailVerification's useEffect and got VERIFICATION_URL: "
-    )
-    console.log(VERIFICATION_URL)
-    // TODO: Implement the verification email redux stuffs...
+
     axios
       .get(`${API_URL}${VERIFICATION_URL}`)
       .then(({ data }) => {

@@ -31,6 +31,10 @@ const StyledForm = styled.form`
       padding-left: 0.2rem;
     }
 
+    .input-error {
+      color: red;
+    }
+
     .form-button {
       background: blue;
     }

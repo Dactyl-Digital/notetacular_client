@@ -10,7 +10,7 @@ import NotificationSnacks from "../../shared/notification-snacks"
 import CreateResourceModal from "../../shared/create-resource-modal"
 import Button from "../../shared/button"
 import StyledForm from "../../shared/styled-form"
-import { createSuccessMessage } from "../helpers"
+import { createSuccessMessage, checkFormSubmissionErrors } from "../helpers"
 
 // TODO (future feature):
 // NOTE: Currently, when deleting a note, it'll leave a gap such that
@@ -35,6 +35,7 @@ const CreateNoteForm = ({
   createNoteError,
   toggleShowModal,
   loading,
+  setSnacks,
   showSnacks,
 }) => {
   const [isLoading, setIsLoading] = useState(false)
@@ -69,12 +70,17 @@ const CreateNoteForm = ({
           value={title}
           onChange={e => setTitle(e.target.value)}
         />
-        {createNoteError && title.length < 4 && (
+        {createNoteError &&
+          title.length < 4 &&
           // Works in this case... because there will only ever be one.
           // But how will I handle this for the signup/login form... or the
           // tag creation form.
-          <p>{createNoteError.errors[0].message}</p>
-        )}
+          checkFormSubmissionErrors(
+            createNoteError,
+            setSnacks,
+            toggleShowModal,
+            message => <p className="input-error">{message}</p>
+          )}
       </div>
       <div className="form-button">
         <Button type="CREATE" size="SMALL">
@@ -88,7 +94,7 @@ const CreateNoteForm = ({
 const NoteList = ({ topics, topicId, subCategoryId, showNotes }) => {
   const noteListRef = useRef(null)
   const { loading, loadingResource } = useUi()
-  const { parentTopicsOfNotes, createNoteError } = useNote()
+  const { parentTopicsOfNotes, noteListError, createNoteError } = useNote()
   const { createNote, listNotes, clearCreateNoteError } = useNoteActions()
   const [snacks, setSnacks] = useState([])
   const [title, setTitle] = useState("")
@@ -125,8 +131,9 @@ const NoteList = ({ topics, topicId, subCategoryId, showNotes }) => {
     if (!mainContent) {
       mainContent = document.getElementById("main-content")
     }
-    // IMMEDIATE TODO: Implement scroll handler for loading more notes
-    // when bottom of list is reached, and notePaginationEnd is false
+    if (noteListError) {
+      return setSnacks([{ message: noteListError.message, type: "ERROR" }])
+    }
 
     // The case where no notes have been fetched yet.
     if (noteIdList.length > 0 && !parentTopicsOfNotes.hasOwnProperty(topicId)) {
@@ -134,7 +141,14 @@ const NoteList = ({ topics, topicId, subCategoryId, showNotes }) => {
         offset: 0,
         note_id_list: noteIdList,
       })
-    } else if (fetchNotes && !parentTopicsOfNotes[topicId].notesPaginationEnd) {
+      // NOTE: kinda hacky... using fetchNotes because I ran into a closure issue
+      // when trying to use parentTopicsOfNotes[topicId].listOffset from within the handler.
+      // But this successfully implements scroll loading the notes.
+    } else if (
+      fetchNotes &&
+      parentTopicsOfNotes.hasOwnProperty(topicId) &&
+      !parentTopicsOfNotes[topicId].notesPaginationEnd
+    ) {
       listNotes({
         offset: parentTopicsOfNotes[topicId].listOffset,
         note_id_list: noteIdList,
@@ -200,6 +214,7 @@ const NoteList = ({ topics, topicId, subCategoryId, showNotes }) => {
               createNoteError={createNoteError}
               toggleShowModal={toggleShowModal}
               loading={loadingResource === CREATE_NOTE ? loading : false}
+              setSnacks={setSnacks}
               showSnacks={showSnacks}
             />
           </StyledForm>

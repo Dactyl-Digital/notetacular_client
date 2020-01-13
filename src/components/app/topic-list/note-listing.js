@@ -36,6 +36,7 @@ const NoteListing = ({
   note: { id, title, tags, content_markdown, note_timers },
 }) => {
   const { updateNoteContent } = useNoteActions()
+  const [deletingNote, setDeletingNote] = useState(false)
   const [showEditor, setShowEditor] = useState(false)
 
   useEffect(() => {
@@ -54,13 +55,29 @@ const NoteListing = ({
   }, [])
 
   const persistNoteContent = ({ content_text, content_markdown }) => {
-    updateNoteContent({
-      subCategoryId,
-      topicId,
-      note_id: id,
-      content_text,
-      content_markdown,
-    })
+    if (!deletingNote) {
+      updateNoteContent({
+        subCategoryId,
+        topicId,
+        note_id: id,
+        content_text,
+        content_markdown,
+      })
+    }
+  }
+
+  // NOTE: This is madness. All this implicit dependency of state!
+  // And the setTimeout is necessary so that updateNoteContent within
+  // persistNoteContent doesn't get fired off after (as it's called
+  // in Editor's useEffect unmount function call just incase the user
+  // doesn't save manually) the note is deleted and cause a 500 error...
+  // ON SECOND THOUGHT.. The timeout doesn't help. closure over deletingNote
+  // still occuring... SO, fuck the auto save just incase manual save is forgotten.
+  // Implemented the reminder pop up for that reason...
+  // But would like to fix this later perhaps.
+  const handleDeleteNote = deleteNote => {
+    setDeletingNote(true)
+    deleteNote()
   }
 
   return (
@@ -77,6 +94,7 @@ const NoteListing = ({
         topicId={topicId}
         showEditor={showEditor}
         handleArrowClick={() => setShowEditor(!showEditor)}
+        handleDeleteNote={handleDeleteNote}
       />
       {/* TODO: create toggle for showing the editor */}
       {showEditor ? (

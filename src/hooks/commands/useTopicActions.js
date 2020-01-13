@@ -124,7 +124,6 @@ const deleteTopicError = dispatch => error => {
 }
 
 export const addTopicTags = dispatch => data => {
-  console.log("Dispatching addTopicTags API REQUEST")
   dispatch(
     apiRequest({
       method: "POST",

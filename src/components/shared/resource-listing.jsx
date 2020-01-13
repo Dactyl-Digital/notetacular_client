@@ -149,7 +149,8 @@ const ResourceListing = ({
   scrollTop,
   setActiveCircle,
   showNotes,
-  setShowNotes
+  setShowNotes,
+  handleDeleteNote,
 }) => {
   const { deleteNotebook } = useNotebookActions()
   const { deleteSubCategory } = useSubCategoryActions()
@@ -205,7 +206,7 @@ const ResourceListing = ({
               </div>
             </Link>
           )}
-          {(type === "NOTE") && (
+          {type === "NOTE" && (
             <Tags tags={tags} type={type} topicId={topicId} noteId={noteId} />
           )}
         </div>
@@ -234,10 +235,12 @@ const ResourceListing = ({
                 })
               }
               if (type === "NOTE") {
-                deleteNote({
-                  topic_id: topicId,
-                  note_id: noteId,
-                })
+                handleDeleteNote(() =>
+                  deleteNote({
+                    topic_id: topicId,
+                    note_id: noteId,
+                  })
+                )
               }
             }}
           >
@@ -247,7 +250,9 @@ const ResourceListing = ({
             <div
               // TODO: fix, because this is messy
               onClick={
-                handleArrowClick ? handleArrowClick : () => setShowNotes(!showNotes)
+                handleArrowClick
+                  ? handleArrowClick
+                  : () => setShowNotes(!showNotes)
               }
             >
               <ArrowIcon showNotes={showNotes || showEditor} />

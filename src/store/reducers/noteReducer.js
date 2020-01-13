@@ -52,8 +52,6 @@ export const noteInitialState = {
 //     obj.notes !== null
 //       ? { ...obj[data.topic_id].notes, [data.id]: data }
 //       : { [data.id]: data }
-//   console.log("WTF IS THE RESULT: ", result)
-//   return result
 // }
 
 // const normalizeSingle = (noteState, { data }) => ({

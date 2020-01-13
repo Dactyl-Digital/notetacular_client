@@ -1,6 +1,14 @@
 import axios from "axios"
 import { toggleLoader } from "../actions/ui"
 
+// PRIORITY TODO: Status Code 500 errors return gobblydgook html response
+// which gets set on the redux payload... Figure out how to meaningfully handle this
+// in the context of the operation that was being performed...
+// Also... Another TODO: You didn't implement the constraint that names be uniques under
+// resources owned by a particular user.
+
+// And yet another TODO... Loading indicator for when saving a note.
+
 const API_REQUEST = "API_REQUEST"
 const VALID_SESSION = "VALID_SESSION"
 
@@ -50,18 +58,25 @@ const makeRequest = (
         })
       })
       .catch(function(error) {
-        console.log("the error in GET")
-        console.log(error)
-        console.dir(error)
+        if (process.env.NODE_ENV === "development") {
+          console.log("the error in GET")
+          console.log(error)
+        }
         if (
           error.hasOwnProperty("message") &&
           error.message === "Network Error"
         ) {
-          return onError({
+          onError({
             response: {
               data: { message: "An error occured with the network." },
             },
           })
+          dispatchToggleLoader(dispatch, false, {
+            method,
+            url,
+            loadingResource: null,
+          })
+          return
         }
         const result = invalidSession(error)
         if (result === VALID_SESSION) {
@@ -102,18 +117,26 @@ const makeRequest = (
         // error.response.data = {
         //   message: "Oops... Something went wrong."
         // }
-        console.log("the error in POST")
-        console.dir(error)
 
+        if (process.env.NODE_ENV === "development") {
+          console.log("the error in POST")
+          console.log(error)
+        }
         if (
           error.hasOwnProperty("message") &&
           error.message === "Network Error"
         ) {
-          return onError({
+          onError({
             response: {
               data: { message: "An error occured with the network." },
             },
           })
+          dispatchToggleLoader(dispatch, false, {
+            method,
+            url,
+            loadingResource: null,
+          })
+          return
         }
         const result = invalidSession(error)
         if (result === VALID_SESSION) {
@@ -145,17 +168,25 @@ const makeRequest = (
         })
       })
       .catch(function(error) {
-        console.log("the error in PUT")
-        console.log(error)
+        if (process.env.NODE_ENV === "development") {
+          console.log("the error in PUT")
+          console.log(error)
+        }
         if (
           error.hasOwnProperty("message") &&
           error.message === "Network Error"
         ) {
-          return onError({
+          onError({
             response: {
               data: { message: "An error occured with the network." },
             },
           })
+          dispatchToggleLoader(dispatch, false, {
+            method,
+            url,
+            loadingResource: null,
+          })
+          return
         }
         const result = invalidSession(error)
         if (result === VALID_SESSION) {
@@ -187,17 +218,25 @@ const makeRequest = (
         })
       })
       .catch(function(error) {
-        console.log("the error in PATCH")
-        console.log(error)
+        if (process.env.NODE_ENV === "development") {
+          console.log("the error in PATCH")
+          console.log(error)
+        }
         if (
           error.hasOwnProperty("message") &&
           error.message === "Network Error"
         ) {
-          return onError({
+          onError({
             response: {
               data: { message: "An error occured with the network." },
             },
           })
+          dispatchToggleLoader(dispatch, false, {
+            method,
+            url,
+            loadingResource: null,
+          })
+          return
         }
         const result = invalidSession(error)
         if (result === VALID_SESSION) {
@@ -229,17 +268,25 @@ const makeRequest = (
         })
       })
       .catch(function(error) {
-        console.log("the error in DELETE")
-        console.log(error)
+        if (process.env.NODE_ENV === "development") {
+          console.log("the error in DELETE")
+          console.log(error)
+        }
         if (
           error.hasOwnProperty("message") &&
           error.message === "Network Error"
         ) {
-          return onError({
+          onError({
             response: {
               data: { message: "An error occured with the network." },
             },
           })
+          dispatchToggleLoader(dispatch, false, {
+            method,
+            url,
+            loadingResource: null,
+          })
+          return
         }
         const result = invalidSession(error)
         if (result === VALID_SESSION) {
@@ -262,11 +309,14 @@ const makeRequest = (
 }
 
 export const apiMiddleware = ({ dispatch }) => next => action => {
-  console.log("Inside the middleware w/ action: ", action)
+  if (process.env.NODE_ENV === "development")
+    console.log("Inside the middleware w/ action: ", action)
   if (action.type === API_REQUEST) {
-    console.log("action.type === API_REQUEST")
+    if (process.env.NODE_ENV === "development")
+      console.log("action.type === API_REQUEST")
     return makeRequest(dispatch, action, action.meta)
   }
-  console.log("calling next(action) in middleware")
+  if (process.env.NODE_ENV === "development")
+    console.log("calling next(action) in middleware")
   next(action)
 }

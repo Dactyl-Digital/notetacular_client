@@ -20,7 +20,10 @@ import CreateResourceModal from "../../shared/create-resource-modal"
 import { ActiveCircleContext } from "../notebook-list"
 import Button from "../../shared/button"
 import StyledForm from "../../shared/styled-form"
-import { onResourceLoadScrollIntoView } from "../helpers"
+import {
+  onResourceLoadScrollIntoView,
+  checkFormSubmissionErrors,
+} from "../helpers"
 
 // TODO: Duplicated in notebook-list, and topic-list
 // move to a shared file.
@@ -71,6 +74,7 @@ const CreateSubCategoryForm = ({
   createSubCategoryError,
   toggleShowModal,
   loading,
+  setSnacks,
   showSnacks,
 }) => {
   const [isLoading, setIsLoading] = useState(false)
@@ -107,12 +111,17 @@ const CreateSubCategoryForm = ({
           value={title}
           onChange={e => setTitle(e.target.value)}
         />
-        {createSubCategoryError && title.length < 4 && (
+        {createSubCategoryError &&
+          title.length < 4 &&
           // Works in this case... because there will only ever be one.
           // But how will I handle this for the signup/login form... or the
           // tag creation form.
-          <p>{createSubCategoryError.errors[0].message}</p>
-        )}
+          checkFormSubmissionErrors(
+            createSubCategoryError,
+            setSnacks,
+            toggleShowModal,
+            message => <p className="input-error">{message}</p>
+          )}
       </div>
       <div className="form-button">
         <Button type="CREATE" size="SMALL">
@@ -133,6 +142,7 @@ const SubCategoryList = ({ notebookId }) => {
   const { notebooks } = useNotebook()
   const {
     parentNotebooksOfSubCategories,
+    subCategoryListError,
     createSubCategoryError,
   } = useSubCategory()
   const {
@@ -161,6 +171,14 @@ const SubCategoryList = ({ notebookId }) => {
       onResourceLoadScrollIntoView(id)
     }
     listEl.current.addEventListener("scroll", handleScroll)
+
+    if (subCategoryListError) {
+      return setSnacks([
+        ...snacks,
+        { message: subCategoryListError.message, type: "ERROR" },
+      ])
+    }
+
     // WTF NOTE:
     // There's a recursive fetch of listing a notebook's sub categories
     // when navigating directly to it via a link which specifies a notebook
@@ -282,6 +300,7 @@ const SubCategoryList = ({ notebookId }) => {
                           ? loading
                           : false
                       }
+                      setSnacks={setSnacks}
                       showSnacks={showSnacks}
                     />
                   </StyledForm>

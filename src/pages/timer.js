@@ -15,7 +15,6 @@ const TimerPage = () => {
     }, 1000)
 
   useEffect(() => {
-    console.log("time in useEffect: ", time)
     if (running) {
       timer(time)
     }

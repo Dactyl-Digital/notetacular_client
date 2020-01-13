@@ -206,12 +206,15 @@ export default function subCategoryReducer(
   if (type === SET_CREATE_SUB_CATEGORY_ERROR) {
     return { ...subCategoryState, createSubCategoryError: payload }
   }
-  if (type === SET_SUB_CATEGORY_LIST_ERROR) {
+  if (
+    type === SET_SUB_CATEGORY_LIST_ERROR ||
+    type === SET_NOTEBOOKS_SUB_CATEGORIES_ERROR
+  ) {
     return { ...subCategoryState, subCategoryListError: payload }
   }
-  if (type === SET_NOTEBOOKS_SUB_CATEGORIES_ERROR) {
-    return { ...subCategoryState, notebookSubCategoriesError: payload }
-  }
+  // if (type === SET_NOTEBOOKS_SUB_CATEGORIES_ERROR) {
+  //   return { ...subCategoryState, notebookSubCategoriesError: payload }
+  // }
   if (type === SET_DELETE_SUB_CATEGORY_ERROR) {
     return { ...subCategoryState, deleteSubCategoryError: payload }
   }

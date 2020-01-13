@@ -162,7 +162,9 @@ const Editor = ({
       }
       if (quill) {
         quill.root.removeEventListener("keydown", handleSave)
-        saveEditorContent(quill, persistNoteContent)
+        // NOTE: Removing due to issues when deleting a note while the editor is mounted,
+        // as this causes a 500 error.
+        // saveEditorContent(quill, persistNoteContent)
       }
     }
   }, [quill, readOnly])

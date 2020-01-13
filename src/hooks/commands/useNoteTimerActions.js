@@ -35,7 +35,6 @@ const createNoteTimerError = dispatch => error => {
 }
 
 export const listNoteTimers = dispatch => ({ offset, note_timer_id_list }) => {
-  console.log("dispatching note_timer_id_list: ", note_timer_id_list)
   dispatch(
     apiRequest({
       method: "GET",

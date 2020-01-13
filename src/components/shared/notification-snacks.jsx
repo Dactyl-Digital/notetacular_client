@@ -10,8 +10,10 @@ const Container = styled.div`
   padding: 0.4rem 1.2rem;
   border-radius: 50px;
   box-shadow: 0rem 0.1rem 1rem rgba(27, 113, 113, 30%);
-  /* TODO: Animate this bitch in. */
+  box-shadow: ${props =>
+    props.type === "ERROR" && "0rem 0.1rem 1rem rgba(255, 85, 85, 30%)"};
 
+  /* TODO: Animate this bitch in. */
   p {
     display: block;
     margin: 0;

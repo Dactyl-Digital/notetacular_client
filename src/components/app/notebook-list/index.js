@@ -12,7 +12,10 @@ import ResourceListing from "../../shared/resource-listing"
 import CreateResourceModal from "../../shared/create-resource-modal"
 import Button from "../../shared/button"
 import StyledForm from "../../shared/styled-form"
-import { onResourceLoadScrollIntoView } from "../helpers"
+import {
+  onResourceLoadScrollIntoView,
+  checkFormSubmissionErrors,
+} from "../helpers"
 
 export const ActiveCircleContext = React.createContext({
   active: null,
@@ -67,6 +70,7 @@ const CreateNotebookForm = ({
   createNotebookError,
   toggleShowModal,
   loading,
+  setSnacks,
   showSnacks,
 }) => {
   const [isLoading, setIsLoading] = useState(false)
@@ -103,12 +107,17 @@ const CreateNotebookForm = ({
           value={title}
           onChange={e => setTitle(e.target.value)}
         />
-        {createNotebookError && title.length < 4 && (
+        {createNotebookError &&
+          title.length < 4 &&
           // Works in this case... because there will only ever be one.
           // But how will I handle this for the signup/login form... or the
           // tag creation form.
-          <p>{createNotebookError.errors[0].message}</p>
-        )}
+          checkFormSubmissionErrors(
+            createNotebookError,
+            setSnacks,
+            toggleShowModal,
+            message => <p className="input-error">{message}</p>
+          )}
       </div>
       <div className="form-button">
         <Button type="CREATE" size="SMALL">
@@ -125,6 +134,7 @@ const NotebookList = () => {
     notebooks,
     notebooksPaginationEnd,
     listNotebooksOffset,
+    notebookListError,
     createNotebookError,
   } = useNotebook()
   const {
@@ -160,13 +170,18 @@ const NotebookList = () => {
     // if so then make another listNotebooks request.
     // IMMEDIATE TODO: Need to keep track of the count of the total
     // number of results received.
+
+    if (notebookListError) {
+      return setSnacks([{ message: notebookListError.message, type: "ERROR" }])
+    }
+
     if (!notebooksPaginationEnd) {
       listNotebooks(listNotebooksOffset)
     }
     return () => {
       listEl.current.removeEventListener("scroll", handleScroll)
     }
-  }, [activeCircle, loading, createNotebookError])
+  }, [activeCircle, loading, notebookListError, createNotebookError])
 
   const handleScroll = () => {
     setScrollTop(listEl.current.scrollTop)
@@ -252,6 +267,7 @@ const NotebookList = () => {
                       loading={
                         loadingResource === CREATE_NOTEBOOK ? loading : false
                       }
+                      setSnacks={setSnacks}
                       showSnacks={showSnacks}
                     />
                   </StyledForm>
