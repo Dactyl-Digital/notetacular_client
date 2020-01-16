@@ -3,7 +3,7 @@ import axios from "axios"
 // old prod endpoint -> "https://api.notastical.com/api"
 export const API_URL =
   process.env.NODE_ENV === "production"
-    ? "api.notastical.com/api"
+    ? "https://api.notastical.com/api"
     : "http://localhost:4000/api"
 
 export const SIGNUP_URL = `/signup`
