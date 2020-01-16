@@ -10,6 +10,7 @@ import PropTypes from "prop-types"
 import { useStaticQuery, graphql } from "gatsby"
 import Helmet from "react-helmet"
 import axios from "axios"
+import { API_URL } from "../api-endpoints"
 import { createGlobalStyle } from "styled-components"
 import { Provider } from "react-redux"
 import { store } from "../store"
@@ -17,6 +18,7 @@ import { store } from "../store"
 import Header from "./header"
 import "./layout.css"
 
+axios.defaults.baseURL = API_URL
 axios.defaults.withCredentials = true
 
 const GlobalStyle = createGlobalStyle`
