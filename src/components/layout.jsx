@@ -21,6 +21,17 @@ import "./layout.css"
 axios.defaults.baseURL = API_URL
 axios.defaults.withCredentials = true
 
+axios
+  .get("/api/test")
+  .then(res => {
+    console.log("res: ")
+    console.dir(res)
+  })
+  .catch(err => {
+    console.log("err: ")
+    console.dir(err)
+  })
+
 const GlobalStyle = createGlobalStyle`
   body {
     background: ${props => (props.theme === "purple" ? "purple" : "white")};
