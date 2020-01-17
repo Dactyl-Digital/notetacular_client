@@ -22,7 +22,7 @@ axios.defaults.baseURL = API_URL
 axios.defaults.withCredentials = true
 
 axios
-  .get("/api/test")
+  .get("/test")
   .then(res => {
     console.log("res: ")
     console.dir(res)
