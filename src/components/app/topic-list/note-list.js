@@ -6,7 +6,7 @@ import { useUi } from "../../../hooks/queries/useUi"
 import { useTopic } from "../../../hooks/queries/useTopic"
 import { useNote } from "../../../hooks/queries/useNote"
 import { useNoteActions } from "../../../hooks/commands/useNoteActions"
-import NotificationSnacks from "../../shared/notification-snacks"
+import { useNotifications } from "../../shared/notification-snacks/notification-provider"
 import CreateResourceModal from "../../shared/create-resource-modal"
 import Button from "../../shared/button"
 import StyledForm from "../../shared/styled-form"
@@ -35,8 +35,7 @@ const CreateNoteForm = ({
   createNoteError,
   toggleShowModal,
   loading,
-  setSnacks,
-  showSnacks,
+  addNotification,
 }) => {
   const [isLoading, setIsLoading] = useState(false)
 
@@ -48,7 +47,13 @@ const CreateNoteForm = ({
       } else if (loading === false) {
         toggleShowModal(false)
         setTitle("")
-        showSnacks({ message: "Note successfully created!", type: "SUCCESS" })
+        addNotification({
+          key: "CREATE_NOTE_SUCCESS",
+          notification: {
+            message: "Note successfully created!",
+            type: "SUCCESS",
+          },
+        })
         setIsLoading(loading)
         return
       }
@@ -72,15 +77,16 @@ const CreateNoteForm = ({
         />
         {createNoteError &&
           title.length < 4 &&
-          // Works in this case... because there will only ever be one.
+          // TODO: Works in this case... because there will only ever be one.
           // But how will I handle this for the signup/login form... or the
           // tag creation form.
-          checkFormSubmissionErrors(
-            createNoteError,
-            setSnacks,
+          checkFormSubmissionErrors({
+            error: createNoteError,
+            notificationKey: "CREATE_NOTE_ERROR",
+            addNotification,
             toggleShowModal,
-            message => <p className="input-error">{message}</p>
-          )}
+            renderHtml: message => <p className="input-error">{message}</p>,
+          })}
       </div>
       <div className="form-button">
         <Button type="CREATE" size="SMALL">
@@ -96,7 +102,7 @@ const NoteList = ({ topics, topicId, subCategoryId, showNotes }) => {
   const { loading, loadingResource } = useUi()
   const { parentTopicsOfNotes, noteListError, createNoteError } = useNote()
   const { createNote, listNotes, clearCreateNoteError } = useNoteActions()
-  const [snacks, setSnacks] = useState([])
+  const { addNotification } = useNotifications()
   const [title, setTitle] = useState("")
   const [fetchNotes, setFetchNotes] = useState(false)
 
@@ -132,7 +138,10 @@ const NoteList = ({ topics, topicId, subCategoryId, showNotes }) => {
       mainContent = document.getElementById("main-content")
     }
     if (noteListError) {
-      return setSnacks([{ message: noteListError.message, type: "ERROR" }])
+      return addNotification({
+        key: "NOTE_LIST_ERROR",
+        notification: { message: noteListError.message, type: "ERROR" },
+      })
     }
 
     // The case where no notes have been fetched yet.
@@ -190,16 +199,8 @@ const NoteList = ({ topics, topicId, subCategoryId, showNotes }) => {
     })
   }
 
-  const showSnacks = newSnack => {
-    setSnacks([...snacks, newSnack])
-    setTimeout(() => {
-      setSnacks([])
-    }, 3000)
-  }
-
   return (
     <Container data-testid="note-list" showNotes={showNotes}>
-      <NotificationSnacks snacks={snacks} />
       <CreateResourceModal action="Create" resource="Note" buttonType="NORMAL">
         {toggleShowModal => (
           <StyledForm
@@ -214,8 +215,7 @@ const NoteList = ({ topics, topicId, subCategoryId, showNotes }) => {
               createNoteError={createNoteError}
               toggleShowModal={toggleShowModal}
               loading={loadingResource === CREATE_NOTE ? loading : false}
-              setSnacks={setSnacks}
-              showSnacks={showSnacks}
+              addNotification={addNotification}
             />
           </StyledForm>
         )}

@@ -8,7 +8,7 @@ import {
   CREATE_SUB_CATEGORY,
   LIST_SUB_CATEGORIES,
 } from "../../../store/actions/ui"
-import NotificationSnacks from "../../shared/notification-snacks"
+import { useNotifications } from "../../shared/notification-snacks/notification-provider"
 import Heading from "../../shared/heading"
 import Sidebar from "../../shared/sidebar"
 import ResourceListing from "../../shared/resource-listing"
@@ -74,8 +74,7 @@ const CreateSubCategoryForm = ({
   createSubCategoryError,
   toggleShowModal,
   loading,
-  setSnacks,
-  showSnacks,
+  addNotification,
 }) => {
   const [isLoading, setIsLoading] = useState(false)
   useEffect(() => {
@@ -86,9 +85,12 @@ const CreateSubCategoryForm = ({
       } else if (loading === false) {
         toggleShowModal(false)
         setTitle("")
-        showSnacks({
-          message: "Sub Category successfully created!",
-          type: "SUCCESS",
+        addNotification({
+          key: "CREATE_SUB_CATEGORY_SUCCESS",
+          notification: {
+            message: "Sub Category successfully created!",
+            type: "SUCCESS",
+          },
         })
         setIsLoading(loading)
         return
@@ -113,15 +115,16 @@ const CreateSubCategoryForm = ({
         />
         {createSubCategoryError &&
           title.length < 4 &&
-          // Works in this case... because there will only ever be one.
+          // TODO: Works in this case... because there will only ever be one.
           // But how will I handle this for the signup/login form... or the
           // tag creation form.
-          checkFormSubmissionErrors(
-            createSubCategoryError,
-            setSnacks,
+          checkFormSubmissionErrors({
+            error: createSubCategoryError,
+            notificationKey: "CREATE_SUB_CATEGORY_ERROR",
+            addNotification,
             toggleShowModal,
-            message => <p className="input-error">{message}</p>
-          )}
+            renderHtml: message => <p className="input-error">{message}</p>,
+          })}
       </div>
       <div className="form-button">
         <Button type="CREATE" size="SMALL">
@@ -151,7 +154,7 @@ const SubCategoryList = ({ notebookId }) => {
     listNotebooksSubCategories,
     clearCreateSubCategoryError,
   } = useSubCategoryActions()
-  const [snacks, setSnacks] = useState([])
+  const { addNotification } = useNotifications()
   const [title, setTitle] = useState("")
   const [activeCircle, setActiveCircle] = useState({
     active: null,
@@ -173,10 +176,10 @@ const SubCategoryList = ({ notebookId }) => {
     listEl.current.addEventListener("scroll", handleScroll)
 
     if (subCategoryListError) {
-      return setSnacks([
-        ...snacks,
-        { message: subCategoryListError.message, type: "ERROR" },
-      ])
+      return addNotification({
+        key: "SUB_CATEGORY_LIST_ERROR",
+        notification: { message: subCategoryListError.message, type: "ERROR" },
+      })
     }
 
     // WTF NOTE:
@@ -241,13 +244,6 @@ const SubCategoryList = ({ notebookId }) => {
     }
   }
 
-  const showSnacks = newSnack => {
-    setSnacks([...snacks, newSnack])
-    setTimeout(() => {
-      setSnacks([])
-    }, 3000)
-  }
-
   // NOTE: This fucking sucks
   const subCategories = parentNotebooksOfSubCategories.hasOwnProperty(
     notebookId
@@ -270,7 +266,6 @@ const SubCategoryList = ({ notebookId }) => {
         <div id="main-content" ref={listEl}>
           <div id="main-content-wrapper">
             <div id="heading-modal-container">
-              <NotificationSnacks snacks={snacks} />
               <Heading title="Sub Categories" />
               {/* <CreateSubCategoryModal notebookId={notebookId} /> */}
               <CreateResourceModal
@@ -300,8 +295,7 @@ const SubCategoryList = ({ notebookId }) => {
                           ? loading
                           : false
                       }
-                      setSnacks={setSnacks}
-                      showSnacks={showSnacks}
+                      addNotification={addNotification}
                     />
                   </StyledForm>
                 )}

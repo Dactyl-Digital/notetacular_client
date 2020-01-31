@@ -1,6 +1,10 @@
 import { useDispatch } from "react-redux"
 import { apiRequest } from "../../store/actions/api"
-import { CREATE_NOTE, LIST_NOTES } from "../../store/actions/ui"
+import {
+  CREATE_NOTE,
+  LIST_NOTES,
+  UPDATE_NOTE_CONTENT,
+} from "../../store/actions/ui"
 import {
   setCreatedNote,
   setCreateNoteError,
@@ -98,6 +102,8 @@ export const updateNoteContent = dispatch => ({
   note_id,
   content_markdown,
   content_text,
+  showSaveSuccess,
+  showSaveError,
 }) => {
   dispatch(
     apiRequest({
@@ -108,20 +114,26 @@ export const updateNoteContent = dispatch => ({
         content_markdown,
         content_text,
       },
-      onSuccess: updateNoteContentSuccess({ subCategoryId, topicId })(dispatch),
-      onError: updateNoteContentError(dispatch),
+      loadingResource: UPDATE_NOTE_CONTENT,
+      onSuccess: updateNoteContentSuccess(showSaveSuccess)({
+        subCategoryId,
+        topicId,
+      })(dispatch),
+      onError: updateNoteContentError(showSaveError)(dispatch),
     })
   )
 }
 
-const updateNoteContentSuccess = ({
+const updateNoteContentSuccess = onSaveSuccess => ({
   subCategoryId,
   topicId,
 }) => dispatch => response => {
+  onSaveSuccess()
   dispatch(setUpdateNoteContent({ ...response, subCategoryId, topicId }))
 }
 
-const updateNoteContentError = dispatch => error => {
+const updateNoteContentError = onSaveError => dispatch => error => {
+  onSaveError()
   dispatch(setUpdateNoteContentError(error))
 }
 

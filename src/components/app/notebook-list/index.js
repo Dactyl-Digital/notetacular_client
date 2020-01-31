@@ -4,12 +4,12 @@ import { useUi } from "../../../hooks/queries/useUi"
 import { useNotebook } from "../../../hooks/queries/useNotebook"
 import { useNotebookActions } from "../../../hooks/commands/useNotebookActions"
 import { CREATE_NOTEBOOK, LIST_NOTEBOOKS } from "../../../store/actions/ui"
-import NotificationSnacks from "../../shared/notification-snacks"
 import Heading from "../../shared/heading"
 import Sidebar from "../../shared/sidebar"
 import ResourceListing from "../../shared/resource-listing"
 // import CreateNotebookModal from "./create-notebook-modal"
 import CreateResourceModal from "../../shared/create-resource-modal"
+import { useNotifications } from "../../shared/notification-snacks/notification-provider"
 import Button from "../../shared/button"
 import StyledForm from "../../shared/styled-form"
 import {
@@ -70,10 +70,10 @@ const CreateNotebookForm = ({
   createNotebookError,
   toggleShowModal,
   loading,
-  setSnacks,
-  showSnacks,
+  addNotification,
 }) => {
   const [isLoading, setIsLoading] = useState(false)
+
   useEffect(() => {
     if (isLoading !== loading) {
       if (createNotebookError) {
@@ -82,9 +82,12 @@ const CreateNotebookForm = ({
       } else if (loading === false) {
         toggleShowModal(false)
         setTitle("")
-        showSnacks({
-          message: "Notebook successfully created!",
-          type: "SUCCESS",
+        addNotification({
+          key: "CREATE_NOTEBOOK_SUCCESS",
+          notification: {
+            message: "Notebook successfully created!",
+            type: "SUCCESS",
+          },
         })
         setIsLoading(loading)
         return
@@ -109,15 +112,16 @@ const CreateNotebookForm = ({
         />
         {createNotebookError &&
           title.length < 4 &&
-          // Works in this case... because there will only ever be one.
+          // TODO: Works in this case... because there will only ever be one.
           // But how will I handle this for the signup/login form... or the
           // tag creation form.
-          checkFormSubmissionErrors(
-            createNotebookError,
-            setSnacks,
+          checkFormSubmissionErrors({
+            error: createNotebookError,
+            notificationKey: "CREATE_NOTEBOOK_ERROR",
+            addNotification,
             toggleShowModal,
-            message => <p className="input-error">{message}</p>
-          )}
+            renderHtml: message => <p className="input-error">{message}</p>,
+          })}
       </div>
       <div className="form-button">
         <Button type="CREATE" size="SMALL">
@@ -142,8 +146,7 @@ const NotebookList = () => {
     listNotebooks,
     clearCreateNotebookError,
   } = useNotebookActions()
-  const [snacks, setSnacks] = useState([])
-
+  const { addNotification } = useNotifications()
   const [title, setTitle] = useState("")
   // Create custom hook for all of these... would that really help anything
   // over just copy pasting into sub-category-list & topic-list?
@@ -172,7 +175,10 @@ const NotebookList = () => {
     // number of results received.
 
     if (notebookListError) {
-      return setSnacks([{ message: notebookListError.message, type: "ERROR" }])
+      return addNotification({
+        key: "NOTEBOOK_LIST_ERROR",
+        notification: { message: notebookListError.message, type: "ERROR" },
+      })
     }
 
     if (!notebooksPaginationEnd) {
@@ -220,13 +226,6 @@ const NotebookList = () => {
 
   const keys = Object.keys(notebooks)
 
-  const showSnacks = newSnack => {
-    setSnacks([...snacks, newSnack])
-    setTimeout(() => {
-      setSnacks([])
-    }, 3000)
-  }
-
   return (
     <ActiveCircleContext.Provider
       value={{
@@ -235,7 +234,6 @@ const NotebookList = () => {
       }}
     >
       <Container data-testid="notebook-list-page">
-        <NotificationSnacks snacks={snacks} />
         <Sidebar keys={keys} resourceList={notebooks} />
         <div id="main-content" ref={listEl}>
           <div id="main-content-wrapper">
@@ -267,8 +265,7 @@ const NotebookList = () => {
                       loading={
                         loadingResource === CREATE_NOTEBOOK ? loading : false
                       }
-                      setSnacks={setSnacks}
-                      showSnacks={showSnacks}
+                      addNotification={addNotification}
                     />
                   </StyledForm>
                 )}

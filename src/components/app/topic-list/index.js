@@ -6,7 +6,7 @@ import { useTopic } from "../../../hooks/queries/useTopic"
 import { useTopicActions } from "../../../hooks/commands/useTopicActions"
 // import TopicListing from "./topic-listing"
 import { CREATE_TOPIC, LIST_TOPICS } from "../../../store/actions/ui"
-import NotificationSnacks from "../../shared/notification-snacks"
+import { useNotifications } from "../../shared/notification-snacks/notification-provider"
 import Heading from "../../shared/heading"
 import Sidebar from "../../shared/sidebar"
 import Timer from "./timer"
@@ -70,10 +70,10 @@ const CreateTopicForm = ({
   createTopicError,
   toggleShowModal,
   loading,
-  setSnacks,
-  showSnacks,
+  addNotification,
 }) => {
   const [isLoading, setIsLoading] = useState(false)
+
   useEffect(() => {
     if (isLoading !== loading) {
       if (createTopicError) {
@@ -82,7 +82,14 @@ const CreateTopicForm = ({
       } else if (loading === false) {
         toggleShowModal(false)
         setTitle("")
-        showSnacks({ message: "Topic successfully created!", type: "SUCCESS" })
+
+        addNotification({
+          key: "CREATE_TOPIC_SUCCESS",
+          notification: {
+            message: "Topic successfully created!",
+            type: "SUCCESS",
+          },
+        })
         setIsLoading(loading)
         return
       }
@@ -106,15 +113,16 @@ const CreateTopicForm = ({
         />
         {createTopicError &&
           title.length < 4 &&
-          // Works in this case... because there will only ever be one.
+          // TODO: Works in this case... because there will only ever be one.
           // But how will I handle this for the signup/login form... or the
           // tag creation form.
-          checkFormSubmissionErrors(
-            createTopicError,
-            setSnacks,
+          checkFormSubmissionErrors({
+            error: createTopicError,
+            notificationKey: "CREATE_TOPIC_ERROR",
+            addNotification,
             toggleShowModal,
-            message => <p className="input-error">{message}</p>
-          )}
+            renderHtml: message => <p className="input-error">{message}</p>,
+          })}
       </div>
       <div className="form-button">
         <Button type="CREATE" size="SMALL">
@@ -176,7 +184,7 @@ const TopicList = ({ notebookId, subCategoryId }) => {
     listSubCategoryTopics,
     clearCreateTopicError,
   } = useTopicActions()
-  const [snacks, setSnacks] = useState([])
+  const { addNotification } = useNotifications()
   const [title, setTitle] = useState("")
   const [activeTopic, setActiveTopic] = useState(null)
 
@@ -204,7 +212,10 @@ const TopicList = ({ notebookId, subCategoryId }) => {
     listEl.current.addEventListener("scroll", handleScroll)
 
     if (topicListError) {
-      return setSnacks([{ message: topicListError.message, type: "ERROR" }])
+      return addNotification({
+        key: "TOPIC_LIST_ERROR",
+        notification: { message: topicListError.message, type: "ERROR" },
+      })
     }
 
     if (!parentNotebooksOfSubCategories.hasOwnProperty(notebookId)) {
@@ -264,13 +275,6 @@ const TopicList = ({ notebookId, subCategoryId }) => {
     }
   }
 
-  const showSnacks = newSnack => {
-    setSnacks([...snacks, newSnack])
-    setTimeout(() => {
-      setSnacks([])
-    }, 3000)
-  }
-
   const handleCreateNewTopic = () => {
     if (createTopicError) {
       clearCreateTopicError({ response: { data: null } })
@@ -299,7 +303,6 @@ const TopicList = ({ notebookId, subCategoryId }) => {
         <div id="main-content" ref={listEl}>
           <div id="main-content-wrapper">
             <div id="heading-modal-container">
-              <NotificationSnacks snacks={snacks} />
               <Heading title="Topics" />
               <CreateResourceModal
                 action="Create"
@@ -326,8 +329,7 @@ const TopicList = ({ notebookId, subCategoryId }) => {
                       loading={
                         loadingResource === CREATE_TOPIC ? loading : false
                       }
-                      setSnacks={setSnacks}
-                      showSnacks={showSnacks}
+                      addNotification={addNotification}
                     />
                   </StyledForm>
                 )}

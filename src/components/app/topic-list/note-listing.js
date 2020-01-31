@@ -3,6 +3,7 @@ import styled from "styled-components"
 import { useNoteActions } from "../../../hooks/commands/useNoteActions"
 import ResourceListing from "../../shared/resource-listing"
 import Editor from "./editor"
+import { useNotifications } from "../../shared/notification-snacks/notification-provider"
 
 // IMMEDIATE TODO: Start implementing LOADING states in the UI for the rest of the resources...
 
@@ -38,6 +39,7 @@ const NoteListing = ({
   const { updateNoteContent } = useNoteActions()
   const [deletingNote, setDeletingNote] = useState(false)
   const [showEditor, setShowEditor] = useState(false)
+  const { addNotification } = useNotifications()
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -54,6 +56,28 @@ const NoteListing = ({
     }
   }, [])
 
+  const showSaveResult = ({ key, message, type }) => {
+    addNotification({
+      key,
+      notification: {
+        message,
+        type,
+      },
+    })
+  }
+  const showSaveSuccess = () =>
+    showSaveResult({
+      key: "UPDATE_NOTE_SUCCESS",
+      message: "Note successfully saved!",
+      type: "SUCCESS",
+    })
+  const showSaveError = () =>
+    showSaveResult({
+      key: "UPDATE_NOTE_ERROR",
+      message: "Shoot! An error occured.",
+      type: "ERROR",
+    })
+
   const persistNoteContent = ({ content_text, content_markdown }) => {
     if (!deletingNote) {
       updateNoteContent({
@@ -62,6 +86,8 @@ const NoteListing = ({
         note_id: id,
         content_text,
         content_markdown,
+        showSaveSuccess,
+        showSaveError,
       })
     }
   }

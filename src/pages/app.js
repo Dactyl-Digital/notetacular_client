@@ -11,28 +11,33 @@ import RecentlyUpdatedNotebooks from "../components/app/recently-updated-notes"
 import NotebookList from "../components/app/notebook-list"
 import SubCategoryList from "../components/app/sub-category-list"
 import TopicList from "../components/app/topic-list"
+import NotificationProvider from "../components/shared/notification-snacks/notification-provider"
+import NotificationSnacks from "../components/shared/notification-snacks"
 // const TopicList = React.lazy(() => import("../components/app/topic-list"))
 
 const App = () => {
   if (typeof window !== "undefined") {
     return (
       <Layout>
-        <Router>
-          <Signup path="/app/signup/" />
-          <Login path="/app/login/" />
-          <EmailVerification path="/app/api/verify-email/*" />
-          {/* <PrivateRoute path="/app/" component={RecentlyUpdatedNotebooks} /> */}
-          {/* TODO: Utilize path params for dynamic linking */}
-          <PrivateRoute path="/app/notebooks/" component={NotebookList} />
-          <PrivateRoute
-            path="/app/notebook/:notebookId/sub-categories/"
-            component={SubCategoryList}
-          />
-          <PrivateRoute
-            path="/app/notebook/:notebookId/sub-category/:subCategoryId/topics/"
-            component={TopicList}
-          />
-        </Router>
+        <NotificationProvider initialNotifications={{}}>
+          <NotificationSnacks />
+          <Router>
+            <Signup path="/app/signup/" />
+            <Login path="/app/login/" />
+            <EmailVerification path="/app/api/verify-email/*" />
+            {/* <PrivateRoute path="/app/" component={RecentlyUpdatedNotebooks} /> */}
+            {/* TODO: Utilize path params for dynamic linking */}
+            <PrivateRoute path="/app/notebooks/" component={NotebookList} />
+            <PrivateRoute
+              path="/app/notebook/:notebookId/sub-categories/"
+              component={SubCategoryList}
+            />
+            <PrivateRoute
+              path="/app/notebook/:notebookId/sub-category/:subCategoryId/topics/"
+              component={TopicList}
+            />
+          </Router>
+        </NotificationProvider>
       </Layout>
     )
   }

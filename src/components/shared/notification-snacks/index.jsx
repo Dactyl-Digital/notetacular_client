@@ -1,5 +1,8 @@
-import React from "react"
+import React, { useEffect } from "react"
 import styled from "styled-components"
+import { UPDATE_NOTE_CONTENT } from "../../../store/actions/ui"
+import { useUi } from "../../../hooks/queries/useUi"
+import { useNotifications } from "./notification-provider"
 
 const Container = styled.div`
   position: absolute;
@@ -32,9 +35,27 @@ const NotificationSnack = ({ message, type }) => (
   </Container>
 )
 
-const NotificationSnacks = ({ snacks }) =>
-  snacks.map(({ message, type }) => (
-    <NotificationSnack message={message} type={type} />
-  ))
+const NotificationSnacks = () => {
+  const { loadingResource } = useUi()
+  const { notifications } = useNotifications()
+
+  useEffect(() => {
+    console.log("The loading resource inside NotificationSnacks")
+    console.log(loadingResource)
+  }, loadingResource)
+
+  if (loadingResource === UPDATE_NOTE_CONTENT) {
+    return <NotificationSnack message={"Saving Note!"} type={"SUCCESS"} />
+  }
+
+  const keys = Object.keys(notifications)
+  if (keys.length > 0) {
+    return keys.map(key => {
+      const { message, type } = notifications[key]
+      return <NotificationSnack message={message} type={type} />
+    })
+  }
+  return null
+}
 
 export default NotificationSnacks
