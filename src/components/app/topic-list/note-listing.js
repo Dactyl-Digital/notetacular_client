@@ -37,24 +37,39 @@ const NoteListing = ({
   note: { id, title, tags, content_markdown, note_timers },
 }) => {
   const { updateNoteContent } = useNoteActions()
-  const [deletingNote, setDeletingNote] = useState(false)
   const [showEditor, setShowEditor] = useState(false)
   const { addNotification } = useNotifications()
 
   useEffect(() => {
+    // extractNoteIdFromHash(id, showEditor, setShowEditor)
     if (typeof window !== "undefined") {
       const { hash } = window.location
       // TODO/NOTE:
       // An error popped up here... but only once, keep track of this.
       if (hash) {
         let hashStr = hash.slice(1, hash.length)
-        const [noteId, ...rest] = hashStr.match(extractNoteIdRegex)
+        const [noteId, ..._rest] = hashStr.match(extractNoteIdRegex)
         if (id === Number(noteId)) {
           setShowEditor(!showEditor)
         }
       }
     }
   }, [])
+
+  const extractNoteIdFromHash = (id, showEditor, setShowEditor) => {
+    if (typeof window !== "undefined") {
+      const { hash } = window.location
+      // TODO/NOTE:
+      // An error popped up here... but only once, keep track of this.
+      if (hash) {
+        let hashStr = hash.slice(1, hash.length)
+        const [noteId, ..._rest] = hashStr.match(extractNoteIdRegex)
+        if (id === Number(noteId)) {
+          setShowEditor(!showEditor)
+        }
+      }
+    }
+  }
 
   const showSaveResult = ({ key, message, type }) => {
     addNotification({
@@ -65,12 +80,14 @@ const NoteListing = ({
       },
     })
   }
+
   const showSaveSuccess = () =>
     showSaveResult({
       key: "UPDATE_NOTE_SUCCESS",
       message: "Note successfully saved!",
       type: "SUCCESS",
     })
+
   const showSaveError = () =>
     showSaveResult({
       key: "UPDATE_NOTE_ERROR",
@@ -78,19 +95,16 @@ const NoteListing = ({
       type: "ERROR",
     })
 
-  const persistNoteContent = ({ content_text, content_markdown }) => {
-    if (!deletingNote) {
-      updateNoteContent({
-        subCategoryId,
-        topicId,
-        note_id: id,
-        content_text,
-        content_markdown,
-        showSaveSuccess,
-        showSaveError,
-      })
-    }
-  }
+  const persistNoteContent = ({ content_text, content_markdown }) =>
+    updateNoteContent({
+      subCategoryId,
+      topicId,
+      note_id: id,
+      content_text,
+      content_markdown,
+      showSaveSuccess,
+      showSaveError,
+    })
 
   // NOTE: This is madness. All this implicit dependency of state!
   // And the setTimeout is necessary so that updateNoteContent within
@@ -101,10 +115,7 @@ const NoteListing = ({
   // still occuring... SO, fuck the auto save just incase manual save is forgotten.
   // Implemented the reminder pop up for that reason...
   // But would like to fix this later perhaps.
-  const handleDeleteNote = deleteNote => {
-    setDeletingNote(true)
-    deleteNote()
-  }
+  const handleDeleteNote = deleteNote => deleteNote()
 
   return (
     <Container className="note-listing" idx={idx} showNotes={showNotes}>

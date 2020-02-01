@@ -1,14 +1,15 @@
 import React, { useState, useEffect, useRef } from "react"
 import { Link } from "gatsby"
 import styled from "styled-components"
-import Modal from "./modal"
-import SearchIcon from "./icons/search-icon"
-import XIcon from "./icons/x-icon"
-import ArrowIcon from "./icons/arrow-icon"
-import { LIST_SEARCH_RESULTS } from "../../store/actions/ui"
-import { useUi } from "../../hooks/queries/useUi"
-import { useSearch } from "../../hooks/queries/useSearch"
-import { useSearchActions } from "../../hooks/commands/useSearchActions"
+import Modal from "../modal"
+import SearchIcon from "../icons/search-icon"
+import XIcon from "../icons/x-icon"
+import ArrowIcon from "../icons/arrow-icon"
+import { LIST_SEARCH_RESULTS } from "../../../store/actions/ui"
+import { useUi } from "../../../hooks/queries/useUi"
+import { useSearch } from "../../../hooks/queries/useSearch"
+import { useSearchActions } from "../../../hooks/commands/useSearchActions"
+import SearchProvider, { useSearchState } from "./search-provider"
 
 const PAGE_AMOUNT = 10
 
@@ -50,12 +51,12 @@ const Container = styled.div`
       background: #fcfcfc;
       border-radius: 5px;
       border-bottom-left-radius: ${props =>
-        props.showingSearchResults && "0px"};
+        props.searchResultsVisible && "0px"};
       border-bottom-right-radius: ${props =>
-        props.showingSearchResults && "0px"};
+        props.searchResultsVisible && "0px"};
       height: 2.4rem;
       border-bottom: ${props =>
-        props.showingSearchResults && "0.15rem solid rgb(150, 148, 148, 20%)"};
+        props.searchResultsVisible && "0.15rem solid rgb(150, 148, 148, 20%)"};
 
       input {
         width: 100%;
@@ -158,7 +159,7 @@ const SearchResultsPaginationView = ({
   children,
   searchResults,
   page,
-  clearSearch,
+  resetSearchAndToggle,
 }) => (
   <>
     {searchResults.map(
@@ -180,7 +181,7 @@ const SearchResultsPaginationView = ({
           >
             <Link
               to={`/app/notebook/${notebook_id}/sub-category/${sub_category_id}/topics#topic-${topic_id}-note-${note_id}`}
-              onClick={() => clearSearch()}
+              onClick={() => resetSearchAndToggle()}
             >
               <h4 className="search-result-title">{title}</h4>
             </Link>
@@ -199,17 +200,15 @@ const EmptySearchResults = () => (
   </>
 )
 
-const SearchBar = ({
-  searchVal,
-  setSearchVal,
-  handleInputChange,
-  toggleModal,
-  clearSearch,
-}) => {
+const SearchBar = () => {
+  const {
+    resetSearchAndToggle,
+    searchVal,
+    handleInputChange,
+  } = useSearchState()
+
   const inputRef = useRef(null)
-  useEffect(() => {
-    inputRef.current.focus()
-  }, [])
+  useEffect(() => inputRef.current.focus(), [])
 
   return (
     <div id="search-bar">
@@ -219,37 +218,27 @@ const SearchBar = ({
         value={searchVal}
         onChange={handleInputChange}
       ></input>
-      <div
-        id="x-icon-container"
-        onClick={() => {
-          toggleModal(false)
-          clearSearch()
-          setSearchVal("")
-        }}
-      >
+      <div id="x-icon-container" onClick={() => resetSearchAndToggle()}>
         <XIcon />
       </div>
     </div>
   )
 }
 
-const SearchResults = ({
-  searchResults,
-  retrievedSearchResults,
-  clearSearch,
-  setSearchVal,
-  page,
-  handleBack,
-  handleNext,
-  loading,
-  loadingResource,
-}) => {
-  useEffect(() => {
-    if (retrievedSearchResults) {
-      setSearchVal("")
-      clearSearch()
-    }
-  }, [])
+const SearchResults = () => {
+  const {
+    resetSearch,
+    resetSearchAndToggle,
+    searchResults,
+    retrievedSearchResults,
+    page,
+    handleBack,
+    handleNext,
+    loading,
+    loadingResource,
+  } = useSearchState()
+
+  useEffect(() => resetSearch(), [])
 
   return (
     <>
@@ -264,7 +253,7 @@ const SearchResults = ({
             <SearchResultsPaginationView
               searchResults={searchResults}
               page={page}
-              clearSearch={clearSearch}
+              resetSearchAndToggle={resetSearchAndToggle}
             >
               <div id="arrows-container">
                 <div id="back-arrow" onClick={handleBack}>
@@ -328,37 +317,52 @@ const Search = () => {
     }
   }
 
+  const resetSearch = () => {
+    if (retrievedSearchResults) {
+      setSearchVal("")
+      clearSearch()
+    }
+  }
+
   return (
     <Modal resource="Search" IconComponent={SearchIcon} buttonType="ICON">
-      {toggleModal => (
-        <Container
-          showingSearchResults={
-            retrievedSearchResults ||
-            (loading && loadingResource === LIST_SEARCH_RESULTS)
-          }
-        >
-          <div id="search-container">
-            <SearchBar
-              searchVal={searchVal}
-              setSearchVal={setSearchVal}
-              handleInputChange={handleInputChange}
-              toggleModal={toggleModal}
-              clearSearch={clearSearch}
-            />
-            <SearchResults
-              searchResults={searchResults}
-              retrievedSearchResults={retrievedSearchResults}
-              clearSearch={clearSearch}
-              setSearchVal={setSearchVal}
-              page={page}
-              handleBack={handleBack}
-              handleNext={handleNext}
-              loading={loading}
-              loadingResource={loadingResource}
-            />
-          </div>
-        </Container>
-      )}
+      {toggleModal => {
+        const initialSearchState = {
+          resetSearch,
+          resetSearchAndToggle: () => {
+            toggleModal(false)
+            resetSearch()
+            // setSearchVal("")
+            // if (retrievedSearchResults) {
+            //   clearSearch()
+            // }
+          },
+          searchVal,
+          handleInputChange,
+          searchResults,
+          retrievedSearchResults,
+          page,
+          handleBack,
+          handleNext,
+          loading,
+          loadingResource,
+        }
+        return (
+          <SearchProvider initialSearchState={initialSearchState}>
+            <Container
+              searchResultsVisible={
+                retrievedSearchResults ||
+                (loading && loadingResource === LIST_SEARCH_RESULTS)
+              }
+            >
+              <div id="search-container">
+                <SearchBar />
+                <SearchResults />
+              </div>
+            </Container>
+          </SearchProvider>
+        )
+      }}
     </Modal>
   )
 }

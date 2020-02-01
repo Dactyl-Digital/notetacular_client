@@ -2,7 +2,7 @@ import React from "react"
 import styled from "styled-components"
 import { ActiveCircleContext } from "../../app/notebook-list"
 
-const Nav = styled.nav`
+const Nav = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
