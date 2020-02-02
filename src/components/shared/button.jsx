@@ -29,6 +29,7 @@ const StyledButton = styled.button`
 
   span {
     display: flex;
+    justify-content: ${props => props.formButton && "center"};
     align-items: center;
     text-shadow: 0.15rem 0.15rem
       ${props =>
@@ -43,11 +44,19 @@ const StyledButton = styled.button`
   }
 `
 
-const Button = ({ children, type, size, removeMargin, handleClick }) => {
+const Button = ({
+  children,
+  type,
+  formButton,
+  size,
+  removeMargin,
+  handleClick,
+}) => {
   return (
     <StyledButton
       type={type}
       size={size}
+      formButton={formButton}
       removeMargin={removeMargin}
       onClick={handleClick}
     >

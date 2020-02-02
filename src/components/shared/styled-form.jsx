@@ -23,12 +23,13 @@ const StyledForm = styled.form`
     }
 
     input {
-      width: 12rem;
-      min-width: 12rem;
-      max-width: 12rem;
+      width: ${props => (props.spanWidth ? "100%" : "12rem")};
+      max-width: ${props => !props.spanWidth && "12rem"};
+      min-width: ${props => !props.spanWidth && "12rem"};
       border: 0.1rem solid #969464;
       font-size: 0.9rem;
       padding-left: 0.2rem;
+      margin-bottom: 1.4rem;
     }
 
     .input-error {
