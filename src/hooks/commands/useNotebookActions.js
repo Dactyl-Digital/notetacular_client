@@ -6,7 +6,7 @@ import {
   setCreateNotebookError,
   setNotebookList,
   setNotebookListError,
-  setDeletedNotebook,
+  removeDeletedNotebook,
   setDeleteNotebookError,
 } from "../../store/actions/notebook"
 import { NOTEBOOK_URL, LIST_NOTEBOOKS_URL } from "../../api-endpoints"
@@ -65,8 +65,13 @@ export const deleteNotebook = dispatch => ({ notebook_id }) => {
   )
 }
 
+// NOTE: You're handling these cases inconsistently... for the
+// deleteSubCatSuccess you used a curried function where the UI passed
+// in the notebook_id and subcat_id.
+// I think I did that because I didn't want to fetch additional resources on the
+// server. If that's the case then it's no problem to handle it that way.
 const deleteNotebookSuccess = dispatch => response => {
-  dispatch(setDeletedNotebook(response))
+  dispatch(removeDeletedNotebook(response))
 }
 
 const deleteNotebookError = dispatch => error => {

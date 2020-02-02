@@ -76,7 +76,7 @@ export const removeDeletedSubCategory = ({ notebook_id, sub_category_id }) => ({
   type: REMOVE_DELETED_SUB_CATEGORY,
   payload: { notebook_id, sub_category_id },
   meta: {
-    trigger: "Note was successfully deleted on the serverside.",
+    trigger: "Sub Category was successfully deleted on the serverside.",
   },
 })
 

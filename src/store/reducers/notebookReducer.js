@@ -6,6 +6,7 @@ import {
   SET_CREATE_NOTEBOOK_ERROR,
   SET_NOTEBOOK_LIST_ERROR,
   SET_LIST_SHARED_NOTEBOOKS_ERROR,
+  REMOVE_DELETED_NOTEBOOK,
 } from "../actions/notebook"
 // import { helperFn } from "./helpers"
 
@@ -64,6 +65,20 @@ export default function notebookReducer(
   }
   if (type === SET_NOTEBOOK_LIST_ERROR) {
     return { ...notebookState, notebookListError: payload }
+  }
+  if (type === REMOVE_DELETED_NOTEBOOK) {
+    console.log("payload in REMOVE_DELETED_NOTEBOOK")
+    console.log(payload)
+    const { notebooks } = notebookState
+    console.log("notebooks before delete")
+    console.log(notebooks)
+    delete notebooks[payload.notebook_id]
+    console.log("notebooks after delete")
+    console.log(notebooks)
+    return {
+      ...notebookState,
+      notebooks,
+    }
   }
   // if (type === SET_LIST_SHARED_NOTEBOOKS_ERROR) {
   //   return { ...notebookState, signinError: payload.errors }

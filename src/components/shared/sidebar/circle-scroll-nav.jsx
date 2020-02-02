@@ -63,6 +63,8 @@ const A = styled.a`
 
   .resource-title {
     overflow-x: hidden;
+    /* NOTE: removeds overflow just to get rid of the scrollbars */
+    padding: 0.05rem 0;
     white-space: nowrap;
     min-width: 6rem;
     max-width: 8rem;

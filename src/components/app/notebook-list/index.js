@@ -19,15 +19,14 @@ const Container = styled.div`
   display: flex;
 
   #main-content {
-    /* TODO: For now this at least looks good on large screens... */
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 0 8vw;
     padding-top: 2rem;
-    width: 100%;
-    min-width: 32rem;
+    width: 110%;
     height: 100vh;
+    overflow: auto;
     overflow-y: scroll;
 
     #main-content-wrapper {
