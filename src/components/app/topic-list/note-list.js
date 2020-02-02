@@ -109,6 +109,10 @@ const NoteList = ({ topics, topicId, subCategoryId, showNotes }) => {
   const { notes } = topics[topicId]
   const noteIdList = Array.isArray(notes) ? notes : []
 
+  // dependency inject:
+  // - the listRef ("actually using #main-content as the hook for the scrollListener should suffice.")
+  // - the "LIST_RESOURCE" string for the loadingResource predicate check.
+  // -
   const handleScroll = e => {
     if (loading && loadingResource === "LIST_NOTES") {
       e.preventDefault()

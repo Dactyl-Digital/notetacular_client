@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useContext } from "react"
 
 const NotificationContext = React.createContext({
   notifications: {},
@@ -6,9 +6,7 @@ const NotificationContext = React.createContext({
 })
 
 export function useNotifications() {
-  const { notifications, addNotification } = React.useContext(
-    NotificationContext
-  )
+  const { notifications, addNotification } = useContext(NotificationContext)
   return { notifications, addNotification }
 }
 

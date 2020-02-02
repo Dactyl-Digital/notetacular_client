@@ -7,6 +7,7 @@ import { useTopicActions } from "../../../hooks/commands/useTopicActions"
 // import TopicListing from "./topic-listing"
 import { CREATE_TOPIC, LIST_TOPICS } from "../../../store/actions/ui"
 import { useNotifications } from "../../shared/notification-snacks/notification-provider"
+import ScrollProvider from "../../shared/resource-providers/scroll-provider"
 import Heading from "../../shared/heading"
 import Sidebar from "../../shared/sidebar"
 import Timer from "./timer"
@@ -186,30 +187,25 @@ const TopicList = ({ notebookId, subCategoryId }) => {
   } = useTopicActions()
   const { addNotification } = useNotifications()
   const [title, setTitle] = useState("")
-  const [activeTopic, setActiveTopic] = useState(null)
 
-  const [activeCircle, setActiveCircle] = useState({
-    active: null,
-    activePosition: 0,
-  })
-  const [setActiveDisabled, setSetActiveDisabled] = useState(false)
-  const [scrollTop, setScrollTop] = useState(0)
-  const listEl = useRef(null)
+  // TODO: I think I meant to use this to open up the topic's note
+  // list when the page is navigated to it specifically.
+  const [activeTopic, setActiveTopic] = useState(null)
 
   // TODO: Genericize this b, make a reusable hook... as this is
   // repeated in notebook-list and sub-category-list
   useEffect(() => {
-    let hash
-    if (typeof window !== "undefined") {
-      hash = window.location.hash
-    }
-    if (hash && !activeCircle.active) {
-      // TODO: IMPLEMENT SCROLL NOTE INTO VIEW... Will need to handle
-      // toggling editor
-      let id = hash.slice(1, hash.length)
-      onResourceLoadScrollIntoView(id)
-    }
-    listEl.current.addEventListener("scroll", handleScroll)
+    // let hash
+    // if (typeof window !== "undefined") {
+    //   hash = window.location.hash
+    // }
+    // if (hash && !activeCircle.active) {
+    //   // TODO: IMPLEMENT SCROLL NOTE INTO VIEW... Will need to handle
+    //   // toggling editor
+    //   let id = hash.slice(1, hash.length)
+    //   onResourceLoadScrollIntoView(id)
+    // }
+    // listEl.current.addEventListener("scroll", handleScroll)
 
     if (topicListError) {
       return addNotification({
@@ -250,30 +246,7 @@ const TopicList = ({ notebookId, subCategoryId }) => {
         })
       }
     }
-
-    return () => {
-      listEl.current.removeEventListener("scroll", handleScroll)
-    }
-  }, [activeCircle, loading, topicListError, createTopicError])
-
-  const handleScroll = () => {
-    setScrollTop(listEl.current.scrollTop)
-  }
-
-  const setActive = ({ active, activePosition, clickedNav }) => {
-    if (!setActiveDisabled || clickedNav) {
-      setActiveCircle({ ...activeCircle, active, activePosition })
-      if (clickedNav) {
-        setSetActiveDisabled(clickedNav)
-      }
-      // Necessary to prevent the scroll event from being triggered
-      // and resetting a higher ResourceListing as active when scrolled to
-      // the bottom of the list. (As the clicked ResourceListing won't be
-      // at the top of the viewport and the one that is would be set to active
-      // right after the clicked ResourceListing is)
-      setTimeout(() => setSetActiveDisabled(false), 1000)
-    }
-  }
+  }, [loading, topicListError, createTopicError])
 
   const handleCreateNewTopic = () => {
     if (createTopicError) {
@@ -292,15 +265,10 @@ const TopicList = ({ notebookId, subCategoryId }) => {
   const keys = Object.keys(topics)
 
   return (
-    <ActiveCircleContext.Provider
-      value={{
-        ...activeCircle,
-        setActive,
-      }}
-    >
+    <ScrollProvider listId="main-content">
       <Container data-testid="topic-list-page">
         <Sidebar keys={keys} resourceList={topics} />
-        <div id="main-content" ref={listEl}>
+        <div id="main-content">
           <div id="main-content-wrapper">
             <div id="heading-modal-container">
               <Heading title="Topics" />
@@ -352,10 +320,6 @@ const TopicList = ({ notebookId, subCategoryId }) => {
                         topics={topics}
                         topicId={topics[key].id}
                         subCategoryId={subCategoryId}
-                        active={activeCircle.active === topics[key].title}
-                        setActiveDisabled={setActiveDisabled}
-                        scrollTop={scrollTop}
-                        setActiveCircle={setActiveCircle}
                         showNoteList={topics[key].id.toString() === activeTopic}
                       />
                     )
@@ -366,7 +330,7 @@ const TopicList = ({ notebookId, subCategoryId }) => {
           </div>
         </div>
       </Container>
-    </ActiveCircleContext.Provider>
+    </ScrollProvider>
   )
 }
 

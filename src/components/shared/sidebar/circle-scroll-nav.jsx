@@ -1,6 +1,7 @@
 import React from "react"
 import styled from "styled-components"
-import { ActiveCircleContext } from "../../app/notebook-list"
+import { useActiveListItemState } from "../resource-providers/active-list-item-provider"
+// import { ActiveCircleContext } from "../../app/notebook-list"
 
 const Nav = styled.div`
   display: flex;
@@ -70,40 +71,38 @@ const A = styled.a`
 
 // Will receive the resourceList object (i.e. notebooks, subCategories, topics) from redux state and the Object.keys array as props
 const CircleScrollNav = props => {
+  const { activeCircle, setActive } = useActiveListItemState()
+
   return (
-    <ActiveCircleContext.Consumer>
-      {({ active, activePosition, setActive }) => (
-        <Nav>
-          {props.keys.map((key, i) => (
-            <A
-              className="scroll-link"
-              key={`#${props.resourceList[key].title}`}
-              href={`#${props.resourceList[key].title}`}
-              onClick={() => {
-                setActive({
-                  active: props.resourceList[key].title,
-                  activePosition: i,
-                  clickedNav: true,
-                })
-              }}
-              activePosition={activePosition}
-              currentPosition={i}
-            >
-              <div
-                className={
-                  i === props.keys.length - 1
-                    ? `circle circle-last-child`
-                    : `circle`
-                }
-              ></div>
-              <span className="resource-title">
-                {props.resourceList[key].title}
-              </span>
-            </A>
-          ))}
-        </Nav>
-      )}
-    </ActiveCircleContext.Consumer>
+    <Nav>
+      {props.keys.map((key, i) => (
+        <A
+          className="scroll-link"
+          key={`#${props.resourceList[key].title}`}
+          href={`#${props.resourceList[key].title}`}
+          onClick={() => {
+            setActive({
+              active: props.resourceList[key].title,
+              activePosition: i,
+              clickedNav: true,
+            })
+          }}
+          activePosition={activeCircle.activePosition}
+          currentPosition={i}
+        >
+          <div
+            className={
+              i === props.keys.length - 1
+                ? `circle circle-last-child`
+                : `circle`
+            }
+          ></div>
+          <span className="resource-title">
+            {props.resourceList[key].title}
+          </span>
+        </A>
+      ))}
+    </Nav>
   )
 }
 

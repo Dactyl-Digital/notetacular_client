@@ -7,6 +7,7 @@ const Container = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  min-width: 26rem;
   padding-right: 1.6rem;
 
   h1 {

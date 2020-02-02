@@ -332,10 +332,6 @@ const Search = () => {
           resetSearchAndToggle: () => {
             toggleModal(false)
             resetSearch()
-            // setSearchVal("")
-            // if (retrievedSearchResults) {
-            //   clearSearch()
-            // }
           },
           searchVal,
           handleInputChange,
@@ -348,19 +344,19 @@ const Search = () => {
           loadingResource,
         }
         return (
-          <SearchProvider initialSearchState={initialSearchState}>
-            <Container
-              searchResultsVisible={
-                retrievedSearchResults ||
-                (loading && loadingResource === LIST_SEARCH_RESULTS)
-              }
-            >
-              <div id="search-container">
+          <Container
+            searchResultsVisible={
+              retrievedSearchResults ||
+              (loading && loadingResource === LIST_SEARCH_RESULTS)
+            }
+          >
+            <div id="search-container">
+              <SearchProvider initialSearchState={initialSearchState}>
                 <SearchBar />
                 <SearchResults />
-              </div>
-            </Container>
-          </SearchProvider>
+              </SearchProvider>
+            </div>
+          </Container>
         )
       }}
     </Modal>

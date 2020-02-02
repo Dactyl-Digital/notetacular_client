@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import styled from "styled-components"
 import { useUi } from "../../../hooks/queries/useUi"
 import { useNotebook } from "../../../hooks/queries/useNotebook"
@@ -10,18 +10,10 @@ import ResourceListing from "../../shared/resource-listing"
 // import CreateNotebookModal from "./create-notebook-modal"
 import CreateResourceModal from "../../shared/create-resource-modal"
 import { useNotifications } from "../../shared/notification-snacks/notification-provider"
+import ScrollProvider from "../../shared/resource-providers/scroll-provider"
 import Button from "../../shared/button"
 import StyledForm from "../../shared/styled-form"
-import {
-  onResourceLoadScrollIntoView,
-  checkFormSubmissionErrors,
-} from "../helpers"
-
-export const ActiveCircleContext = React.createContext({
-  active: null,
-  activePosition: 0,
-  setActive: () => {},
-})
+import { checkFormSubmissionErrors } from "../helpers"
 
 const Container = styled.div`
   display: flex;
@@ -74,6 +66,8 @@ const CreateNotebookForm = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false)
 
+  // TODO Pretty much everything in the useEffect is generlizable w/ the
+  // stuff in sub-cat-list useEffect....
   useEffect(() => {
     if (isLoading !== loading) {
       if (createNotebookError) {
@@ -148,31 +142,9 @@ const NotebookList = () => {
   } = useNotebookActions()
   const { addNotification } = useNotifications()
   const [title, setTitle] = useState("")
-  // Create custom hook for all of these... would that really help anything
-  // over just copy pasting into sub-category-list & topic-list?
-  const [activeCircle, setActiveCircle] = useState({
-    active: null,
-    activePosition: 0,
-  })
-  const [setActiveDisabled, setSetActiveDisabled] = useState(false)
-  const [scrollTop, setScrollTop] = useState(0)
-  const listEl = useRef(null)
 
   useEffect(() => {
-    let hash
-    if (typeof window !== "undefined") {
-      hash = window.location.hash
-    }
-    if (hash && !activeCircle.active) {
-      const id = hash.slice(1, hash.length)
-      onResourceLoadScrollIntoView(id)
-    }
-    listEl.current.addEventListener("scroll", handleScroll)
-    // TODO: Implement logic in handleScroll to check if notebooksPaginationEnd is false (when the
-    // user is at the bottom of the page),
-    // if so then make another listNotebooks request.
-    // IMMEDIATE TODO: Need to keep track of the count of the total
-    // number of results received.
+    loadInitialNotebookList()
 
     if (notebookListError) {
       return addNotification({
@@ -180,31 +152,11 @@ const NotebookList = () => {
         notification: { message: notebookListError.message, type: "ERROR" },
       })
     }
+  }, [loading, notebookListError, createNotebookError])
 
-    if (!notebooksPaginationEnd) {
+  const loadInitialNotebookList = () => {
+    if (Object.keys(notebooks).length === 0 && !loading) {
       listNotebooks(listNotebooksOffset)
-    }
-    return () => {
-      listEl.current.removeEventListener("scroll", handleScroll)
-    }
-  }, [activeCircle, loading, notebookListError, createNotebookError])
-
-  const handleScroll = () => {
-    setScrollTop(listEl.current.scrollTop)
-  }
-
-  const setActive = ({ active, activePosition, clickedNav }) => {
-    if (!setActiveDisabled || clickedNav) {
-      setActiveCircle({ ...activeCircle, active, activePosition })
-      if (clickedNav) {
-        setSetActiveDisabled(clickedNav)
-      }
-      // Necessary to prevent the scroll event from being triggered
-      // and resetting a higher ResourceListing as active when scrolled to
-      // the bottom of the list. (As the clicked ResourceListing won't be
-      // at the top of the viewport and the one that is would be set to active
-      // right after the clicked ResourceListing is)
-      setTimeout(() => setSetActiveDisabled(false), 1000)
     }
   }
 
@@ -226,16 +178,28 @@ const NotebookList = () => {
 
   const keys = Object.keys(notebooks)
 
+  // NOTE:
+  // handleScroll for notebookList.js requires a scrollTop: Int, and setScrollTop: Fn
+  // handleScroll for noteList.js doesn't require either scrollTop or setScrollTop...
+  // Although, noteLists handleScroll exposes functionality which will be needed by all
+  // of the lists to facilitate auto-loading more of the list at the bottom of scroll.
+  // But the SubCat and Topic lists surely will. So perhaps make scrollTop and setScrollTop
+  // optional functionality which can be passed in/opted into.
+  // scrollTop is passed to ResourceListing as a prop.
+
+  // <ScrollProvider> <- Responsible for scrollTop/setScrollTop
+  //  <ActiveItemProvider> <- Simply for maintaining the active item (in sidebar and resource list) which should be styled
+  //    <ListProvider> <- Responsible for fetching lists. Can hook into ScrollProvider's handleScroll function, to pass in additional
+  //                      desired functionality which should execute on scroll (this is where the scroll loading at bottom will occur).
+  //     // Rest of the children/html/components in NotebookList
+  //    </ListProvider>
+  //  </ActiveItemProvider>
+  // </ScrollProvider>
   return (
-    <ActiveCircleContext.Provider
-      value={{
-        ...activeCircle,
-        setActive,
-      }}
-    >
+    <ScrollProvider listId="main-content">
       <Container data-testid="notebook-list-page">
         <Sidebar keys={keys} resourceList={notebooks} />
-        <div id="main-content" ref={listEl}>
+        <div id="main-content">
           <div id="main-content-wrapper">
             <div id="heading-modal-container">
               <Heading title="Notebooks" />
@@ -284,10 +248,6 @@ const NotebookList = () => {
                     link={`notebook/${notebooks[key].id}/sub-categories`}
                     index={i}
                     notebookId={notebooks[key].id}
-                    active={activeCircle.active === notebooks[key].title}
-                    setActiveDisabled={setActiveDisabled}
-                    scrollTop={scrollTop}
-                    setActiveCircle={setActiveCircle}
                   />
                 ))
               )}
@@ -297,11 +257,10 @@ const NotebookList = () => {
           whether the most recent // page fetch retrieved 20 elements, if less,
           then // there are no more pages to retrieve. */}
             <button onClick={loadMoreNotebooks}>Load More</button>
-            {/* TODO: Create a CreateNotebookModal component */}
           </div>
         </div>
       </Container>
-    </ActiveCircleContext.Provider>
+    </ScrollProvider>
   )
 }
 

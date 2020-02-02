@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, lazy, Suspense } from "react"
+import React, { useRef, useEffect, lazy, Suspense } from "react"
 import { Link } from "gatsby"
 import styled from "styled-components"
 import { useNotebookActions } from "../../hooks/commands/useNotebookActions"
@@ -8,6 +8,9 @@ import { useNoteActions } from "../../hooks/commands/useNoteActions"
 import Tags from "../app/topic-list/tags"
 import TrashIcon from "./icons/trash-icon"
 import ArrowIcon from "./icons/arrow-icon"
+import { useScrollState } from "./resource-providers/scroll-provider"
+import { useActiveListItemState } from "./resource-providers/active-list-item-provider"
+import { onResourceLoadScrollIntoView } from "../app/helpers"
 const NoteList = lazy(() => import("../app/topic-list/note-list"))
 // SOLUTION!!! -> To the quill "document is undefined" at gatsby build time!!!
 // NOTE: Causes an error when running in dev though... -> UPDATE: Had to use
@@ -21,6 +24,7 @@ const Container = styled.div`
   align-items: center;
   position: relative;
   width: 100%;
+  min-width: 26rem;
   height: 4.6rem;
   border-radius: 5px;
   transition: box-shadow 0.4s, transform 0.4s ease-in-out;
@@ -143,15 +147,23 @@ const ResourceListing = ({
   handleDelete,
   showEditor,
   handleArrowClick,
-  active,
+  // active,
   index,
-  setActiveDisabled,
-  scrollTop,
-  setActiveCircle,
+  // setActiveDisabled,
+  // scrollTop,
+  // setActiveCircle,
   showNotes,
   setShowNotes,
   handleDeleteNote,
 }) => {
+  const { scrollTop, setActiveItemScrolledTo } = useScrollState()
+  const {
+    activeCircle,
+    setActiveCircle,
+    setActiveDisabled,
+    setSetActiveDisabled,
+  } = useActiveListItemState()
+
   const { deleteNotebook } = useNotebookActions()
   const { deleteSubCategory } = useSubCategoryActions()
   const { deleteTopic } = useTopicActions()
@@ -161,24 +173,30 @@ const ResourceListing = ({
   const listingEl = useRef(null)
   const titleRef = useRef(null)
 
-  useEffect(() => {
-    // if (!titleRightPosition) {
-    //   if (titleRef.current !== null) {
-    //     setTitleRightPosition(titleRef.current.offsetParent.scrollWidth)
-    //   }
-    // }
-
-    // TODO.... This is really weird. And this error didn't pop up for the past
-    // week that this code was written... But Inside of NoteListing I use ResourceListing
-    // as well. And it has no need for a setActiveCircle, so it causes an error.
-    // But the fact that this is the first time this error has shown up... WTF.
-    // Figure out a better way to implement this stuff....
-    if (type === "NOTE") return
-    if (setActiveDisabled) return
-    const elementTop = listingEl.current.getBoundingClientRect().top
-    if (elementTop > -60 && elementTop < 60) {
-      setActiveCircle({ active: title, activePosition: index })
+  // TODO: Find a more suitable place to move this... Temporarily replacing
+  // this from the sub-cat-list component, as it no longer has access to activeCircle
+  const moveActiveIntoView = () => {
+    let hash
+    if (typeof window !== "undefined") {
+      hash = window.location.hash
     }
+    if (hash && !activeCircle.active) {
+      const id = hash.slice(1, hash.length)
+      onResourceLoadScrollIntoView(id, setSetActiveDisabled)
+    }
+  }
+
+  useEffect(() => {
+    moveActiveIntoView()
+    setActiveItemScrolledTo({
+      type,
+      resourceType: "NOTE",
+      setActiveDisabled,
+      setActiveCircle,
+      el: listingEl.current,
+      title,
+      index,
+    })
   }, [scrollTop])
 
   return (
@@ -191,7 +209,8 @@ const ResourceListing = ({
         id={id}
         ref={listingEl}
         type={type}
-        active={active}
+        active={activeCircle.active === title}
+        // active={active}
         // titleRightPosition={titleRightPosition}
       >
         <div id="title-and-tags">
@@ -274,4 +293,4 @@ const ResourceListing = ({
   )
 }
 
-export default React.memo(ResourceListing)
+export default ResourceListing // React.memo(ResourceListing)

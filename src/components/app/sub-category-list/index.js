@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react"
+import React, { useState, useEffect } from "react"
 import styled from "styled-components"
 import { useUi } from "../../../hooks/queries/useUi"
 import { useNotebook } from "../../../hooks/queries/useNotebook"
@@ -9,21 +9,15 @@ import {
   LIST_SUB_CATEGORIES,
 } from "../../../store/actions/ui"
 import { useNotifications } from "../../shared/notification-snacks/notification-provider"
+import ScrollProvider from "../../shared/resource-providers/scroll-provider"
 import Heading from "../../shared/heading"
 import Sidebar from "../../shared/sidebar"
 import ResourceListing from "../../shared/resource-listing"
 // import CreateSubCategoryModal from "./create-sub-category-modal"
 import CreateResourceModal from "../../shared/create-resource-modal"
-// TODO: You're exporting an exact copy of this from notebook-list
-// as the CircleScrollNav needs it to use the Context Provider.
-// Need to figure out a better arrangement for this
-import { ActiveCircleContext } from "../notebook-list"
 import Button from "../../shared/button"
 import StyledForm from "../../shared/styled-form"
-import {
-  onResourceLoadScrollIntoView,
-  checkFormSubmissionErrors,
-} from "../helpers"
+import { checkFormSubmissionErrors } from "../helpers"
 
 // TODO: Duplicated in notebook-list, and topic-list
 // move to a shared file.
@@ -77,6 +71,9 @@ const CreateSubCategoryForm = ({
   addNotification,
 }) => {
   const [isLoading, setIsLoading] = useState(false)
+
+  // TODO Pretty much everything in the useEffect is generlizable w/ the
+  // stuff in notebook-list useEffect....
   useEffect(() => {
     if (isLoading !== loading) {
       if (createSubCategoryError) {
@@ -156,25 +153,15 @@ const SubCategoryList = ({ notebookId }) => {
   } = useSubCategoryActions()
   const { addNotification } = useNotifications()
   const [title, setTitle] = useState("")
-  const [activeCircle, setActiveCircle] = useState({
-    active: null,
-    activePosition: 0,
-  })
-  const [setActiveDisabled, setSetActiveDisabled] = useState(false)
-  const [scrollTop, setScrollTop] = useState(0)
-  const listEl = useRef(null)
+  // const [activeCircle, setActiveCircle] = useState({
+  //   active: null,
+  //   activePosition: 0,
+  // })
+  // const [setActiveDisabled, setSetActiveDisabled] = useState(false)
+  // const [scrollTop, setScrollTop] = useState(0)
+  // const listEl = useRef(null)
 
   useEffect(() => {
-    let hash
-    if (typeof window !== "undefined") {
-      hash = window.location.hash
-    }
-    if (hash && !activeCircle.active) {
-      const id = hash.slice(1, hash.length)
-      onResourceLoadScrollIntoView(id)
-    }
-    listEl.current.addEventListener("scroll", handleScroll)
-
     if (subCategoryListError) {
       return addNotification({
         key: "SUB_CATEGORY_LIST_ERROR",
@@ -212,15 +199,11 @@ const SubCategoryList = ({ notebookId }) => {
         })
       }
     }
+  }, [loading, createSubCategoryError])
 
-    return () => {
-      listEl.current.removeEventListener("scroll", handleScroll)
-    }
-  }, [activeCircle, loading, createSubCategoryError])
-
-  const handleScroll = () => {
-    setScrollTop(listEl.current.scrollTop)
-  }
+  // const handleScroll = () => {
+  //   setScrollTop(listEl.current.scrollTop)
+  // }
 
   const handleCreateNewSubCategory = () => {
     if (createSubCategoryError) {
@@ -229,20 +212,20 @@ const SubCategoryList = ({ notebookId }) => {
     createSubCategory({ title, notebook_id: notebookId })
   }
 
-  const setActive = ({ active, activePosition, clickedNav }) => {
-    if (!setActiveDisabled || clickedNav) {
-      setActiveCircle({ ...activeCircle, active, activePosition })
-      if (clickedNav) {
-        setSetActiveDisabled(clickedNav)
-      }
-      // Necessary to prevent the scroll event from being triggered
-      // and resetting a higher ResourceListing as active when scrolled to
-      // the bottom of the list. (As the clicked ResourceListing won't be
-      // at the top of the viewport and the one that is would be set to active
-      // right after the clicked ResourceListing is)
-      setTimeout(() => setSetActiveDisabled(false), 1500)
-    }
-  }
+  // const setActive = ({ active, activePosition, clickedNav }) => {
+  //   if (!setActiveDisabled || clickedNav) {
+  //     setActiveCircle({ ...activeCircle, active, activePosition })
+  //     if (clickedNav) {
+  //       setSetActiveDisabled(clickedNav)
+  //     }
+  //     // Necessary to prevent the scroll event from being triggered
+  //     // and resetting a higher ResourceListing as active when scrolled to
+  //     // the bottom of the list. (As the clicked ResourceListing won't be
+  //     // at the top of the viewport and the one that is would be set to active
+  //     // right after the clicked ResourceListing is)
+  //     setTimeout(() => setSetActiveDisabled(false), 1500)
+  //   }
+  // }
 
   // NOTE: This fucking sucks
   const subCategories = parentNotebooksOfSubCategories.hasOwnProperty(
@@ -255,19 +238,13 @@ const SubCategoryList = ({ notebookId }) => {
 
   const keys = Object.keys(subCategories)
   return (
-    <ActiveCircleContext.Provider
-      value={{
-        ...activeCircle,
-        setActive,
-      }}
-    >
+    <ScrollProvider listId="main-content">
       <Container data-testid="sub-category-list-page">
         <Sidebar keys={keys} resourceList={subCategories} />
-        <div id="main-content" ref={listEl}>
+        <div id="main-content">
           <div id="main-content-wrapper">
             <div id="heading-modal-container">
               <Heading title="Sub Categories" />
-              {/* <CreateSubCategoryModal notebookId={notebookId} /> */}
               <CreateResourceModal
                 action="Create"
                 resource="Sub Category"
@@ -315,10 +292,10 @@ const SubCategoryList = ({ notebookId }) => {
                     notebookId={notebookId}
                     subCategoryId={subCategories[key].id}
                     index={i}
-                    active={activeCircle.active === subCategories[key].title}
-                    setActiveDisabled={setActiveDisabled}
-                    scrollTop={scrollTop}
-                    setActiveCircle={setActiveCircle}
+                    // active={activeCircle.active === subCategories[key].title}
+                    // setActiveDisabled={setActiveDisabled}
+                    // scrollTop={scrollTop}
+                    // setActiveCircle={setActiveCircle}
                   />
                 ))
               )}
@@ -326,7 +303,7 @@ const SubCategoryList = ({ notebookId }) => {
           </div>
         </div>
       </Container>
-    </ActiveCircleContext.Provider>
+    </ScrollProvider>
   )
 }
 
