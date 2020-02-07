@@ -2,9 +2,10 @@ import {
   LOGIN_USER,
   LOGOUT_USER,
   INVALID_SESSION,
-  SIGN_UP_SUCCESS,
-  SET_SIGNUP_ERROR,
-  SET_LOGIN_ERROR,
+  SIGNUP_SUCCESS,
+  SIGNUP_ERROR,
+  LOGIN_SUCCESS,
+  LOGIN_ERROR,
 } from "../actions/auth"
 // import {helperFunction} from '../helpers'
 
@@ -17,9 +18,10 @@ if (typeof localStorage !== "undefined") {
 
 export const authInitialState = {
   authenticated: authenticated ? true : false,
-  successfulSignup: false,
+  signupSuccess: false,
   signupError: null,
-  signinError: null,
+  loginSuccess: null,
+  loginError: null,
 }
 
 export default function authReducer(
@@ -35,14 +37,17 @@ export default function authReducer(
   if (type === INVALID_SESSION) {
     return { ...authState, authenticated: false }
   }
-  if (type === SIGN_UP_SUCCESS) {
-    return { ...authState, successfulSignup: true }
+  if (type === SIGNUP_SUCCESS) {
+    return { ...authState, signupSuccess: true }
   }
-  if (type === SET_SIGNUP_ERROR) {
+  if (type === SIGNUP_ERROR) {
     return { ...authState, signupError: payload }
   }
-  if (type === SET_LOGIN_ERROR) {
-    return { ...authState, signinError: payload }
+  if (type === LOGIN_SUCCESS) {
+    return { ...authState, loginSuccess: true }
+  }
+  if (type === LOGIN_ERROR) {
+    return { ...authState, loginError: payload }
   }
   return authState
 }

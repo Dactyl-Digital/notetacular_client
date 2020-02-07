@@ -1,10 +1,11 @@
 export const LOGIN_USER = "LOGIN_USER"
 export const LOGOUT_USER = "LOGOUT_USER"
 export const INVALID_SESSION = "INVALID_SESSION"
-export const SIGN_UP_SUCCESS = "SIGN_UP_SUCCESS"
-export const SET_SIGNUP_ERROR = "SET_SIGNUP_ERROR"
-export const SET_LOGIN_ERROR = "SET_LOGIN_ERROR"
-export const SET_LOGOUT_ERROR = "SET_LOGOUT_ERROR"
+export const SIGNUP_SUCCESS = "SIGNUP_SUCCESS"
+export const SIGNUP_ERROR = "SIGNUP_ERROR"
+export const LOGIN_SUCCESS = "LOGIN_SUCCESS"
+export const LOGIN_ERROR = "LOGIN_ERROR"
+export const LOGOUT_ERROR = "LOGOUT_ERROR"
 
 export const setLoginUser = () => ({
   type: LOGIN_USER,
@@ -24,7 +25,7 @@ export const setLogoutUser = () => ({
 })
 
 export const setSuccessfulSignup = () => ({
-  type: SIGN_UP_SUCCESS,
+  type: SIGNUP_SUCCESS,
   payload: {},
   meta: {
     trigger: "User signed up and must be prompted to verify email.",
@@ -33,7 +34,7 @@ export const setSuccessfulSignup = () => ({
 
 export const setSignupError = ({ response }) => {
   return {
-    type: SET_SIGNUP_ERROR,
+    type: SIGNUP_ERROR,
     payload: response.data,
     meta: {
       trigger:
@@ -44,7 +45,7 @@ export const setSignupError = ({ response }) => {
 
 export const setLoginError = ({ response }) => {
   return {
-    type: SET_LOGIN_ERROR,
+    type: LOGIN_ERROR,
     payload: response.data,
     meta: {
       trigger: "User entered incorrect username or password or server error.",
@@ -54,7 +55,7 @@ export const setLoginError = ({ response }) => {
 
 export const setLogoutError = () => {
   return {
-    type: SET_LOGOUT_ERROR,
+    type: LOGOUT_ERROR,
     payload: {},
     meta: {
       trigger: "User entered incorrect username or password or server error.",

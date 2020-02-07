@@ -6,8 +6,11 @@ const StyledForm = styled.form`
   flex-direction: column;
   justify-content: space-between;
   height: 14rem;
+  /* Soo much style hack. Need better organization/pre-planning for this stuff. (Button would overflow */
+  /* this container otherwise) */
+  height: ${props => props.signupForm && "18rem"};
   min-height: 14rem;
-  max-height: 14rem;
+  max-height: 18rem;
   padding: 1.4rem;
   padding-bottom: 0;
 

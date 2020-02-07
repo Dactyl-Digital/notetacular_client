@@ -27,6 +27,12 @@ const Container = styled.div`
       font-family: "Blinker", sans-serif;
     }
 
+    p {
+      font-size: 0.7rem;
+      margin: 0;
+      margin-top: -1rem;
+    }
+
     width: 16rem;
     height: 20rem;
     border-radius: 5px;
