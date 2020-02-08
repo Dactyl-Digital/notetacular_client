@@ -63,6 +63,7 @@ const CreateSubCategoryModal = ({ notebookId }) => {
               id="title"
               type="text"
               value={title}
+              autofocus="true"
               onChange={e => setTitle(e.target.value)}
             />
             <button>Submit!</button>

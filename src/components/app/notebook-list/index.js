@@ -15,6 +15,26 @@ import Button from "../../shared/button"
 import StyledForm from "../../shared/styled-form"
 import { checkFormSubmissionErrors } from "../helpers"
 
+const loadInitialList = ({
+  type,
+  resource,
+  listResourceFn,
+  listOffset,
+  params,
+  paginationEnd,
+  loading,
+}) => {
+  if (Object.keys(resource).length === 0 && !loading && !paginationEnd) {
+    if (type === "NOTEBOOK") return listResourceFn(listOffset)
+    if (type === "SUB_CATEGORY") {
+      return listResourceFn({
+        offset: listOffset,
+        ...params,
+      })
+    }
+  }
+}
+
 const Container = styled.div`
   display: flex;
 
@@ -143,7 +163,15 @@ const NotebookList = () => {
   const [title, setTitle] = useState("")
 
   useEffect(() => {
-    loadInitialNotebookList()
+    // loadInitialNotebookList()
+    loadInitialList({
+      type: "NOTEBOOK",
+      resource: notebooks,
+      listResourceFn: listNotebooks,
+      listOffset: listNotebooksOffset,
+      paginationEnd: notebooksPaginationEnd,
+      loading: loading,
+    })
 
     if (notebookListError) {
       return addNotification({
@@ -153,11 +181,16 @@ const NotebookList = () => {
     }
   }, [loading, notebookListError, createNotebookError])
 
-  const loadInitialNotebookList = () => {
-    if (Object.keys(notebooks).length === 0 && !loading) {
-      listNotebooks(listNotebooksOffset)
-    }
-  }
+  // made a generalize helper function, which hopefully can be used across all list components
+  // const loadInitialNotebookList = () => {
+  //   if (
+  //     Object.keys(notebooks).length === 0 &&
+  //     !loading &&
+  //     !notebooksPaginationEnd
+  //   ) {
+  //     listNotebooks(listNotebooksOffset)
+  //   }
+  // }
 
   const handleCreateNewNotebook = () => {
     if (createNotebookError) {

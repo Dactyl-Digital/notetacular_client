@@ -1,10 +1,12 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import styled from "styled-components"
 import { navigate } from "gatsby"
 import { useAuth } from "../../../hooks/queries/useAuth"
 import { useAuthActions } from "../../../hooks/commands/useAuthActions"
+import { useNotifications } from "../../shared/notification-snacks/notification-provider"
 import StyledForm from "../../shared/styled-form"
 import Button from "../../shared/button"
+import { renderAuthFormError } from "../helpers"
 // TODO: Create your necessary equivalents as this is used in the
 // /components/shared/privateRoute.js file as well to protect routes.
 // import { handleLogin, isLoggedIn } from "../services/auth"
@@ -43,12 +45,22 @@ const Container = styled.div`
 `
 
 const Login = () => {
-  const { authenticated } = useAuth()
+  const { authenticated, loginError } = useAuth()
   const { loginUser } = useAuthActions()
+  const { addNotification } = useNotifications()
   const [loginData, setLoginData] = useState({
     username: "",
     password: "",
   })
+
+  useEffect(() => {
+    if (loginError) {
+      return addNotification({
+        key: "LOGIN_ERROR",
+        notification: { message: loginError.message, type: "ERROR" },
+      })
+    }
+  }, [loginError])
 
   if (authenticated) {
     if (typeof localStorage !== "undefined") {
@@ -87,6 +99,12 @@ const Login = () => {
                 onChange={handleChange}
               />
             </label>
+            {loginError !== null &&
+              loginError.hasOwnProperty("errors") &&
+              renderAuthFormError({
+                field: "username",
+                errors: loginError,
+              })}
             <label>
               Password
               <input
@@ -96,6 +114,12 @@ const Login = () => {
                 onChange={handleChange}
               />
             </label>
+            {loginError !== null &&
+              loginError.hasOwnProperty("errors") &&
+              renderAuthFormError({
+                field: "password",
+                errors: loginError.errors,
+              })}
           </div>
           <Button type="CREATE" formButton={true}>
             Submit

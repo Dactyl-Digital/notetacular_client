@@ -172,6 +172,7 @@ const TopicListing = ({
 }
 
 const TopicList = ({ notebookId, subCategoryId }) => {
+  const topicListRef = useRef(null)
   const { loading, loadingResource } = useUi()
   const { parentNotebooksOfSubCategories } = useSubCategory()
   const {
@@ -187,6 +188,7 @@ const TopicList = ({ notebookId, subCategoryId }) => {
   } = useTopicActions()
   const { addNotification } = useNotifications()
   const [title, setTitle] = useState("")
+  const [fetchTopics, setFetchTopics] = useState(false)
 
   // TODO: I think I meant to use this to open up the topic's note
   // list when the page is navigated to it specifically.
@@ -232,27 +234,67 @@ const TopicList = ({ notebookId, subCategoryId }) => {
       : []
 
     if (parentSubCategoriesOfTopics.hasOwnProperty(subCategoryId)) {
-      if (!parentSubCategoriesOfTopics[subCategoryId].topicsPaginationEnd) {
+      if (
+        Object.keys(
+          parentNotebooksOfSubCategories[notebookId].subCategories[
+            subCategoryId
+          ].topics
+        ).length === 0 &&
+        !loading &&
+        !parentSubCategoriesOfTopics[subCategoryId].topicsPaginationEnd
+      ) {
+        listTopics({
+          offset: parentSubCategoriesOfTopics[subCategoryId].listOffset,
+          topic_id_list: topicIdList,
+        })
+      } else if (
+        fetchTopics &&
+        !parentSubCategoriesOfTopics[subCategoryId].topicsPaginationEnd
+      ) {
         listTopics({
           offset: parentSubCategoriesOfTopics[subCategoryId].listOffset,
           topic_id_list: topicIdList,
         })
       }
-    } else {
-      if (topicIdList.length > 0) {
-        listTopics({
-          offset: 0,
-          topic_id_list: topicIdList,
-        })
-      }
     }
-  }, [loading, topicListError, createTopicError])
+    // else {
+    //   if (topicIdList.length > 0) {
+    //     listTopics({
+    //       offset: 0,
+    //       topic_id_list: topicIdList,
+    //     })
+    //   }
+    // }
+  }, [fetchTopics, loading, topicListError, createTopicError])
 
   const handleCreateNewTopic = () => {
     if (createTopicError) {
       clearCreateTopicError({ response: { data: null } })
     }
     createTopic({ title, sub_category_id: subCategoryId })
+  }
+
+  const handleScroll = e => {
+    if (loading && loadingResource === "LIST_TOPICS") {
+      e.preventDefault()
+    }
+    const { clientHeight } = e.target
+    const { bottom } = topicListRef.current.getBoundingClientRect()
+
+    if (bottom < clientHeight && !loading) {
+      // Closure being a bitch again. Because the eventListener
+      // is set up in the useEffect hook... And no updates occur.
+      // When the trigger occurs to load new notes, this will still be empty.
+      // listNotes({
+      //   offset: parentTopicsOfNotes[topicId].listOffset,
+      //   note_id_list: noteIdList,
+      // })
+      // SOLUTION: Going to use a useState hook, to trigger loading new notes.
+      setFetchTopics(true)
+      setTimeout(() => {
+        setFetchTopics(false)
+      }, 2000)
+    }
   }
 
   // NOTE: This fucking sucks
@@ -265,7 +307,7 @@ const TopicList = ({ notebookId, subCategoryId }) => {
   const keys = Object.keys(topics)
 
   return (
-    <ScrollProvider listId="main-content">
+    <ScrollProvider listId="main-content" fn={handleScroll}>
       <Container data-testid="topic-list-page">
         <Sidebar keys={keys} resourceList={topics} />
         <div id="main-content">
@@ -304,8 +346,10 @@ const TopicList = ({ notebookId, subCategoryId }) => {
               </CreateResourceModal>
             </div>
             <Timer>
-              <div id="resource-list">
-                {loading && loadingResource === LIST_TOPICS ? (
+              <div id="resource-list" ref={topicListRef}>
+                {loading &&
+                loadingResource === LIST_TOPICS &&
+                keys.length === 0 ? (
                   <h1>Loading...</h1>
                 ) : (
                   keys.map((key, i) => {
@@ -324,6 +368,9 @@ const TopicList = ({ notebookId, subCategoryId }) => {
                       />
                     )
                   })
+                )}
+                {loading && loadingResource === LIST_TOPICS && keys > 0 && (
+                  <h1>Loading...</h1>
                 )}
               </div>
             </Timer>

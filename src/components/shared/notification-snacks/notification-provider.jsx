@@ -23,6 +23,7 @@ export default function NotificationProvider({
       removeNotification(key)
     }, 3000)
   }
+
   const removeNotification = keyToRemove =>
     setNotifications({ ...removeKeyFromObject(notifications, keyToRemove) })
 

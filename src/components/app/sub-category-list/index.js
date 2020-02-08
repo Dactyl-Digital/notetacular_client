@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import styled from "styled-components"
 import { useUi } from "../../../hooks/queries/useUi"
 import { useNotebook } from "../../../hooks/queries/useNotebook"
@@ -138,6 +138,7 @@ const CreateSubCategoryForm = ({
 // Then you'll want to retrieve the list of subCategories with the foreign key reference
 // to that notebookId.
 const SubCategoryList = ({ notebookId }) => {
+  const subCategoryListRef = useRef(null)
   const { loading, loadingResource } = useUi()
   const { notebooks } = useNotebook()
   const {
@@ -153,6 +154,7 @@ const SubCategoryList = ({ notebookId }) => {
   } = useSubCategoryActions()
   const { addNotification } = useNotifications()
   const [title, setTitle] = useState("")
+  const [fetchSubCategories, setFetchSubCategories] = useState(false)
   // const [activeCircle, setActiveCircle] = useState({
   //   active: null,
   //   activePosition: 0,
@@ -173,7 +175,7 @@ const SubCategoryList = ({ notebookId }) => {
     // There's a recursive fetch of listing a notebook's sub categories
     // when navigating directly to it via a link which specifies a notebook
     // Probably due to including loading and createSubCategoryError in the list
-    // of the useEffect dependencies....
+    // of the useEffect dependencies.... ba
     let subCategoryIdList
     if (notebooks.hasOwnProperty(notebookId)) {
       subCategoryIdList = notebooks[notebookId].sub_categories
@@ -183,33 +185,72 @@ const SubCategoryList = ({ notebookId }) => {
     }
 
     if (parentNotebooksOfSubCategories.hasOwnProperty(notebookId)) {
+      // TODO: Could possibly use the initialListFetch helper function here.
       if (
+        Object.keys(notebooks[notebookId].sub_categories).length === 0 &&
+        !loading &&
         !parentNotebooksOfSubCategories[notebookId].subCategoriesPaginationEnd
       ) {
         listSubCategories({
           offset: parentNotebooksOfSubCategories[notebookId].listOffset,
           sub_category_id_list: subCategoryIdList,
         })
-      }
-    } else {
-      if (subCategoryIdList.length > 0) {
+      } else if (
+        !loading &&
+        fetchSubCategories &&
+        !parentNotebooksOfSubCategories[notebookId].subCategoriesPaginationEnd
+      ) {
+        console.log(
+          "parentNotebooksOfSubCategories[notebookId].subCategoriesPaginationEnd"
+        )
+        console.log(
+          parentNotebooksOfSubCategories[notebookId].subCategoriesPaginationEnd
+        )
         listSubCategories({
-          offset: 0,
+          offset: parentNotebooksOfSubCategories[notebookId].listOffset,
           sub_category_id_list: subCategoryIdList,
         })
       }
     }
-  }, [loading, createSubCategoryError])
-
-  // const handleScroll = () => {
-  //   setScrollTop(listEl.current.scrollTop)
-  // }
+    // else {
+    //   if (subCategoryIdList.length > 0) {
+    //     listSubCategories({
+    //       offset: 0,
+    //       sub_category_id_list: subCategoryIdList,
+    //     })
+    //   }
+    // }
+  }, [fetchSubCategories, loading, createSubCategoryError])
 
   const handleCreateNewSubCategory = () => {
     if (createSubCategoryError) {
       clearCreateSubCategoryError({ response: { data: null } })
     }
     createSubCategory({ title, notebook_id: notebookId })
+  }
+
+  const handleScroll = e => {
+    if (loading && loadingResource === "LIST_SUB_CATEGORIES") {
+      e.preventDefault()
+      return
+    }
+    const { clientHeight } = e.target
+    const { bottom } = subCategoryListRef.current.getBoundingClientRect()
+
+    if (bottom < clientHeight && !loading) {
+      // Closure being a bitch again. Because the eventListener
+      // is set up in the useEffect hook... And no updates occur.
+      // When the trigger occurs to load new notes, this will still be empty.
+      // listNotes({
+      //   offset: parentTopicsOfNotes[topicId].listOffset,
+      //   note_id_list: noteIdList,
+      // })
+      // SOLUTION: Going to use a useState hook, to trigger loading new notes.
+      setFetchSubCategories(true)
+      setTimeout(() => {
+        setFetchSubCategories(false)
+      }, 1000)
+    }
   }
 
   // const setActive = ({ active, activePosition, clickedNav }) => {
@@ -238,7 +279,7 @@ const SubCategoryList = ({ notebookId }) => {
 
   const keys = Object.keys(subCategories)
   return (
-    <ScrollProvider listId="main-content">
+    <ScrollProvider listId="main-content" fn={handleScroll}>
       <Container data-testid="sub-category-list-page">
         <Sidebar keys={keys} resourceList={subCategories} />
         <div id="main-content">
@@ -278,8 +319,10 @@ const SubCategoryList = ({ notebookId }) => {
                 )}
               </CreateResourceModal>
             </div>
-            <div id="resource-list">
-              {loading && loadingResource === LIST_SUB_CATEGORIES ? (
+            <div id="resource-list" ref={subCategoryListRef}>
+              {loading &&
+              loadingResource === LIST_SUB_CATEGORIES &&
+              keys.length === 0 ? (
                 <h1>Loading...</h1>
               ) : (
                 keys.map((key, i) => (
@@ -299,6 +342,9 @@ const SubCategoryList = ({ notebookId }) => {
                   />
                 ))
               )}
+              {loading &&
+                loadingResource === LIST_SUB_CATEGORIES &&
+                keys > 0 && <h1>Loading...</h1>}
             </div>
           </div>
         </div>

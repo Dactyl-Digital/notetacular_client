@@ -3,14 +3,15 @@ import styled from "styled-components"
 import NoteListing from "./note-listing"
 import { CREATE_NOTE, LIST_NOTES } from "../../../store/actions/ui"
 import { useUi } from "../../../hooks/queries/useUi"
-import { useTopic } from "../../../hooks/queries/useTopic"
+// import { useTopic } from "../../../hooks/queries/useTopic"
 import { useNote } from "../../../hooks/queries/useNote"
 import { useNoteActions } from "../../../hooks/commands/useNoteActions"
 import { useNotifications } from "../../shared/notification-snacks/notification-provider"
 import CreateResourceModal from "../../shared/create-resource-modal"
 import Button from "../../shared/button"
 import StyledForm from "../../shared/styled-form"
-import { createSuccessMessage, checkFormSubmissionErrors } from "../helpers"
+import ScrollProvider from "../../shared/resource-providers/scroll-provider"
+import { checkFormSubmissionErrors } from "../helpers"
 
 // TODO (future feature):
 // NOTE: Currently, when deleting a note, it'll leave a gap such that
@@ -19,6 +20,7 @@ import { createSuccessMessage, checkFormSubmissionErrors } from "../helpers"
 // have order 0, 2. And the next note created after that will be 3.
 // If you want to implement click-and-drag in the future. The above
 // will need to be accounted for.
+
 const Container = styled.div`
   /* button {
     opacity: 0%;
@@ -136,11 +138,11 @@ const NoteList = ({ topics, topicId, subCategoryId, showNotes }) => {
     }
   }
 
-  let mainContent
+  // let mainContent
   useEffect(() => {
-    if (!mainContent) {
-      mainContent = document.getElementById("main-content")
-    }
+    // if (!mainContent) {
+    //   mainContent = document.getElementById("main-content")
+    // }
     if (noteListError) {
       return addNotification({
         key: "NOTE_LIST_ERROR",
@@ -184,11 +186,11 @@ const NoteList = ({ topics, topicId, subCategoryId, showNotes }) => {
     //   }
     // }
 
-    mainContent.addEventListener("scroll", handleScroll)
+    // mainContent.addEventListener("scroll", handleScroll)
 
-    return () => {
-      mainContent.removeEventListener("scroll", handleScroll)
-    }
+    // return () => {
+    //   mainContent.removeEventListener("scroll", handleScroll)
+    // }
   }, [fetchNotes])
 
   const handleCreateNewNote = () => {
@@ -202,7 +204,8 @@ const NoteList = ({ topics, topicId, subCategoryId, showNotes }) => {
       sub_category_id: subCategoryId,
     })
   }
-
+  console.log("What is this id?")
+  console.log(`topic-${topicId}-note-list`)
   return (
     <Container data-testid="note-list" showNotes={showNotes}>
       <CreateResourceModal action="Create" resource="Note" buttonType="NORMAL">
@@ -224,24 +227,30 @@ const NoteList = ({ topics, topicId, subCategoryId, showNotes }) => {
           </StyledForm>
         )}
       </CreateResourceModal>
-      <div ref={noteListRef} className="note-list">
-        {parentTopicsOfNotes.hasOwnProperty(topicId) &&
-          noteIdList.map((noteId, idx) => {
-            if (parentTopicsOfNotes[topicId].notes.hasOwnProperty(noteId)) {
-              return (
-                <NoteListing
-                  idx={idx}
-                  showNotes={showNotes}
-                  key={`${topicId}-${noteId}`}
-                  note={parentTopicsOfNotes[topicId].notes[noteId]}
-                  topicId={topics[topicId].id}
-                  subCategoryId={subCategoryId}
-                />
-              )
-            }
-          })}
-        {loading && loadingResource === "LIST_NOTES" && <h1>Loading...</h1>}
-      </div>
+      <ScrollProvider listId="main-content" fn={handleScroll}>
+        <div
+          ref={noteListRef}
+          id={`topic-${topicId}-note-list`}
+          className="note-list"
+        >
+          {parentTopicsOfNotes.hasOwnProperty(topicId) &&
+            noteIdList.map((noteId, idx) => {
+              if (parentTopicsOfNotes[topicId].notes.hasOwnProperty(noteId)) {
+                return (
+                  <NoteListing
+                    idx={idx}
+                    showNotes={showNotes}
+                    key={`${topicId}-${noteId}`}
+                    note={parentTopicsOfNotes[topicId].notes[noteId]}
+                    topicId={topics[topicId].id}
+                    subCategoryId={subCategoryId}
+                  />
+                )
+              }
+            })}
+          {loading && loadingResource === "LIST_NOTES" && <h1>Loading...</h1>}
+        </div>
+      </ScrollProvider>
     </Container>
   )
 }

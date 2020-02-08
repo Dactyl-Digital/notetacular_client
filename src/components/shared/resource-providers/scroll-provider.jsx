@@ -15,6 +15,8 @@ export default function ScrollProvider({ children, listId, fn }) {
 
   let mainContent
   useEffect(() => {
+    console.log("WHAT IS listId")
+    console.log(listId)
     if (!mainContent) {
       mainContent = document.getElementById(listId)
     }
@@ -29,10 +31,10 @@ export default function ScrollProvider({ children, listId, fn }) {
 
   // NOTE: fn is the logic for loading in additional resource list items (Notebooks, SubCats, Topics, Notes)
   // for when the bottom of the list has been scrolled past.
-  const handleScroll = mainContent => fn => _e => {
+  const handleScroll = mainContent => fn => e => {
     setScrollTop(mainContent.scrollTop)
     if (typeof fn !== "undefined") {
-      fn()
+      fn(e)
     }
   }
 

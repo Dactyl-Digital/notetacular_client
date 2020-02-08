@@ -94,6 +94,8 @@ const normalizeSingle = ({ parentNotebooksOfSubCategories }, { data }) => {
 const normalize = key => (subCategoryState, { data }) =>
   data[key].reduce((acc, resource, i) => {
     const subCategoriesPaginationEnd = data[key].length !== 20
+    // console.log("THE subCategoriesPaginationEnd IN SUB CAT REDUCER")
+    // console.log(subCategoriesPaginationEnd)
     if (i === 0) {
       // NOTE: Doing this to ensure that listOffset is only incremented once while
       // iterating through the list of notes retrieved from the API.

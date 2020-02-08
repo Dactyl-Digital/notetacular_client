@@ -4,6 +4,7 @@ import { useAuth } from "../../../hooks/queries/useAuth"
 import { useAuthActions } from "../../../hooks/commands/useAuthActions"
 import StyledForm from "../../shared/styled-form"
 import Button from "../../shared/button"
+import { renderAuthFormError } from "../helpers"
 
 // TODO: Need to style this form better so that the button doesn't overflow out of the
 // container when the errors are displayed...
@@ -64,34 +65,6 @@ const Container = styled.div`
   }
 `
 
-const renderError = ({ field, errors }) => {
-  // First possible error format
-  // errors: Array(3)
-  //   0: {message: "Username must be between 4 and 40 characters.", field: "username"}
-  //   1: {message: "Email must be greater than 8 characters.", field: "email"}
-  //   2: {message: "Password must be at least 12 characters.", field: "password"}
-  if (Array.isArray(errors)) {
-    const result = errors.reduce((acc, error) => {
-      if (error.field === field) {
-        acc.push(<p className="input-error">{error.message}</p>)
-      }
-      return acc
-    }, [])
-    console.log("the result:")
-    console.log(result)
-    return result
-  }
-
-  // Second possible error format:
-  // errors:
-  //  username: ["That username is already taken"]
-  if (errors.hasOwnProperty(field)) {
-    return <p className="input-error">{errors[field][0]}</p>
-  }
-
-  return null
-}
-
 const Signup = () => {
   const { signupSuccess, signupError } = useAuth()
   const { signupUser } = useAuthActions()
@@ -143,7 +116,10 @@ const Signup = () => {
               onChange={handleChange}
             />
             {signupError &&
-              renderError({ field: "username", errors: signupError.errors })}
+              renderAuthFormError({
+                field: "username",
+                errors: signupError.errors,
+              })}
             <label htmlFor="email">Email</label>
             <input
               id="email"
@@ -152,7 +128,10 @@ const Signup = () => {
               onChange={handleChange}
             />
             {signupError &&
-              renderError({ field: "email", errors: signupError.errors })}
+              renderAuthFormError({
+                field: "email",
+                errors: signupError.errors,
+              })}
             <label htmlFor="password">Password</label>
             <input
               id="password"
@@ -161,7 +140,10 @@ const Signup = () => {
               onChange={handleChange}
             />
             {signupError &&
-              renderError({ field: "password", errors: signupError.errors })}
+              renderAuthFormError({
+                field: "password",
+                errors: signupError.errors,
+              })}
             <Button type="CREATE" formButton={true}>
               Submit
             </Button>

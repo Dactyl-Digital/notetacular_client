@@ -1,3 +1,5 @@
+import React from "react"
+
 export const onResourceLoadScrollIntoView = (id, setSetActiveDisabled) => {
   setTimeout(() => {
     let targetResource = document.getElementById(id)
@@ -43,4 +45,32 @@ export const checkFormSubmissionErrors = ({
     notification: { message: error.message, type: "ERROR" },
   })
   toggleShowModal(false)
+}
+
+export const renderAuthFormError = ({ field, errors, addNotification }) => {
+  // First possible error format
+  // errors: Array(3)
+  //   0: {message: "Username must be between 4 and 40 characters.", field: "username"}
+  //   1: {message: "Email must be greater than 8 characters.", field: "email"}
+  //   2: {message: "Password must be at least 12 characters.", field: "password"}
+  if (Array.isArray(errors)) {
+    const result = errors.reduce((acc, error) => {
+      if (error.field === field) {
+        acc.push(<p className="input-error">{error.message}</p>)
+      }
+      return acc
+    }, [])
+    console.log("the result:")
+    console.log(result)
+    return result
+  }
+
+  // Second possible error format:
+  // errors:
+  //  username: ["That username is already taken"]
+  if (errors.hasOwnProperty(field)) {
+    return <p className="input-error">{errors[field][0]}</p>
+  }
+
+  return null
 }
