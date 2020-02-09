@@ -248,6 +248,7 @@ const TopicList = ({ notebookId, subCategoryId }) => {
           topic_id_list: topicIdList,
         })
       } else if (
+        !loading &&
         fetchTopics &&
         !parentSubCategoriesOfTopics[subCategoryId].topicsPaginationEnd
       ) {

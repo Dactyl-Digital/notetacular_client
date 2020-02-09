@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import styled from "styled-components"
 import { useUi } from "../../../hooks/queries/useUi"
 import { useNotebook } from "../../../hooks/queries/useNotebook"
@@ -146,6 +146,7 @@ const CreateNotebookForm = ({
 }
 
 const NotebookList = () => {
+  const notebookListRef = useRef(null)
   const { loading, loadingResource } = useUi()
   const {
     notebooks,
@@ -161,6 +162,7 @@ const NotebookList = () => {
   } = useNotebookActions()
   const { addNotification } = useNotifications()
   const [title, setTitle] = useState("")
+  const [fetchNotebooks, setFetchNotebooks] = useState(false)
 
   useEffect(() => {
     // loadInitialNotebookList()
@@ -173,13 +175,17 @@ const NotebookList = () => {
       loading: loading,
     })
 
+    if (!loading && fetchNotebooks && !notebooksPaginationEnd) {
+      listNotebooks(listNotebooksOffset)
+    }
+
     if (notebookListError) {
       return addNotification({
         key: "NOTEBOOK_LIST_ERROR",
         notification: { message: notebookListError.message, type: "ERROR" },
       })
     }
-  }, [loading, notebookListError, createNotebookError])
+  }, [fetchNotebooks, loading, notebookListError, createNotebookError])
 
   // made a generalize helper function, which hopefully can be used across all list components
   // const loadInitialNotebookList = () => {
@@ -197,6 +203,30 @@ const NotebookList = () => {
       clearCreateNotebookError({ response: { data: null } })
     }
     createNotebook({ title })
+  }
+
+  const handleScroll = e => {
+    if (loading && loadingResource === "LIST_NOTEBOOKS") {
+      e.preventDefault()
+      return
+    }
+    const { clientHeight } = e.target
+    const { bottom } = notebookListRef.current.getBoundingClientRect()
+
+    if (bottom < clientHeight && !loading) {
+      // Closure being a bitch again. Because the eventListener
+      // is set up in the useEffect hook... And no updates occur.
+      // When the trigger occurs to load new notes, this will still be empty.
+      // listNotes({
+      //   offset: parentTopicsOfNotes[topicId].listOffset,
+      //   note_id_list: noteIdList,
+      // })
+      // SOLUTION: Going to use a useState hook, to trigger loading new notes.
+      setFetchNotebooks(true)
+      setTimeout(() => {
+        setFetchNotebooks(false)
+      }, 0)
+    }
   }
 
   const loadMoreNotebooks = () => listNotebooks(listNotebooksOffset)
@@ -228,7 +258,7 @@ const NotebookList = () => {
   //  </ActiveItemProvider>
   // </ScrollProvider>
   return (
-    <ScrollProvider listId="main-content">
+    <ScrollProvider listId="main-content" fn={handleScroll}>
       <Container data-testid="notebook-list-page">
         <Sidebar keys={keys} resourceList={notebooks} />
         <div id="main-content">
@@ -267,7 +297,7 @@ const NotebookList = () => {
                 )}
               </CreateResourceModal>
             </div>
-            <div id="resource-list">
+            <div id="resource-list" ref={notebookListRef}>
               {loading && loadingResource === LIST_NOTEBOOKS ? (
                 <h1>Loading...</h1>
               ) : (

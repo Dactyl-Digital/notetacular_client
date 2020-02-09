@@ -19,6 +19,11 @@ import Button from "../../shared/button"
 import StyledForm from "../../shared/styled-form"
 import { checkFormSubmissionErrors } from "../helpers"
 
+// TODO: It's not a huge issue at the moment... so just fix it later when you
+// finally create the ListResourceProvider component to generalize that logic as
+// best as possible outside of the list components. The issue being the multiple
+// fetch that occurs at the bottom of the list.
+
 // TODO: Duplicated in notebook-list, and topic-list
 // move to a shared file.
 const Container = styled.div`
@@ -179,7 +184,7 @@ const SubCategoryList = ({ notebookId }) => {
     let subCategoryIdList
     if (notebooks.hasOwnProperty(notebookId)) {
       subCategoryIdList = notebooks[notebookId].sub_categories
-    } else {
+    } else if (!loading) {
       // NOTE: The case when the user copies and pastes the link into the browser.
       return listNotebooksSubCategories({ notebookId, limit: 20, offset: 0 })
     }
@@ -200,12 +205,6 @@ const SubCategoryList = ({ notebookId }) => {
         fetchSubCategories &&
         !parentNotebooksOfSubCategories[notebookId].subCategoriesPaginationEnd
       ) {
-        console.log(
-          "parentNotebooksOfSubCategories[notebookId].subCategoriesPaginationEnd"
-        )
-        console.log(
-          parentNotebooksOfSubCategories[notebookId].subCategoriesPaginationEnd
-        )
         listSubCategories({
           offset: parentNotebooksOfSubCategories[notebookId].listOffset,
           sub_category_id_list: subCategoryIdList,
@@ -220,7 +219,12 @@ const SubCategoryList = ({ notebookId }) => {
     //     })
     //   }
     // }
-  }, [fetchSubCategories, loading, createSubCategoryError])
+  }, [
+    fetchSubCategories,
+    loading,
+    subCategoryListError,
+    createSubCategoryError,
+  ])
 
   const handleCreateNewSubCategory = () => {
     if (createSubCategoryError) {
@@ -249,7 +253,7 @@ const SubCategoryList = ({ notebookId }) => {
       setFetchSubCategories(true)
       setTimeout(() => {
         setFetchSubCategories(false)
-      }, 1000)
+      }, 0)
     }
   }
 

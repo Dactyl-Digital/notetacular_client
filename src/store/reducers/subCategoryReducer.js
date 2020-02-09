@@ -176,10 +176,16 @@ export default function subCategoryReducer(
     }
   }
   if (type === SET_SUB_CATEGORY_LIST) {
-    return subCategoryListNewState(subCategoryState, payload)
+    const result = subCategoryListNewState(subCategoryState, payload)
+    console.log("The returned result in SET_SUB_CATEGORY_LIST")
+    console.log(subCategoryListNewState(subCategoryState, payload))
+    return result
   }
   if (type === SET_NOTEBOOKS_SUB_CATEGORIES) {
-    return subCategoryListNewState(subCategoryState, payload)
+    const result = subCategoryListNewState(subCategoryState, payload)
+    console.log("The returned result in SET_NOTEBOOKS_SUB_CATEGORIES")
+    console.log(subCategoryListNewState(subCategoryState, payload))
+    return result
   }
   if (type === REMOVE_DELETED_SUB_CATEGORY) {
     const { notebook_id, sub_category_id } = payload
