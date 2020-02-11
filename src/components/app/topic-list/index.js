@@ -189,7 +189,7 @@ const TopicList = ({ notebookId, subCategoryId }) => {
   const { addNotification } = useNotifications()
   const [title, setTitle] = useState("")
   const [fetchTopics, setFetchTopics] = useState(false)
-
+  const [initialListFetched, setInitialListFetched] = useState(false)
   // TODO: I think I meant to use this to open up the topic's note
   // list when the page is navigated to it specifically.
   const [activeTopic, setActiveTopic] = useState(null)
@@ -209,6 +209,20 @@ const TopicList = ({ notebookId, subCategoryId }) => {
     // }
     // listEl.current.addEventListener("scroll", handleScroll)
 
+    console.log("what is parentNotebooksOfSubCategories")
+    console.dir(parentNotebooksOfSubCategories)
+    const topicIdList = parentNotebooksOfSubCategories.hasOwnProperty(
+      subCategoryId
+    )
+      ? parentNotebooksOfSubCategories[subCategoryId].hasOwnProperty(
+          "subCategories"
+        )
+        ? parentNotebooksOfSubCategories[subCategoryId].subCategories[
+            subCategoryId
+          ].topics
+        : []
+      : []
+
     if (topicListError) {
       return addNotification({
         key: "TOPIC_LIST_ERROR",
@@ -216,22 +230,34 @@ const TopicList = ({ notebookId, subCategoryId }) => {
       })
     }
 
-    if (!parentNotebooksOfSubCategories.hasOwnProperty(notebookId)) {
+    if (
+      parentNotebooksOfSubCategories.hasOwnProperty(subCategoryId) &&
+      !loading &&
+      !initialListFetched
+    ) {
+      console.log("what's the topicIdList")
+      console.log(topicIdList)
+      if (topicIdList.length > 0) {
+        listTopics({
+          offset: 0,
+          topic_id_list: topicIdList,
+        })
+        setInitialListFetched(true)
+      }
+    } else if (!loading && !initialListFetched) {
+      console.log("SHOULD FIRE ON VISITING PAGE INITIALLY")
       // NOTE: The case when the user copies and pastes the link into the browser.
-      return listSubCategoryTopics({ subCategoryId, limit: 20, offset: 0 })
+      listSubCategoryTopics({ subCategoryId, limit: 20, offset: 0 })
+      setInitialListFetched(true)
     }
 
-    const topicIdList = parentNotebooksOfSubCategories.hasOwnProperty(
-      notebookId
-    )
-      ? parentNotebooksOfSubCategories[notebookId].hasOwnProperty(
-          "subCategories"
-        )
-        ? parentNotebooksOfSubCategories[notebookId].subCategories[
-            subCategoryId
-          ].topics
-        : []
-      : []
+    if (topicIdList.length > 0) {
+      listTopics({
+        offset: 0,
+        topic_id_list: topicIdList,
+      })
+      setInitialListFetched(true)
+    }
 
     if (parentSubCategoriesOfTopics.hasOwnProperty(subCategoryId)) {
       if (

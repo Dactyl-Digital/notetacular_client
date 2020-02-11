@@ -160,6 +160,7 @@ const SubCategoryList = ({ notebookId }) => {
   const { addNotification } = useNotifications()
   const [title, setTitle] = useState("")
   const [fetchSubCategories, setFetchSubCategories] = useState(false)
+  const [initialListFetched, setInitialListFetched] = useState(false)
   // const [activeCircle, setActiveCircle] = useState({
   //   active: null,
   //   activePosition: 0,
@@ -182,11 +183,21 @@ const SubCategoryList = ({ notebookId }) => {
     // Probably due to including loading and createSubCategoryError in the list
     // of the useEffect dependencies.... ba
     let subCategoryIdList
-    if (notebooks.hasOwnProperty(notebookId)) {
+    if (
+      notebooks.hasOwnProperty(notebookId) &&
+      !loading &&
+      !initialListFetched
+    ) {
       subCategoryIdList = notebooks[notebookId].sub_categories
-    } else if (!loading) {
+      listSubCategories({
+        offset: 0,
+        sub_category_id_list: subCategoryIdList,
+      })
+      setInitialListFetched(true)
+    } else if (!loading && !initialListFetched) {
       // NOTE: The case when the user copies and pastes the link into the browser.
-      return listNotebooksSubCategories({ notebookId, limit: 20, offset: 0 })
+      listNotebooksSubCategories({ notebookId, limit: 20, offset: 0 })
+      setInitialListFetched(true)
     }
 
     if (parentNotebooksOfSubCategories.hasOwnProperty(notebookId)) {
@@ -198,7 +209,7 @@ const SubCategoryList = ({ notebookId }) => {
       ) {
         listSubCategories({
           offset: parentNotebooksOfSubCategories[notebookId].listOffset,
-          sub_category_id_list: subCategoryIdList,
+          sub_category_id_list: notebooks[notebookId].sub_categories,
         })
       } else if (
         !loading &&
@@ -207,7 +218,7 @@ const SubCategoryList = ({ notebookId }) => {
       ) {
         listSubCategories({
           offset: parentNotebooksOfSubCategories[notebookId].listOffset,
-          sub_category_id_list: subCategoryIdList,
+          sub_category_id_list: notebooks[notebookId].sub_categories,
         })
       }
     }
