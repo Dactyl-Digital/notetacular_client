@@ -79,6 +79,24 @@ const normalizeSingle = ({ parentNotebooksOfSubCategories }, { data }) => {
     }),
     failFn: () => ({}),
   })
+
+  // console.log("the parentNotebooksOfSubCategories")
+  // console.log(parentNotebooksOfSubCategories)
+
+  const prevSubCategoryIds = checkProperty({
+    obj: parentNotebooksOfSubCategories,
+    property: notebook_id,
+    failFn: () => [],
+    recursiveFn: obj =>
+      checkProperty({
+        obj,
+        property: "subCategoryIds",
+        successFn: () =>
+          parentNotebooksOfSubCategories[notebook_id].subCategoryIds,
+        failFn: () => [],
+      }),
+  })
+
   return {
     [notebook_id]: {
       subCategoriesPaginationEnd: true,
@@ -86,6 +104,7 @@ const normalizeSingle = ({ parentNotebooksOfSubCategories }, { data }) => {
         ...prevSubCategories,
         ...newSubCategories,
       },
+      subCategoryIds: [data.id, ...prevSubCategoryIds],
       listOffset: newListOffset,
     },
   }
@@ -116,6 +135,12 @@ const normalize = key => (subCategoryState, { data }) =>
               ].subCategories,
               [resource.id]: resource,
             },
+            subCategoryIds: [
+              ...subCategoryState.parentNotebooksOfSubCategories[
+                resource.notebook_id
+              ].subCategoryIds,
+              resource.id,
+            ],
             listOffset:
               subCategoryState.parentNotebooksOfSubCategories[
                 resource.notebook_id
@@ -129,6 +154,7 @@ const normalize = key => (subCategoryState, { data }) =>
           subCategories: {
             [resource.id]: resource,
           },
+          subCategoryIds: [resource.id],
           listOffset: data[key].length,
         }
       }
@@ -145,6 +171,10 @@ const normalize = key => (subCategoryState, { data }) =>
             ...acc[resource.notebook_id].subCategories,
             [resource.id]: resource,
           },
+          subCategoryIds: [
+            ...acc[resource.notebook_id].subCategoryIds,
+            resource.id,
+          ],
         },
       }
     }

@@ -66,11 +66,15 @@ const normalizeSingle = ({ parentSubCategoriesOfTopics }, { data }) => {
 
   const prevTopicIds = checkProperty({
     obj: parentSubCategoriesOfTopics,
-    property: "topicIds",
-    successFn: () => ({
-      ...parentSubCategoriesOfTopics[sub_category_id].topicIds,
-    }),
-    failFn: () => ({}),
+    property: sub_category_id,
+    failFn: () => [],
+    recursiveFn: obj =>
+      checkProperty({
+        obj,
+        property: "topicIds",
+        successFn: () => parentSubCategoriesOfTopics[sub_category_id].topicIds,
+        failFn: () => [],
+      }),
   })
 
   return {
@@ -123,8 +127,6 @@ const normalizeSingleUpdate = ({ parentSubCategoriesOfTopics }, { data }) => {
 const normalize = key => (topicState, { data }) =>
   data[key].reduce((acc, resource, i) => {
     const topicsPaginationEnd = data[key].length !== 20
-    console.log("the topicState.parentSubCategoriesOfTopics at i = ", i)
-    console.log(topicState.parentSubCategoriesOfTopics)
     if (i === 0) {
       // NOTE: Doing this to ensure that listOffset is only incremented once while
       // iterating through the list of notes 3retrieved from the API.
@@ -133,7 +135,6 @@ const normalize = key => (topicState, { data }) =>
           resource.sub_category_id
         )
       ) {
-        if (i === 0) console.log("inside first if")
         // Updating a current topic's notes
         acc = {
           ...acc,
@@ -158,7 +159,6 @@ const normalize = key => (topicState, { data }) =>
           },
         }
       } else {
-        if (i === 0) console.log("inside first else")
         // Creating a new entry for a subCategory's topics
         acc[resource.sub_category_id] = {
           topicsPaginationEnd: topicsPaginationEnd,
@@ -170,7 +170,6 @@ const normalize = key => (topicState, { data }) =>
         }
       }
     } else {
-      if (i === 0) console.log("inside second else")
       // TODO: THIS ELSE LOGIC IS DUPLICATED (w/ one slight modification) ABOVE!
       // DO SOMETHING ABOUT THIS MESS
       // Updating a current topic's notes
@@ -184,7 +183,7 @@ const normalize = key => (topicState, { data }) =>
             [resource.id]: resource,
           },
           topicIds: [...acc[resource.sub_category_id].topicIds, resource.id],
-          listOffset: data[key].length,
+          // listOffset: data[key].length,
         },
       }
     }

@@ -150,6 +150,7 @@ const NotebookList = () => {
   const { loading, loadingResource } = useUi()
   const {
     notebooks,
+    notebookIds,
     notebooksPaginationEnd,
     listNotebooksOffset,
     notebookListError,
@@ -165,7 +166,6 @@ const NotebookList = () => {
   const [fetchNotebooks, setFetchNotebooks] = useState(false)
 
   useEffect(() => {
-    // loadInitialNotebookList()
     loadInitialList({
       type: "NOTEBOOK",
       resource: notebooks,
@@ -184,19 +184,13 @@ const NotebookList = () => {
         key: "NOTEBOOK_LIST_ERROR",
         notification: { message: notebookListError.message, type: "ERROR" },
       })
+    } else if (createNotebookError) {
+      return addNotification({
+        key: "CREATE_NOTEBOOK_ERROR",
+        notification: { message: createNotebookError.message, type: "ERROR" },
+      })
     }
   }, [fetchNotebooks, loading, notebookListError, createNotebookError])
-
-  // made a generalize helper function, which hopefully can be used across all list components
-  // const loadInitialNotebookList = () => {
-  //   if (
-  //     Object.keys(notebooks).length === 0 &&
-  //     !loading &&
-  //     !notebooksPaginationEnd
-  //   ) {
-  //     listNotebooks(listNotebooksOffset)
-  //   }
-  // }
 
   const handleCreateNewNotebook = () => {
     if (createNotebookError) {
@@ -229,8 +223,6 @@ const NotebookList = () => {
     }
   }
 
-  const loadMoreNotebooks = () => listNotebooks(listNotebooksOffset)
-
   // TODO: Implement navigating to the list of sub categories for a given
   //       notebook onClick.
   //       The redirect URL will contain the notebook id, which can then be
@@ -238,7 +230,8 @@ const NotebookList = () => {
   //       the redux state, obtain the sub_category_id_list, and make the API
   //       request to the backend upon initial mount.
 
-  const keys = Object.keys(notebooks)
+  // const keys = Object.keys(notebooks)
+  const keys = notebookIds
 
   // NOTE:
   // handleScroll for notebookList.js requires a scrollTop: Int, and setScrollTop: Fn
@@ -298,7 +291,9 @@ const NotebookList = () => {
               </CreateResourceModal>
             </div>
             <div id="resource-list" ref={notebookListRef}>
-              {loading && loadingResource === LIST_NOTEBOOKS ? (
+              {loading &&
+              loadingResource === LIST_NOTEBOOKS &&
+              keys.length === 0 ? (
                 <h1>Loading...</h1>
               ) : (
                 keys.map((key, i) => (
@@ -313,12 +308,10 @@ const NotebookList = () => {
                   />
                 ))
               )}
+              {loading &&
+                loadingResource === LIST_NOTEBOOKS &&
+                keys.length > 0 && <h1>Loading...</h1>}
             </div>
-            {/* // TODO: Implement scroll loading, and introduce some state // to keep
-          track of whether there are more pages to be // retrieved -> by checking
-          whether the most recent // page fetch retrieved 20 elements, if less,
-          then // there are no more pages to retrieve. */}
-            <button onClick={loadMoreNotebooks}>Load More</button>
           </div>
         </div>
       </Container>

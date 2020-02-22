@@ -13,6 +13,7 @@ import {
 export const notebookInitialState = {
   listNotebooksOffset: 0,
   notebooks: {},
+  notebookIds: [],
   notebooksPaginationEnd: false,
   listSharedNotebooksOffset: 0,
   sharedNotebooks: {},
@@ -30,9 +31,15 @@ const normalizeSingle = ({ data }) => {
 }
 
 // TODO: Move this into a helper folder.
-const normalize = key => ({ data }) =>
-  data[key].reduce((acc, resource) => {
-    acc[resource.id] = resource
+const normalize = key => (notebookState, { data }) =>
+  data[key].reduce((acc, resource, i) => {
+    if (i === 0) {
+      acc["notebooks"] = { ...notebookState.notebooks, [resource.id]: resource }
+      acc["notebookIds"] = [...notebookState.notebookIds, resource.id]
+    } else {
+      acc["notebooks"][resource.id] = resource
+      acc["notebookIds"] = [...acc.notebookIds, resource.id]
+    }
     return acc
   }, {})
 
@@ -90,10 +97,11 @@ const notebookListNewState = (notebookState, payload) => {
   const notebooksPaginationEnd = payload.data.notebooks.length !== 20
   return {
     ...notebookState,
-    notebooks: {
-      ...notebookState.notebooks,
-      ...normalizeNotebooks(payload),
-    },
+    ...normalizeNotebooks(notebookState, payload),
+    // notebooks: {
+    //   ...notebookState.notebooks,
+    //   ,
+    // },
     listNotebooksOffset: notebookState.listNotebooksOffset + 20,
     notebooksPaginationEnd,
   }

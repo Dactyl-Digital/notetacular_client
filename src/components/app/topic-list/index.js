@@ -172,6 +172,18 @@ const TopicListing = ({
   )
 }
 
+// const useListFetchMachine = () => {
+//   const [listFetchState, setListFetchState] = useState("FETCH_INITIAL_LIST")
+
+//   const permittedTransitions = {
+//     FETCH_INITIAL_LIST: ["AWAITING_LIST_ADDITIONAL"],
+//     AWAITING_LIST_ADDITIONAL: ["LIST_ADDITIONAL"],
+//     LIST_ADDITIONAL: ["AWAITING_LIST_ADDITIONAL"],
+//   }
+
+//   return { listFetchState, transitionListFetchState }
+// }
+
 const TopicList = ({ notebookId, subCategoryId }) => {
   const topicListRef = useRef(null)
   const { loading, loadingResource } = useUi()
@@ -189,11 +201,10 @@ const TopicList = ({ notebookId, subCategoryId }) => {
   } = useTopicActions()
   const { addNotification } = useNotifications()
   const [title, setTitle] = useState("")
-  const [fetchTopics, setFetchTopics] = useState(false)
-  const [listFetchState, setListFetchState] = useState("FETCH_INITIAL_LIST")
   // TODO: I think I meant to use this to open up the topic's note
   // list when the page is navigated to it specifically.
   const [activeTopic, setActiveTopic] = useState(null)
+  const [listFetchState, setListFetchState] = useState("FETCH_INITIAL_LIST")
 
   const permittedTransitions = () => {
     const permitted = {
@@ -203,7 +214,7 @@ const TopicList = ({ notebookId, subCategoryId }) => {
     }
 
     return (state, transition) => {
-      if (permitted[state].indexOf(transition) != -1) {
+      if (permitted[state].indexOf(transition) !== -1) {
         console.log(`setListFetchState(${transition})`)
         setListFetchState(transition)
       }
@@ -217,6 +228,9 @@ const TopicList = ({ notebookId, subCategoryId }) => {
 
   // TODO: Genericize this b, make a reusable hook... as this is
   // repeated in notebook-list and sub-category-list
+  // UPDATE ON THE TODO: Tried the reusable hook thing w/ the state machine setup...
+  // Seems as though closure is keeping the state variable the same, meaning it won't
+  // transition through the states... Will need to mess around with this later.
   useEffect(() => {
     // Unfucking the fetching resource list logic (Yeah... These are basically the cases.):
     // 1. state = "INITIAL_LOAD" Component mounts, fetch initial page of 20; state transitions to "INITIAL_LIST_FETCHED" (The dispatch function
@@ -225,13 +239,17 @@ const TopicList = ({ notebookId, subCategoryId }) => {
     //    state transitions to "ADDITIONAL_LIST_FETCHED" (The main thing I need to eliminate is multiple calls being issued upon the user
     //    scrolling down).
 
-    console.log("what is parentNotebooksOfSubCategories")
-    console.dir(parentNotebooksOfSubCategories)
-
     if (topicListError) {
       return addNotification({
         key: "TOPIC_LIST_ERROR",
         notification: { message: topicListError.message, type: "ERROR" },
+      })
+    } else if (createTopicError) {
+      console.log("the create topic errror....")
+      console.log(createTopicError)
+      return addNotification({
+        key: "CREATE_TOPIC_ERROR",
+        notification: { message: createTopicError.message, type: "ERROR" },
       })
     }
 
@@ -241,19 +259,15 @@ const TopicList = ({ notebookId, subCategoryId }) => {
       "DIRECT_URL_NAVIGATION"
     )
 
-    if (topicIdList === "DIRECT_URL_NAVIGATION" && !loading) {
-      console.log("fetching initialList")
+    if (!loading && topicIdList === "DIRECT_URL_NAVIGATION") {
       listSubCategoryTopics({ subCategoryId, limit: 20, offset: 0 })
       transitionListFetchState("AWAITING_LIST_ADDITIONAL")
       return
     }
 
-    // console.log("parentNotebooksOfSubCategories.hasOwnProperty(notebookId)")
-    // console.log(parentNotebooksOfSubCategories.hasOwnProperty(notebookId))
-    if (listFetchState === "FETCH_INITIAL_LIST" && !loading) {
-      console.log("fetching initialList")
-      console.log("the listFetchState: ", listFetchState)
+    if (!loading && listFetchState === "FETCH_INITIAL_LIST") {
       listTopics({
+        subCategoryId,
         offset: 0,
         topic_id_list: topicIdList,
       })
@@ -261,58 +275,19 @@ const TopicList = ({ notebookId, subCategoryId }) => {
       return
     }
 
-    if (parentSubCategoriesOfTopics.hasOwnProperty(subCategoryId)) {
-      if (
-        Object.keys(
-          parentNotebooksOfSubCategories[notebookId].subCategories[
-            subCategoryId
-          ].topics
-        ).length === 0 &&
-        !loading &&
-        !parentSubCategoriesOfTopics[subCategoryId].topicsPaginationEnd
-      ) {
-        console.log(
-          "The if ( \
-          Object.keys( \
-            parentNotebooksOfSubCategories[notebookId].subCategories[\
-              subCategoryId\
-            ].topics\
-          ).length === 0 &&\
-          !loading &&\
-          !parentSubCategoriesOfTopics[subCategoryId].topicsPaginationEnd\
-        ) conditional met"
-        )
-        listTopics({
-          offset: parentSubCategoriesOfTopics[subCategoryId].listOffset,
-          topic_id_list: topicIdList,
-        })
-      } else if (
-        !loading &&
-        fetchTopics &&
-        !parentSubCategoriesOfTopics[subCategoryId].topicsPaginationEnd
-      ) {
-        console.log(
-          "The else if (\
-          !loading && \
-          fetchTopics && \
-          !parentSubCategoriesOfTopics[subCategoryId].topicsPaginationEnd\
-        ) conditional met"
-        )
-        listTopics({
-          offset: parentSubCategoriesOfTopics[subCategoryId].listOffset,
-          topic_id_list: topicIdList,
-        })
-      }
+    if (
+      !loading &&
+      parentSubCategoriesOfTopics.hasOwnProperty(subCategoryId) &&
+      topicIdList.length > 0 &&
+      listFetchState === "LIST_ADDITIONAL"
+    ) {
+      listTopics({
+        subCategoryId,
+        offset: parentSubCategoriesOfTopics[subCategoryId].listOffset,
+        topic_id_list: topicIdList,
+      })
     }
-    // else {
-    //   if (topicIdList.length > 0) {
-    //     listTopics({
-    //       offset: 0,
-    //       topic_id_list: topicIdList,
-    //     })
-    //   }
-    // }
-  }, [fetchTopics, loading, topicListError, createTopicError])
+  }, [listFetchState, loading, topicListError, createTopicError])
 
   const handleCreateNewTopic = () => {
     if (createTopicError) {
@@ -337,10 +312,14 @@ const TopicList = ({ notebookId, subCategoryId }) => {
       //   note_id_list: noteIdList,
       // })
       // SOLUTION: Going to use a useState hook, to trigger loading new notes.
-      setFetchTopics(true)
+
+      // NOTE: Really cheating here... as a way to get around listFetchState still
+      // being INITIAL_FETCH_LIST when this is finally triggered... damn closures still
+      // messing things up.
+      setListFetchState("LIST_ADDITIONAL")
       setTimeout(() => {
-        setFetchTopics(false)
-      }, 2000)
+        setListFetchState("AWAITING_LIST_ADDITIONAL")
+      }, 1500)
     }
   }
 
@@ -363,8 +342,6 @@ const TopicList = ({ notebookId, subCategoryId }) => {
     [subCategoryId, "topicIds"],
     []
   )
-
-  // const keys = Object.keys(topics)
 
   return (
     <ScrollProvider listId="main-content" fn={handleScroll}>
@@ -429,9 +406,9 @@ const TopicList = ({ notebookId, subCategoryId }) => {
                     )
                   })
                 )}
-                {loading && loadingResource === LIST_TOPICS && keys > 0 && (
-                  <h1>Loading...</h1>
-                )}
+                {loading &&
+                  loadingResource === LIST_TOPICS &&
+                  keys.length > 0 && <h1>Loading...</h1>}
               </div>
             </Timer>
           </div>

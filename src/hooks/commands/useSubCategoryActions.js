@@ -45,6 +45,7 @@ const createSubCategoryError = dispatch => error => {
 // Listing sub categories requires this to be sent on the request body:
 // sub_category_id_list
 export const listSubCategories = dispatch => ({
+  notebookId,
   offset,
   sub_category_id_list,
 }) => {
@@ -52,6 +53,7 @@ export const listSubCategories = dispatch => ({
     apiRequest({
       method: "GET",
       url: `${LIST_SUB_CATEGORIES_URL}${offset}`,
+      parentResource: `notebook-${notebookId}`,
       payload: { sub_category_id_list },
       loadingResource: LIST_SUB_CATEGORIES,
       onSuccess: listSubCategoriesSuccess(dispatch),
@@ -88,6 +90,7 @@ export const listNotebooksSubCategories = dispatch => ({
     apiRequest({
       method: "GET",
       url: LIST_NOTEBOOKS_SUB_CATEGORIES_URL,
+      parentResource: `notebook-${notebookId}`,
       payload: { notebook_id: notebookId, limit, offset },
       loadingResource: LIST_SUB_CATEGORIES,
       onSuccess: listNotebooksSubCategoriesSuccess(dispatch),

@@ -47,11 +47,16 @@ const createTopicError = dispatch => error => {
 
 // Listing sub categories requires this to be sent on the request body:
 // topic_id_list
-export const listTopics = dispatch => ({ offset, topic_id_list }) => {
+export const listTopics = dispatch => ({
+  subCategoryId,
+  offset,
+  topic_id_list,
+}) => {
   dispatch(
     apiRequest({
       method: "GET",
       url: `${LIST_TOPICS_URL}${offset}`,
+      parentResource: `sub-category-${subCategoryId}`,
       payload: { topic_id_list },
       loadingResource: LIST_TOPICS,
       onSuccess: listTopicsSuccess(dispatch),
@@ -77,6 +82,7 @@ export const listSubCategoryTopics = dispatch => ({
     apiRequest({
       method: "GET",
       url: LIST_SUB_CATEGORY_TOPICS_URL,
+      parentResource: `sub-category-${subCategoryId}`,
       payload: { sub_category_id: subCategoryId, limit, offset },
       loadingResource: LIST_TOPICS,
       onSuccess: listSubCategoryTopicsSuccess(dispatch),

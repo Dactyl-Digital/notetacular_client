@@ -17,6 +17,7 @@ export const API_REQUEST = "API_REQUEST"
 export const apiRequest = ({
   method = "GET",
   url,
+  parentResource,
   payload = {},
   loadingResource,
   onSuccess,
@@ -25,5 +26,5 @@ export const apiRequest = ({
   type: API_REQUEST,
   payload,
   loadingResource,
-  meta: { method, url, onSuccess, onError },
+  meta: { method, url, parentResource, onSuccess, onError },
 })

@@ -160,96 +160,84 @@ const SubCategoryList = ({ notebookId }) => {
   const { addNotification } = useNotifications()
   const [title, setTitle] = useState("")
   const [fetchSubCategories, setFetchSubCategories] = useState(false)
-  const [initialListFetched, setInitialListFetched] = useState(false)
-  // const [activeCircle, setActiveCircle] = useState({
-  //   active: null,
-  //   activePosition: 0,
-  // })
-  // const [setActiveDisabled, setSetActiveDisabled] = useState(false)
-  // const [scrollTop, setScrollTop] = useState(0)
-  // const listEl = useRef(null)
+  // const [initialListFetched, setInitialListFetched] = useState(false)
+
+  const [listFetchState, setListFetchState] = useState("FETCH_INITIAL_LIST")
+
+  const permittedTransitions = () => {
+    const permitted = {
+      FETCH_INITIAL_LIST: ["AWAITING_LIST_ADDITIONAL"],
+      AWAITING_LIST_ADDITIONAL: ["LIST_ADDITIONAL"],
+      LIST_ADDITIONAL: ["AWAITING_LIST_ADDITIONAL"],
+    }
+
+    return (state, transition) => {
+      if (permitted[state].indexOf(transition) !== -1) {
+        console.log(`setListFetchState(${transition})`)
+        setListFetchState(transition)
+      }
+    }
+  }
+
+  const checkPermittedTransition = permittedTransitions()
+
+  const transitionListFetchState = transitionState =>
+    checkPermittedTransition(listFetchState, transitionState)
 
   useEffect(() => {
+    console.log("what is subCategoryListError")
+    console.log(subCategoryListError)
     if (subCategoryListError) {
       return addNotification({
         key: "SUB_CATEGORY_LIST_ERROR",
         notification: { message: subCategoryListError.message, type: "ERROR" },
       })
+    } else if (createSubCategoryError) {
+      return addNotification({
+        key: "CREATE_SUB_CATEGORY_ERROR",
+        notification: {
+          message: createSubCategoryError.message,
+          type: "ERROR",
+        },
+      })
     }
 
-    // WTF NOTE:
-    // There's a recursive fetch of listing a notebook's sub categories
-    // when navigating directly to it via a link which specifies a notebook
-    // Probably due to including loading and createSubCategoryError in the list
-    // of the useEffect dependencies.... ba
-    let subCategoryIdList
-    if (
-      notebooks.hasOwnProperty(notebookId) &&
-      !loading &&
-      !initialListFetched
-    ) {
-      console.log("notebooks[notebookId]")
-      console.dir(notebooks[notebookId])
-      subCategoryIdList = Array.isArray(notebooks[notebookId].sub_categories)
-        ? notebooks[notebookId].sub_categories
-        : []
-      console.log("the sub subCategoryIdList:", subCategoryIdList)
+    const subCategoryIdList = getNestedProperty(
+      notebooks,
+      [notebookId, "sub_categories"],
+      "DIRECT_URL_NAVIGATION"
+    )
+
+    if (!loading && subCategoryIdList === "DIRECT_URL_NAVIGATION") {
+      listNotebooksSubCategories({ notebookId, limit: 20, offset: 0 })
+      transitionListFetchState("AWAITING_LIST_ADDITIONAL")
+      return
+    }
+
+    if (!loading && listFetchState === "FETCH_INITIAL_LIST") {
+      console.log("loading initial sub category list coming from /notebooks")
       listSubCategories({
+        notebookId,
         offset: 0,
         sub_category_id_list: subCategoryIdList,
       })
-      setInitialListFetched(true)
-    } else if (!loading && !initialListFetched) {
-      // NOTE: The case when the user copies and pastes the link into the browser.
-      listNotebooksSubCategories({ notebookId, limit: 20, offset: 0 })
-      setInitialListFetched(true)
+      transitionListFetchState("AWAITING_LIST_ADDITIONAL")
+      return
     }
 
-    if (parentNotebooksOfSubCategories.hasOwnProperty(notebookId)) {
-      // TODO: Could possibly use the initialListFetch helper function here.
-      if (
-        Object.keys(notebooks[notebookId].sub_categories).length === 0 &&
-        !loading &&
-        !parentNotebooksOfSubCategories[notebookId].subCategoriesPaginationEnd
-      ) {
-        listSubCategories({
-          offset: parentNotebooksOfSubCategories[notebookId].listOffset,
-          sub_category_id_list: notebooks[notebookId].sub_categories,
-        })
-      } else if (
-        !loading &&
-        fetchSubCategories &&
-        !parentNotebooksOfSubCategories[notebookId].subCategoriesPaginationEnd
-      ) {
-        // NOTE: When looking into what caused the error when navigating to a Notebook's SubCategory page
-        // when there are no crreated sub categories underneath it.... The notebook.sub_categories field
-        // which is returned from the backend will be an object when there are 0 sub categories associated with it
-        // rather than the required list of sub cat ids...
-        // hence, the check for Array.isArray below:
-        listSubCategories({
-          offset: parentNotebooksOfSubCategories[notebookId].listOffset,
-          sub_category_id_list: Array.isArray(
-            notebooks[notebookId].sub_categories
-          )
-            ? notebooks[notebookId].sub_categories
-            : [],
-        })
-      }
+    if (
+      !loading &&
+      parentNotebooksOfSubCategories.hasOwnProperty(notebookId) &&
+      subCategoryIdList.length > 0 &&
+      listFetchState === "LIST_ADDITIONAL"
+    ) {
+      listSubCategories({
+        notebookId,
+        offset: parentNotebooksOfSubCategories[notebookId].listOffset,
+        sub_category_id_list: subCategoryIdList,
+      })
     }
-    // else {
-    //   if (subCategoryIdList.length > 0) {
-    //     listSubCategories({
-    //       offset: 0,
-    //       sub_category_id_list: subCategoryIdList,
-    //     })
-    //   }
-    // }
-  }, [
-    fetchSubCategories,
-    loading,
-    subCategoryListError,
-    createSubCategoryError,
-  ])
+  }, [listFetchState, loading, subCategoryListError, createSubCategoryError])
 
   const handleCreateNewSubCategory = () => {
     if (createSubCategoryError) {
@@ -275,10 +263,16 @@ const SubCategoryList = ({ notebookId }) => {
       //   note_id_list: noteIdList,
       // })
       // SOLUTION: Going to use a useState hook, to trigger loading new notes.
-      setFetchSubCategories(true)
+
+      // setFetchSubCategories(true)
+      // setTimeout(() => {
+      //   setFetchSubCategories(false)
+      // }, 0)
+
+      setListFetchState("LIST_ADDITIONAL")
       setTimeout(() => {
-        setFetchSubCategories(false)
-      }, 0)
+        setListFetchState("AWAITING_LIST_ADDITIONAL")
+      }, 1500)
     }
   }
 
@@ -298,7 +292,13 @@ const SubCategoryList = ({ notebookId }) => {
     []
   )
 
-  const keys = Object.keys(subCategories)
+  // const keys = Object.keys(subCategories)
+  const keys = getNestedProperty(
+    parentNotebooksOfSubCategories,
+    [notebookId, "subCategoryIds"],
+    []
+  )
+
   return (
     <ScrollProvider listId="main-content" fn={handleScroll}>
       <Container data-testid="sub-category-list-page">
@@ -361,7 +361,7 @@ const SubCategoryList = ({ notebookId }) => {
               )}
               {loading &&
                 loadingResource === LIST_SUB_CATEGORIES &&
-                keys > 0 && <h1>Loading...</h1>}
+                keys.length > 0 && <h1>Loading...</h1>}
             </div>
           </div>
         </div>
