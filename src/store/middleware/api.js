@@ -308,15 +308,42 @@ const makeRequest = (
   }
 }
 
-export const apiMiddleware = ({ dispatch }) => next => action => {
-  if (process.env.NODE_ENV === "development")
-    console.log("Inside the middleware w/ action: ", action)
-  if (action.type === API_REQUEST) {
+export const wrapApiMiddlewareWithCachedRequests = () => {
+  const cachedRequests = []
+  return ({ dispatch }) => next => action => {
+    console.log("cached requests in apiMiddleware", cachedRequests)
     if (process.env.NODE_ENV === "development")
-      console.log("action.type === API_REQUEST")
-    return makeRequest(dispatch, action, action.meta)
+      console.log("Inside the middleware w/ action: ", action)
+    if (action.type === API_REQUEST) {
+      const request = `${action.meta.method}-${action.meta.url}`
+      // Then we've already made the request, so we return rather than making a request.
+      if (cachedRequests.indexOf(request) >= 0) {
+        next(action)
+        return
+      } else {
+        // We'll add it to the list to prevent it from being issued multiple times
+        cachedRequests.push(request)
+      }
+      if (process.env.NODE_ENV === "development")
+        console.log("action.type === API_REQUEST")
+      return makeRequest(dispatch, action, action.meta)
+    }
+    if (process.env.NODE_ENV === "development")
+      console.log("calling next(action) in middleware")
+    next(action)
   }
-  if (process.env.NODE_ENV === "development")
-    console.log("calling next(action) in middleware")
-  next(action)
 }
+
+// export const apiMiddleware = ({ dispatch }) => next => action => {
+//   console.log("cached requests in apiMiddleware", cachedRequests)
+//   if (process.env.NODE_ENV === "development")
+//     console.log("Inside the middleware w/ action: ", action)
+//   if (action.type === API_REQUEST) {
+//     if (process.env.NODE_ENV === "development")
+//       console.log("action.type === API_REQUEST")
+//     return makeRequest(dispatch, action, action.meta)
+//   }
+//   if (process.env.NODE_ENV === "development")
+//     console.log("calling next(action) in middleware")
+//   next(action)
+// }

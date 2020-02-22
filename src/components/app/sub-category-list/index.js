@@ -17,7 +17,7 @@ import ResourceListing from "../../shared/resource-listing"
 import CreateResourceModal from "../../shared/create-resource-modal"
 import Button from "../../shared/button"
 import StyledForm from "../../shared/styled-form"
-import { checkFormSubmissionErrors } from "../helpers"
+import { checkFormSubmissionErrors, getNestedProperty } from "../helpers"
 
 // TODO: It's not a huge issue at the moment... so just fix it later when you
 // finally create the ListResourceProvider component to generalize that logic as
@@ -188,7 +188,12 @@ const SubCategoryList = ({ notebookId }) => {
       !loading &&
       !initialListFetched
     ) {
-      subCategoryIdList = notebooks[notebookId].sub_categories
+      console.log("notebooks[notebookId]")
+      console.dir(notebooks[notebookId])
+      subCategoryIdList = Array.isArray(notebooks[notebookId].sub_categories)
+        ? notebooks[notebookId].sub_categories
+        : []
+      console.log("the sub subCategoryIdList:", subCategoryIdList)
       listSubCategories({
         offset: 0,
         sub_category_id_list: subCategoryIdList,
@@ -216,9 +221,18 @@ const SubCategoryList = ({ notebookId }) => {
         fetchSubCategories &&
         !parentNotebooksOfSubCategories[notebookId].subCategoriesPaginationEnd
       ) {
+        // NOTE: When looking into what caused the error when navigating to a Notebook's SubCategory page
+        // when there are no crreated sub categories underneath it.... The notebook.sub_categories field
+        // which is returned from the backend will be an object when there are 0 sub categories associated with it
+        // rather than the required list of sub cat ids...
+        // hence, the check for Array.isArray below:
         listSubCategories({
           offset: parentNotebooksOfSubCategories[notebookId].listOffset,
-          sub_category_id_list: notebooks[notebookId].sub_categories,
+          sub_category_id_list: Array.isArray(
+            notebooks[notebookId].sub_categories
+          )
+            ? notebooks[notebookId].sub_categories
+            : [],
         })
       }
     }
@@ -268,29 +282,21 @@ const SubCategoryList = ({ notebookId }) => {
     }
   }
 
-  // const setActive = ({ active, activePosition, clickedNav }) => {
-  //   if (!setActiveDisabled || clickedNav) {
-  //     setActiveCircle({ ...activeCircle, active, activePosition })
-  //     if (clickedNav) {
-  //       setSetActiveDisabled(clickedNav)
-  //     }
-  //     // Necessary to prevent the scroll event from being triggered
-  //     // and resetting a higher ResourceListing as active when scrolled to
-  //     // the bottom of the list. (As the clicked ResourceListing won't be
-  //     // at the top of the viewport and the one that is would be set to active
-  //     // right after the clicked ResourceListing is)
-  //     setTimeout(() => setSetActiveDisabled(false), 1500)
-  //   }
-  // }
-
   // NOTE: This fucking sucks
-  const subCategories = parentNotebooksOfSubCategories.hasOwnProperty(
-    notebookId
+  // const subCategories = parentNotebooksOfSubCategories.hasOwnProperty(
+  //   notebookId
+  // )
+  //   ? parentNotebooksOfSubCategories[notebookId].hasOwnProperty("subCategories")
+  //     ? parentNotebooksOfSubCategories[notebookId].subCategories
+  //     : []
+  //   : []
+
+  // Ahh... This is much better.
+  const subCategories = getNestedProperty(
+    parentNotebooksOfSubCategories,
+    [notebookId, "subCategories"],
+    []
   )
-    ? parentNotebooksOfSubCategories[notebookId].hasOwnProperty("subCategories")
-      ? parentNotebooksOfSubCategories[notebookId].subCategories
-      : []
-    : []
 
   const keys = Object.keys(subCategories)
   return (
@@ -350,10 +356,6 @@ const SubCategoryList = ({ notebookId }) => {
                     notebookId={notebookId}
                     subCategoryId={subCategories[key].id}
                     index={i}
-                    // active={activeCircle.active === subCategories[key].title}
-                    // setActiveDisabled={setActiveDisabled}
-                    // scrollTop={scrollTop}
-                    // setActiveCircle={setActiveCircle}
                   />
                 ))
               )}

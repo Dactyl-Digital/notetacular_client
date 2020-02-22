@@ -81,7 +81,7 @@ const Login = () => {
   return (
     <Container>
       <div id="form-container">
-        <h1>Log in</h1>
+        <h1>Login</h1>
         <StyledForm
           spanWidth={true}
           onSubmit={e => {

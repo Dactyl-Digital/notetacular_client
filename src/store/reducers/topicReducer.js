@@ -64,6 +64,15 @@ const normalizeSingle = ({ parentSubCategoriesOfTopics }, { data }) => {
     failFn: () => ({}),
   })
 
+  const prevTopicIds = checkProperty({
+    obj: parentSubCategoriesOfTopics,
+    property: "topicIds",
+    successFn: () => ({
+      ...parentSubCategoriesOfTopics[sub_category_id].topicIds,
+    }),
+    failFn: () => ({}),
+  })
+
   return {
     [sub_category_id]: {
       topicsPaginationEnd: true,
@@ -71,6 +80,7 @@ const normalizeSingle = ({ parentSubCategoriesOfTopics }, { data }) => {
         ...prevTopics,
         ...newTopics,
       },
+      topicIds: [data.id, ...prevTopicIds],
       listOffset: newListOffset,
     },
   }
@@ -113,14 +123,17 @@ const normalizeSingleUpdate = ({ parentSubCategoriesOfTopics }, { data }) => {
 const normalize = key => (topicState, { data }) =>
   data[key].reduce((acc, resource, i) => {
     const topicsPaginationEnd = data[key].length !== 20
+    console.log("the topicState.parentSubCategoriesOfTopics at i = ", i)
+    console.log(topicState.parentSubCategoriesOfTopics)
     if (i === 0) {
       // NOTE: Doing this to ensure that listOffset is only incremented once while
-      // iterating through the list of notes retrieved from the API.
+      // iterating through the list of notes 3retrieved from the API.
       if (
         topicState.parentSubCategoriesOfTopics.hasOwnProperty(
           resource.sub_category_id
         )
       ) {
+        if (i === 0) console.log("inside first if")
         // Updating a current topic's notes
         acc = {
           ...acc,
@@ -133,22 +146,31 @@ const normalize = key => (topicState, { data }) =>
               ].topics,
               [resource.id]: resource,
             },
+            topicIds: [
+              ...topicState.parentSubCategoriesOfTopics[
+                resource.sub_category_id
+              ].topicIds,
+              resource.id,
+            ],
             listOffset:
               topicState.parentSubCategoriesOfTopics[resource.sub_category_id]
                 .listOffset + data[key].length,
           },
         }
       } else {
+        if (i === 0) console.log("inside first else")
         // Creating a new entry for a subCategory's topics
         acc[resource.sub_category_id] = {
           topicsPaginationEnd: topicsPaginationEnd,
           topics: {
             [resource.id]: resource,
           },
+          topicIds: [resource.id],
           listOffset: data[key].length,
         }
       }
     } else {
+      if (i === 0) console.log("inside second else")
       // TODO: THIS ELSE LOGIC IS DUPLICATED (w/ one slight modification) ABOVE!
       // DO SOMETHING ABOUT THIS MESS
       // Updating a current topic's notes
@@ -161,6 +183,7 @@ const normalize = key => (topicState, { data }) =>
             ...acc[resource.sub_category_id].topics,
             [resource.id]: resource,
           },
+          topicIds: [...acc[resource.sub_category_id].topicIds, resource.id],
           listOffset: data[key].length,
         },
       }
@@ -184,7 +207,10 @@ export default function topicReducer(
     }
   }
   if (type === SET_TOPIC_LIST) {
-    return topicListNewState(topicState, payload)
+    const result = topicListNewState(topicState, payload)
+    console.log(`Returning ${result} as the new state`)
+    console.dir(result)
+    return result
   }
   if (type === SET_SUB_CATEGORY_TOPICS) {
     // IMPLEMENT! And now hope it works!

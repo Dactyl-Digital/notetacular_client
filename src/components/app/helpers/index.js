@@ -74,3 +74,24 @@ export const renderAuthFormError = ({ field, errors, addNotification }) => {
 
   return null
 }
+
+// Example usage of getNestedProperty:
+// const obj = {a: {b: {c: "Great Success!"}}, d: 2}
+// In a successful case:
+// getNestedProperty(obj, ['a', 'b', 'c']) => "Great Success!"
+// In an errpr case:
+// getNestedProperty(obj, ['a', 'b', 'e']) => "PROPERTY_ACCESS_ERROR"
+export const getNestedProperty = (
+  obj,
+  [key, ...keys],
+  failVal = "PROPERTY_ACCESS_ERROR"
+) => {
+  if (keys.length === 0) {
+    const val = obj[key]
+    if (val === undefined) return failVal
+    return val
+  }
+  const val = obj[key]
+  if (val === undefined) return failVal
+  return getNestedProperty(val, keys)
+}

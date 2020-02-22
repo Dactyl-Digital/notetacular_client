@@ -19,6 +19,7 @@ import StyledForm from "../../shared/styled-form"
 import {
   onResourceLoadScrollIntoView,
   checkFormSubmissionErrors,
+  getNestedProperty,
 } from "../helpers"
 
 const extractTopicIdRegex = /\d+/
@@ -189,39 +190,43 @@ const TopicList = ({ notebookId, subCategoryId }) => {
   const { addNotification } = useNotifications()
   const [title, setTitle] = useState("")
   const [fetchTopics, setFetchTopics] = useState(false)
-  const [initialListFetched, setInitialListFetched] = useState(false)
+  const [listFetchState, setListFetchState] = useState("FETCH_INITIAL_LIST")
   // TODO: I think I meant to use this to open up the topic's note
   // list when the page is navigated to it specifically.
   const [activeTopic, setActiveTopic] = useState(null)
 
+  const permittedTransitions = () => {
+    const permitted = {
+      FETCH_INITIAL_LIST: ["AWAITING_LIST_ADDITIONAL"],
+      AWAITING_LIST_ADDITIONAL: ["LIST_ADDITIONAL"],
+      LIST_ADDITIONAL: ["AWAITING_LIST_ADDITIONAL"],
+    }
+
+    return (state, transition) => {
+      if (permitted[state].indexOf(transition) != -1) {
+        console.log(`setListFetchState(${transition})`)
+        setListFetchState(transition)
+      }
+    }
+  }
+
+  const checkPermittedTransition = permittedTransitions()
+
+  const transitionListFetchState = transitionState =>
+    checkPermittedTransition(listFetchState, transitionState)
+
   // TODO: Genericize this b, make a reusable hook... as this is
   // repeated in notebook-list and sub-category-list
   useEffect(() => {
-    // let hash
-    // if (typeof window !== "undefined") {
-    //   hash = window.location.hash
-    // }
-    // if (hash && !activeCircle.active) {
-    //   // TODO: IMPLEMENT SCROLL NOTE INTO VIEW... Will need to handle
-    //   // toggling editor
-    //   let id = hash.slice(1, hash.length)
-    //   onResourceLoadScrollIntoView(id)
-    // }
-    // listEl.current.addEventListener("scroll", handleScroll)
+    // Unfucking the fetching resource list logic (Yeah... These are basically the cases.):
+    // 1. state = "INITIAL_LOAD" Component mounts, fetch initial page of 20; state transitions to "INITIAL_LIST_FETCHED" (The dispatch function
+    //    to fetch the list will differ based on how the user navigates to this page - i.e. clicking through the resources/navigating directly via URL.)
+    // 2. state = "INITIAL_LIST_FETCHED", if user scrolls to bottom of the list, an additional 20 resources are fetched from the server;
+    //    state transitions to "ADDITIONAL_LIST_FETCHED" (The main thing I need to eliminate is multiple calls being issued upon the user
+    //    scrolling down).
 
     console.log("what is parentNotebooksOfSubCategories")
     console.dir(parentNotebooksOfSubCategories)
-    const topicIdList = parentNotebooksOfSubCategories.hasOwnProperty(
-      subCategoryId
-    )
-      ? parentNotebooksOfSubCategories[subCategoryId].hasOwnProperty(
-          "subCategories"
-        )
-        ? parentNotebooksOfSubCategories[subCategoryId].subCategories[
-            subCategoryId
-          ].topics
-        : []
-      : []
 
     if (topicListError) {
       return addNotification({
@@ -230,33 +235,30 @@ const TopicList = ({ notebookId, subCategoryId }) => {
       })
     }
 
-    if (
-      parentNotebooksOfSubCategories.hasOwnProperty(subCategoryId) &&
-      !loading &&
-      !initialListFetched
-    ) {
-      console.log("what's the topicIdList")
-      console.log(topicIdList)
-      if (topicIdList.length > 0) {
-        listTopics({
-          offset: 0,
-          topic_id_list: topicIdList,
-        })
-        setInitialListFetched(true)
-      }
-    } else if (!loading && !initialListFetched) {
-      console.log("SHOULD FIRE ON VISITING PAGE INITIALLY")
-      // NOTE: The case when the user copies and pastes the link into the browser.
+    const topicIdList = getNestedProperty(
+      parentNotebooksOfSubCategories,
+      [notebookId, "subCategories", subCategoryId, "topics"],
+      "DIRECT_URL_NAVIGATION"
+    )
+
+    if (topicIdList === "DIRECT_URL_NAVIGATION" && !loading) {
+      console.log("fetching initialList")
       listSubCategoryTopics({ subCategoryId, limit: 20, offset: 0 })
-      setInitialListFetched(true)
+      transitionListFetchState("AWAITING_LIST_ADDITIONAL")
+      return
     }
 
-    if (topicIdList.length > 0) {
+    // console.log("parentNotebooksOfSubCategories.hasOwnProperty(notebookId)")
+    // console.log(parentNotebooksOfSubCategories.hasOwnProperty(notebookId))
+    if (listFetchState === "FETCH_INITIAL_LIST" && !loading) {
+      console.log("fetching initialList")
+      console.log("the listFetchState: ", listFetchState)
       listTopics({
         offset: 0,
         topic_id_list: topicIdList,
       })
-      setInitialListFetched(true)
+      transitionListFetchState("AWAITING_LIST_ADDITIONAL")
+      return
     }
 
     if (parentSubCategoriesOfTopics.hasOwnProperty(subCategoryId)) {
@@ -269,6 +271,17 @@ const TopicList = ({ notebookId, subCategoryId }) => {
         !loading &&
         !parentSubCategoriesOfTopics[subCategoryId].topicsPaginationEnd
       ) {
+        console.log(
+          "The if ( \
+          Object.keys( \
+            parentNotebooksOfSubCategories[notebookId].subCategories[\
+              subCategoryId\
+            ].topics\
+          ).length === 0 &&\
+          !loading &&\
+          !parentSubCategoriesOfTopics[subCategoryId].topicsPaginationEnd\
+        ) conditional met"
+        )
         listTopics({
           offset: parentSubCategoriesOfTopics[subCategoryId].listOffset,
           topic_id_list: topicIdList,
@@ -278,6 +291,13 @@ const TopicList = ({ notebookId, subCategoryId }) => {
         fetchTopics &&
         !parentSubCategoriesOfTopics[subCategoryId].topicsPaginationEnd
       ) {
+        console.log(
+          "The else if (\
+          !loading && \
+          fetchTopics && \
+          !parentSubCategoriesOfTopics[subCategoryId].topicsPaginationEnd\
+        ) conditional met"
+        )
         listTopics({
           offset: parentSubCategoriesOfTopics[subCategoryId].listOffset,
           topic_id_list: topicIdList,
@@ -325,13 +345,26 @@ const TopicList = ({ notebookId, subCategoryId }) => {
   }
 
   // NOTE: This fucking sucks
-  const topics = parentSubCategoriesOfTopics.hasOwnProperty(subCategoryId)
-    ? parentSubCategoriesOfTopics[subCategoryId].hasOwnProperty("topics")
-      ? parentSubCategoriesOfTopics[subCategoryId].topics
-      : []
-    : []
+  // const topics = parentSubCategoriesOfTopics.hasOwnProperty(subCategoryId)
+  //   ? parentSubCategoriesOfTopics[subCategoryId].hasOwnProperty("topics")
+  //     ? parentSubCategoriesOfTopics[subCategoryId].topics
+  //     : []
+  //   : []
 
-  const keys = Object.keys(topics)
+  // Ahh... This is much better.
+  const topics = getNestedProperty(
+    parentSubCategoriesOfTopics,
+    [subCategoryId, "topics"],
+    []
+  )
+
+  const keys = getNestedProperty(
+    parentSubCategoriesOfTopics,
+    [subCategoryId, "topicIds"],
+    []
+  )
+
+  // const keys = Object.keys(topics)
 
   return (
     <ScrollProvider listId="main-content" fn={handleScroll}>

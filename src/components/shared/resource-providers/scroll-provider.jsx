@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react"
+import { useUi } from "../../../hooks/queries/useUi"
 import ActiveListItemProvider from "./active-list-item-provider"
 
 export const ScrollContext = React.createContext({
@@ -11,6 +12,7 @@ export function useScrollState() {
 }
 
 export default function ScrollProvider({ children, listId, fn }) {
+  const { loading } = useUi()
   const [scrollTop, setScrollTop] = useState(0)
 
   let mainContent
@@ -34,6 +36,7 @@ export default function ScrollProvider({ children, listId, fn }) {
   const handleScroll = mainContent => fn => e => {
     setScrollTop(mainContent.scrollTop)
     if (typeof fn !== "undefined") {
+      console.log("HOW MANY DAMN TIMES IS THIS FUNCTION BEING CALLED?!?!?")
       fn(e)
     }
   }
