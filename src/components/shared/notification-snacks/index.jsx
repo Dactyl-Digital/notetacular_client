@@ -8,6 +8,8 @@ const Container = styled.div`
   position: absolute;
   top: 2rem;
   left: 50%;
+  transform: translateX(-25%);
+  left: ${props => props.authPageAlignment && "50%"};
   transform: ${props => props.authPageAlignment && "translateX(-50%)"};
   vertical-align: center;
   background: ${props => (props.type === "SUCCESS" ? "#11EEF6" : "#FF5555")};

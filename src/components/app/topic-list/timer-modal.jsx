@@ -1,27 +1,46 @@
 import React, { useState, useEffect } from "react"
 import ReactDOM from "react-dom"
 import styled from "styled-components"
+import Button from "../../shared/button"
 
 const Container = styled.div`
   position: absolute;
-  z-index: 9002;
-  bottom: 0;
-  right: 0;
-  width: 8rem;
-  height: 8rem;
+  z-index: 9001;
+  bottom: 3rem;
+  right: 3rem;
+  width: 10rem;
+  height: 6rem;
 
-  background: rgba(0, 0, 0, 30%);
-  #timer-controls {
-    position: sticky;
+  #timer-visible-toggle {
+    position: relative;
     top: 0;
-    border: 2px solid #222;
+    right: -5.4rem;
   }
 
-  #btns {
-    display: flex;
+  #timer-container {
+    display: ${props => (props.timerVisible ? "flex" : "none")};
+    flex-direction: column;
 
-    button {
-      margin: 0;
+    background: #fcfcfc;
+    border-radius: 5px;
+    box-shadow: 0rem 0.1rem 1rem rgba(17, 238, 246, 30%);
+
+    #timer-display {
+      display: ${props => (props.timerVisible ? "flex" : "none")};
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+      font-family: "Blinker", sans-serif;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #969464;
+    }
+
+    #timer-controls {
+      display: ${props => (props.timerVisible ? "flex" : "none")};
+      justify-content: center;
+      width: 100%;
+      padding-bottom: 1rem;
     }
   }
 `
@@ -53,6 +72,7 @@ const TimerModal = ({
   stopTimer,
 }) => {
   const [el, setEl] = useState(null)
+  const [timerVisible, setTimerVisible] = useState(true)
   const [timerRunning, setTimerRunning] = useState(true)
 
   useEffect(() => {
@@ -76,11 +96,29 @@ const TimerModal = ({
     return (
       <>
         {ReactDOM.createPortal(
-          <Container>
-            <div id="timer-controls">Timer Modal Present! - {children}</div>
-            <div id="btns">
+          <Container timerVisible={timerVisible}>
+            {timerVisible ? (
               <button
-                onClick={() => {
+                id="timer-visible-toggle"
+                onClick={() => setTimerVisible(false)}
+              >
+                Hide Timer
+              </button>
+            ) : (
+              <button
+                id="timer-visible-toggle"
+                onClick={() => setTimerVisible(true)}
+              >
+                Show Timer
+              </button>
+            )}
+            <div id="timer-container">
+              <div id="timer-display">{children}</div>
+              <div id="timer-controls">
+                {/* <Button
+                type="CREATE"
+                size="SMALL"
+                handleClick={() => {
                   if (!timerRunning) {
                     startTimer({
                       currentElapsedSeconds: elapsedSeconds,
@@ -91,9 +129,9 @@ const TimerModal = ({
                   }
                 }}
               >
-                Start
-              </button>
-              <button
+                Start!
+              </Button> */}
+                {/* <button
                 onClick={() => {
                   if (timerRunning) {
                     pauseTimer()
@@ -102,17 +140,20 @@ const TimerModal = ({
                 }}
               >
                 Pause
-              </button>
-              <button
-                onClick={() => {
-                  if (timerRunning) {
-                    stopTimer()
-                    setTimerRunning(!timerRunning)
-                  }
-                }}
-              >
-                Stop
-              </button>
+              </button> */}
+                <Button
+                  size="SMALL"
+                  removeMargin={true}
+                  handleClick={() => {
+                    if (timerRunning) {
+                      stopTimer()
+                      setTimerRunning(!timerRunning)
+                    }
+                  }}
+                >
+                  Stop!
+                </Button>
+              </div>
             </div>
           </Container>,
           el

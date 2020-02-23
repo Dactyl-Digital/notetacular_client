@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import styled from "styled-components"
 import { useTopicActions } from "../../../hooks/commands/useTopicActions"
 import { useNoteActions } from "../../../hooks/commands/useNoteActions"
@@ -30,7 +30,13 @@ const Container = styled.div`
     width: 14rem;
     max-width: 14rem;
     border-radius: 25px;
-    overflow-x: scroll;
+    overflow-x: ${props => (props.tagList ? "scroll" : "hidden")};
+    /* https://stackoverflow.com/a/30680994/10383131 */
+    ::-webkit-scrollbar {
+      height: 0px;
+      width: 0px; /* Remove scrollbar space */
+      background: transparent; /* Optional: just make scrollbar invisible */
+    }
     margin-right: 0.4rem;
   }
 `
@@ -86,6 +92,7 @@ const NoTagsCreatedYetView = ({
       {/* TODO: Create a separate component for this form. */}
       {toggleShowModal => (
         <StyledForm
+          noPadding={true}
           onSubmit={e => {
             e.preventDefault()
             handleAddNewTag({ inputValueList })
@@ -135,6 +142,26 @@ const Tags = ({ type, tags, topicId, noteId }) => {
   const { addNoteTags } = useNoteActions()
   const [tagInputList, setTagInputList] = useState([""])
   const [inputListErrorPositions, setInputListErrorPositions] = useState([])
+
+  const tagListEl = useRef(null)
+
+  useEffect(() => {
+    if (tagListEl.current) {
+      tagListEl.current.addEventListener("wheel", scrollTagList)
+    }
+
+    return () => {
+      if (tagListEl.current) {
+        tagListEl.current.removeEventListener("wheel", scrollTagList)
+      }
+      return
+    }
+  }, [])
+
+  const scrollTagList = e => {
+    if (e.deltaY > 0) tagListEl.current.scrollLeft += 20
+    else tagListEl.current.scrollLeft -= 20
+  }
 
   const handleAddNewTag = ({ inputValueList }) => {
     let validTags = true
@@ -186,8 +213,8 @@ const Tags = ({ type, tags, topicId, noteId }) => {
   }
 
   return (
-    <Container>
-      <div className="tag-list">
+    <Container tagList={tags.length > 0}>
+      <div className="tag-list" ref={tagListEl}>
         {tags !== null && tags.length > 0 ? (
           <>
             <ExistingTagsView

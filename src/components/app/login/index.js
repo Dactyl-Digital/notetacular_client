@@ -39,7 +39,7 @@ const Container = styled.div`
     height: 20rem;
     border-radius: 5px;
     /* box-shadow: 0rem 0.1rem 1rem rgba(17, 238, 246, 30%); */
-    box-shadow: 0rem 0.1rem 1rem rgba(255, 255, 255, 70%);
+    box-3: 0rem 0.1rem 1rem rgba(255, 255, 255, 70%);
     background: #fcfcfc;
   }
 `
@@ -87,6 +87,7 @@ const Login = () => {
       <div id="form-container">
         <h1>Login</h1>
         <StyledForm
+          inputMarginBottom={true}
           spanWidth={true}
           onSubmit={e => {
             e.preventDefault()

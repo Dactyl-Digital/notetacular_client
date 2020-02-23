@@ -115,7 +115,6 @@ const NoteList = ({ topics, topicId, subCategoryId, showNotes }) => {
   // dependency inject:
   // - the listRef ("actually using #main-content as the hook for the scrollListener should suffice.")
   // - the "LIST_RESOURCE" string for the loadingResource predicate check.
-  // -
   const handleScroll = e => {
     if (loading && loadingResource === "LIST_NOTES") {
       e.preventDefault()
@@ -139,15 +138,15 @@ const NoteList = ({ topics, topicId, subCategoryId, showNotes }) => {
     }
   }
 
-  // let mainContent
   useEffect(() => {
-    // if (!mainContent) {
-    //   mainContent = document.getElementById("main-content")
-    // }
     if (noteListError) {
       return addNotification({
         key: "NOTE_LIST_ERROR",
-        notification: { message: noteListError.message, type: "ERROR", notifiedAt: Date.now() },
+        notification: {
+          message: noteListError.message,
+          type: "ERROR",
+          notifiedAt: Date.now(),
+        },
       })
     }
 
@@ -165,33 +164,13 @@ const NoteList = ({ topics, topicId, subCategoryId, showNotes }) => {
       parentTopicsOfNotes.hasOwnProperty(topicId) &&
       !parentTopicsOfNotes[topicId].notesPaginationEnd
     ) {
+      console.log("WTF IS NOTES PAGINATION END?!?!?")
+      console.log(parentTopicsOfNotes[topicId].notesPaginationEnd)
       listNotes({
         offset: parentTopicsOfNotes[topicId].listOffset,
         note_id_list: noteIdList,
       })
     }
-    // if (parentTopicsOfNotes.hasOwnProperty(topicId)) {
-    //   // Still more notes available on the backend.
-    //   if (!parentTopicsOfNotes[topicId].notesPaginationEnd) {
-    //     listNotes({
-    //       offset: parentTopicsOfNotes[topicId].listOffset,
-    //       note_id_list: noteIdList,
-    //     })
-    //   }
-    // } else {
-    //   if (noteIdList.length > 0) {
-    //     listNotes({
-    //       offset: 0,
-    //       note_id_list: noteIdList,
-    //     })
-    //   }
-    // }
-
-    // mainContent.addEventListener("scroll", handleScroll)
-
-    // return () => {
-    //   mainContent.removeEventListener("scroll", handleScroll)
-    // }
   }, [fetchNotes])
 
   const handleCreateNewNote = () => {
@@ -205,6 +184,7 @@ const NoteList = ({ topics, topicId, subCategoryId, showNotes }) => {
       sub_category_id: subCategoryId,
     })
   }
+
   return (
     <Container data-testid="note-list" showNotes={showNotes}>
       <CreateResourceModal action="Create" resource="Note" buttonType="NORMAL">

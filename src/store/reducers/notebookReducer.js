@@ -7,6 +7,7 @@ import {
   SET_NOTEBOOK_LIST_ERROR,
   SET_LIST_SHARED_NOTEBOOKS_ERROR,
   REMOVE_DELETED_NOTEBOOK,
+  SET_DELETE_NOTEBOOK_ERROR,
 } from "../actions/notebook"
 // import { helperFn } from "./helpers"
 
@@ -20,6 +21,7 @@ export const notebookInitialState = {
   createNotebookError: null,
   notebookListError: null,
   listSharedNotebooksError: null,
+  deleteNotebookError: null,
 }
 
 const normalizeSingle = ({ data }) => {
@@ -52,13 +54,21 @@ export default function notebookReducer(
   if (type === SET_CREATED_NOTEBOOK) {
     return {
       ...notebookState,
-      notebooks: { ...notebookState.notebooks, ...normalizeSingle(payload) },
+      notebooks: {
+        ...notebookState.notebooks,
+        ...normalizeSingle(payload),
+      },
+      notebookIds: [payload.data.id, ...notebookState.notebookIds],
     }
   }
   if (type === SET_NOTEBOOK) {
     return {
       ...notebookState,
-      notebooks: { ...notebookState.notebooks, ...normalizeSingle(payload) },
+      notebooks: {
+        ...notebookState.notebooks,
+        ...normalizeSingle(payload),
+      },
+      notebookIds: [payload.data.id, ...notebookState.notebookIds],
     }
   }
   if (type === SET_NOTEBOOK_LIST) {
@@ -88,6 +98,12 @@ export default function notebookReducer(
       ...notebookState,
       notebooks,
       notebookIds: updatedIdList,
+    }
+  }
+  if (type === SET_DELETE_NOTEBOOK_ERROR) {
+    return {
+      ...notebookState,
+      deleteNotebookError: payload,
     }
   }
   // if (type === SET_LIST_SHARED_NOTEBOOKS_ERROR) {

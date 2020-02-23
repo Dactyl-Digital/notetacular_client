@@ -74,6 +74,7 @@ const Layout = ({ children }) => {
       transform: translate(-50%, -50%);
       background: #fcfcfc;
       padding: 2rem 1.4rem;
+      border-radius: 5px;
     }
   `
 

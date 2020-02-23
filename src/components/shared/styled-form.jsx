@@ -8,10 +8,10 @@ const StyledForm = styled.form`
   height: 14rem;
   /* Soo much style hack. Need better organization/pre-planning for this stuff. (Button would overflow */
   /* this container otherwise) */
-  height: ${props => props.signupForm && "18rem"};
+  height: ${props => props.signupForm && "100%"};
   min-height: 14rem;
-  max-height: 18rem;
-  padding: 1.4rem;
+  max-height: ${props => (props.signupForm ? "22rem" : "18rem")};
+  padding: ${props => (props.noPadding ? "0rem" : "1.4rem")};
   padding-bottom: 0;
 
   .form-fields {
@@ -32,7 +32,7 @@ const StyledForm = styled.form`
       border: 0.1rem solid #969464;
       font-size: 0.9rem;
       padding-left: 0.2rem;
-      margin-bottom: 1.4rem;
+      margin-bottom: ${props => (props.inputMarginBottom ? "1.4rem" : "0rem")};
     }
 
     .input-error {
@@ -46,35 +46,31 @@ const StyledForm = styled.form`
 
   #tag-input-fields-container {
     overflow-y: scroll;
+    padding: 1.4rem;
 
     .tag-input-container {
       display: flex;
       align-items: center;
       width: 13.8rem;
       margin-bottom: 1rem;
-      /* border: 4px solid #222; */
 
       .xicon-container {
         display: flex;
         align-items: center;
         height: 100%;
-      }
 
-      svg {
-        width: 0.7rem;
-        height: 0.7rem;
-        margin-left: 1rem;
-        margin-bottom: 0;
+        svg {
+          width: 0.7rem;
+          height: 0.7rem;
+          margin-left: 1rem;
+          margin-bottom: 0;
+        }
       }
-
-      /* #tag-xicon {
-      margin-left: 0.6rem;
-    } */
     }
   }
 
   button {
-    margin-left: 0;
+    margin-left: ${props => (props.noPadding ? "1.4rem" : "0rem")};
   }
 `
 

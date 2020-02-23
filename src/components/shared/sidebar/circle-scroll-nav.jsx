@@ -17,7 +17,7 @@ const Nav = styled.div`
     text-decoration: none;
     font-family: "Blinker", sans-serif;
     font-weight: 400;
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     color: #fcfcfc;
     text-shadow: 0.07rem 0.07rem #1b7171;
   }

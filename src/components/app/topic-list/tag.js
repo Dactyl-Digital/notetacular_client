@@ -12,7 +12,7 @@ const Container = styled.div`
   border-radius: 25px;
   font-family: "Blinker", sans-serif;
   color: #fcfcfc;
-  text-shadow: 0.1rem 0.1rem #1b7171;
+  text-shadow: 0.09rem 0.09rem #1b7171;
   background: #11eef6;
   background: ${props => (props.type === "NOTE" ? "#fcfcfc" : null)};
   margin-right: 1rem;

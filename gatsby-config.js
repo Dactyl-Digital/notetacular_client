@@ -2,9 +2,9 @@ const siteAddress = new URL("https://www.notastical.com")
 
 module.exports = {
   siteMetadata: {
-    title: `Gatsby Default Starter`,
-    description: `Kick off your next, great Gatsby project with this default starter. This barebones starter ships with the main Gatsby configuration files you might need.`,
-    author: `@gatsbyjs`,
+    title: `Notastical`,
+    description: `The note taking app here to save you from inefficient notetaking!`,
+    author: `@JG`,
   },
   plugins: [
     `gatsby-plugin-react-helmet`,
@@ -38,14 +38,14 @@ module.exports = {
       },
     },
     `gatsby-plugin-netlify`,
-    {
-      resolve: `gatsby-plugin-s3`,
-      options: {
-        bucketName: "notastical.com",
-        protocol: siteAddress.protocol.slice(0, -1),
-        hostname: siteAddress.hostname,
-      },
-    },
+    // {
+    //   resolve: `gatsby-plugin-s3`,
+    //   options: {
+    //     bucketName: "notastical.com",
+    //     protocol: siteAddress.protocol.slice(0, -1),
+    //     hostname: siteAddress.hostname,
+    //   },
+    // },
     // this (optional) plugin enables Progressive Web App + Offline functionality
     // To learn more, visit: https://gatsby.dev/offline
     // `gatsby-plugin-offline`,

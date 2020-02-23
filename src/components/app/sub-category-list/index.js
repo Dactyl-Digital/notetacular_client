@@ -194,15 +194,6 @@ const SubCategoryList = ({ notebookId }) => {
           notifiedAt: Date.now(),
         },
       })
-    } else if (createSubCategoryError) {
-      return addNotification({
-        key: "CREATE_SUB_CATEGORY_ERROR",
-        notification: {
-          message: createSubCategoryError.message,
-          type: "ERROR",
-          notifiedAt: Date.now(),
-        },
-      })
     }
 
     const subCategoryIdList = getNestedProperty(
@@ -217,7 +208,11 @@ const SubCategoryList = ({ notebookId }) => {
       return
     }
 
-    if (!loading && listFetchState === "FETCH_INITIAL_LIST") {
+    if (
+      !loading &&
+      listFetchState === "FETCH_INITIAL_LIST" &&
+      keys.length === 0
+    ) {
       listSubCategories({
         notebookId,
         offset: 0,

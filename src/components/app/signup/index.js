@@ -79,10 +79,6 @@ const Signup = () => {
   const handleChange = e =>
     setSignupData({ ...signupData, [e.target.id]: e.target.value })
 
-  if (signupError) {
-    // IMMEDIATE TODO: addNotification
-  }
-
   if (signupSuccess) {
     return (
       <Container>
@@ -99,6 +95,7 @@ const Signup = () => {
       <div id="form-container">
         <h1>Signup</h1>
         <StyledForm
+          inputMarginBottom={true}
           signupForm={true}
           spanWidth={true}
           onSubmit={e => {

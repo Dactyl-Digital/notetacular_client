@@ -156,6 +156,7 @@ const NotebookList = () => {
     listNotebooksOffset,
     notebookListError,
     createNotebookError,
+    deleteNotebookError,
   } = useNotebook()
   const {
     createNotebook,
@@ -183,15 +184,29 @@ const NotebookList = () => {
     if (notebookListError) {
       return addNotification({
         key: "NOTEBOOK_LIST_ERROR",
-        notification: { message: notebookListError.message, type: "ERROR", notifiedAt: Date.now() },
+        notification: {
+          message: notebookListError.message,
+          type: "ERROR",
+          notifiedAt: Date.now(),
+        },
       })
-    } else if (createNotebookError) {
+    } else if (deleteNotebookError) {
       return addNotification({
-        key: "CREATE_NOTEBOOK_ERROR",
-        notification: { message: createNotebookError.message, type: "ERROR", notifiedAt: Date.now() },
+        key: "DELETE_NOTEBOOK_ERROR",
+        notification: {
+          message: deleteNotebookError.message,
+          type: "ERROR",
+          notifiedAt: Date.now(),
+        },
       })
     }
-  }, [fetchNotebooks, loading, notebookListError, createNotebookError])
+  }, [
+    fetchNotebooks,
+    loading,
+    notebookListError,
+    createNotebookError,
+    deleteNotebookError,
+  ])
 
   const handleCreateNewNotebook = () => {
     if (createNotebookError) {

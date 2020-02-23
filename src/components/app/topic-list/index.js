@@ -248,15 +248,6 @@ const TopicList = ({ notebookId, subCategoryId }) => {
           notifiedAt: Date.now(),
         },
       })
-    } else if (createTopicError) {
-      return addNotification({
-        key: "CREATE_TOPIC_ERROR",
-        notification: {
-          message: createTopicError.message,
-          type: "ERROR",
-          notifiedAt: Date.now(),
-        },
-      })
     }
 
     const topicIdList = getNestedProperty(
@@ -271,7 +262,11 @@ const TopicList = ({ notebookId, subCategoryId }) => {
       return
     }
 
-    if (!loading && listFetchState === "FETCH_INITIAL_LIST") {
+    if (
+      !loading &&
+      listFetchState === "FETCH_INITIAL_LIST" &&
+      keys.length === 0
+    ) {
       listTopics({
         subCategoryId,
         offset: 0,

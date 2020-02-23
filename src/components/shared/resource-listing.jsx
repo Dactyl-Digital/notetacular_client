@@ -64,7 +64,7 @@ const Container = styled.div`
     text-overflow: ellipsis;
     font-family: "Blinker", sans-serif;
     font-weight: 400;
-    font-size: 1.8rem;
+    font-size: 1.4rem;
     color: ${props => (props.type === "NOTE" ? "#fcfcfc" : "#11eef6")};
     color: ${props =>
       props.type === "NOTE"

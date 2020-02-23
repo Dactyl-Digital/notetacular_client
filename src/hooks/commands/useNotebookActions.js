@@ -75,7 +75,27 @@ const deleteNotebookSuccess = dispatch => response => {
 }
 
 const deleteNotebookError = dispatch => error => {
-  dispatch(setDeleteNotebookError(error))
+  // TODO: When I want to fine tune this later... Then this will need to be refactored.
+  // dispatch(setDeleteNotebookError(error))
+  dispatch({
+    type: "SET_DELETE_NOTEBOOK_ERROR",
+    payload: {
+      message:
+        "Can't delete notebook because it has sub categories associated with it!",
+    },
+    meta: {
+      trigger: "Server failed to delete notebook.",
+    },
+  })
+  setTimeout(() => {
+    dispatch({
+      type: "SET_DELETE_NOTEBOOK_ERROR",
+      payload: null,
+      meta: {
+        trigger: "Server failed to delete notebook.",
+      },
+    })
+  }, 3000)
 }
 
 export function useNotebookActions() {
