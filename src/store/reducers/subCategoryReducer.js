@@ -207,20 +207,23 @@ export default function subCategoryReducer(
   }
   if (type === SET_SUB_CATEGORY_LIST) {
     const result = subCategoryListNewState(subCategoryState, payload)
-    console.log("The returned result in SET_SUB_CATEGORY_LIST")
-    console.log(subCategoryListNewState(subCategoryState, payload))
     return result
   }
   if (type === SET_NOTEBOOKS_SUB_CATEGORIES) {
     const result = subCategoryListNewState(subCategoryState, payload)
-    console.log("The returned result in SET_NOTEBOOKS_SUB_CATEGORIES")
-    console.log(subCategoryListNewState(subCategoryState, payload))
     return result
   }
   if (type === REMOVE_DELETED_SUB_CATEGORY) {
     const { notebook_id, sub_category_id } = payload
     delete subCategoryState.parentNotebooksOfSubCategories[notebook_id]
       .subCategories[sub_category_id]
+    const { subCategoryIds } = subCategoryState.parentNotebooksOfSubCategories[
+      notebook_id
+    ]
+    const position = subCategoryIds.indexOf(sub_category_id)
+    const updatedIdList = subCategoryIds
+      .slice(0, position)
+      .concat(subCategoryIds.slice(position + 1))
     return {
       ...subCategoryState,
       parentNotebooksOfSubCategories: {
@@ -231,6 +234,7 @@ export default function subCategoryReducer(
             ...subCategoryState.parentNotebooksOfSubCategories[notebook_id]
               .sub_categories,
           },
+          subCategoryIds: updatedIdList,
           listOffset:
             subCategoryState.parentNotebooksOfSubCategories[notebook_id]
               .listOffset - 1,

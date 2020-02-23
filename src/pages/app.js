@@ -26,7 +26,6 @@ const App = () => {
             <Login path="/app/login/" />
             <EmailVerification path="/app/api/verify-email/*" />
             {/* <PrivateRoute path="/app/" component={RecentlyUpdatedNotebooks} /> */}
-            {/* TODO: Utilize path params for dynamic linking */}
             <PrivateRoute path="/app/notebooks/" component={NotebookList} />
             <PrivateRoute
               path="/app/notebook/:notebookId/sub-categories/"

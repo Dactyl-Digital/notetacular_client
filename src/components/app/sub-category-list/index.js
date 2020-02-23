@@ -92,6 +92,7 @@ const CreateSubCategoryForm = ({
           notification: {
             message: "Sub Category successfully created!",
             type: "SUCCESS",
+            notifiedAt: Date.now(),
           },
         })
         setIsLoading(loading)
@@ -173,7 +174,6 @@ const SubCategoryList = ({ notebookId }) => {
 
     return (state, transition) => {
       if (permitted[state].indexOf(transition) !== -1) {
-        console.log(`setListFetchState(${transition})`)
         setListFetchState(transition)
       }
     }
@@ -185,12 +185,14 @@ const SubCategoryList = ({ notebookId }) => {
     checkPermittedTransition(listFetchState, transitionState)
 
   useEffect(() => {
-    console.log("what is subCategoryListError")
-    console.log(subCategoryListError)
     if (subCategoryListError) {
       return addNotification({
         key: "SUB_CATEGORY_LIST_ERROR",
-        notification: { message: subCategoryListError.message, type: "ERROR" },
+        notification: {
+          message: subCategoryListError.message,
+          type: "ERROR",
+          notifiedAt: Date.now(),
+        },
       })
     } else if (createSubCategoryError) {
       return addNotification({
@@ -198,6 +200,7 @@ const SubCategoryList = ({ notebookId }) => {
         notification: {
           message: createSubCategoryError.message,
           type: "ERROR",
+          notifiedAt: Date.now(),
         },
       })
     }
@@ -215,7 +218,6 @@ const SubCategoryList = ({ notebookId }) => {
     }
 
     if (!loading && listFetchState === "FETCH_INITIAL_LIST") {
-      console.log("loading initial sub category list coming from /notebooks")
       listSubCategories({
         notebookId,
         offset: 0,

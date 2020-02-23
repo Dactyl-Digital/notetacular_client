@@ -13,7 +13,6 @@ export const modal = () => (
       <form
         onSubmit={e => {
           e.preventDefault()
-          console.log("Submitted Form!")
           toggleShowModal(false)
         }}
       >

@@ -74,17 +74,20 @@ export default function notebookReducer(
     return { ...notebookState, notebookListError: payload }
   }
   if (type === REMOVE_DELETED_NOTEBOOK) {
-    console.log("payload in REMOVE_DELETED_NOTEBOOK")
-    console.log(payload)
     const { notebooks } = notebookState
-    console.log("notebooks before delete")
-    console.log(notebooks)
+
     delete notebooks[payload.notebook_id]
-    console.log("notebooks after delete")
-    console.log(notebooks)
+
+    const { notebookIds } = notebookState
+    const position = notebookIds.indexOf(payload.notebook_id)
+    const updatedIdList = notebookIds
+      .slice(0, position)
+      .concat(notebookIds.slice(position + 1))
+
     return {
       ...notebookState,
       notebooks,
+      notebookIds: updatedIdList,
     }
   }
   // if (type === SET_LIST_SHARED_NOTEBOOKS_ERROR) {

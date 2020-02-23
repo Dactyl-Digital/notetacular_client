@@ -5,7 +5,7 @@
  * See: https://www.gatsbyjs.org/docs/use-static-query/
  */
 
-import React from "react"
+import React, { useState, useEffect } from "react"
 import PropTypes from "prop-types"
 import { useStaticQuery, graphql } from "gatsby"
 import Helmet from "react-helmet"
@@ -15,22 +15,23 @@ import { createGlobalStyle } from "styled-components"
 import { Provider } from "react-redux"
 import { store } from "../store"
 
+import styled from "styled-components"
 import Header from "./header"
 import "./layout.css"
 
 axios.defaults.baseURL = API_URL
 axios.defaults.withCredentials = true
 
-axios
-  .get("/test")
-  .then(res => {
-    console.log("res: ")
-    console.dir(res)
-  })
-  .catch(err => {
-    console.log("err: ")
-    console.dir(err)
-  })
+// axios
+//   .get("/test")
+//   .then(res => {
+//     console.log("res: ")
+//     console.dir(res)
+//   })
+//   .catch(err => {
+//     console.log("err: ")
+//     console.dir(err)
+//   })
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -48,6 +49,64 @@ const Layout = ({ children }) => {
       }
     }
   `)
+
+  const Container = styled.div`
+    position: absolute;
+    z-index: 10000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+
+    #bg-modal {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      background: #11eef6;
+    }
+
+    #screen-size-message {
+      position: absolute;
+      z-index: 10001;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #fcfcfc;
+      padding: 2rem 1.4rem;
+    }
+  `
+
+  const ShowScreenSizeMessageOverlay = () => {
+    const [showMessage, setShowMessage] = useState(false)
+
+    useEffect(() => {
+      window.addEventListener("resize", checkPermissibleScreenSize)
+      return () => {
+        window.removeEventListener("resize", checkPermissibleScreenSize)
+      }
+    }, [])
+
+    const checkPermissibleScreenSize = _e => {
+      if (window.innerWidth < 1000) {
+        setShowMessage(true)
+      } else {
+        setShowMessage(false)
+      }
+    }
+
+    if (showMessage) {
+      return (
+        <Container>
+          <div id="screen-size-message">
+            This app is for desktop sized screens only!
+          </div>
+          <div id="bg-modal" />
+        </Container>
+      )
+    }
+    return null
+  }
 
   // NOTE: This style rule is because I don't intend to support mobile/tablets
   // TODO: Implement useEffect to check screen width and show an overlay w/ a message
@@ -100,6 +159,7 @@ const Layout = ({ children }) => {
         ></script>
       </Helmet>
       <GlobalStyle theme="white" />
+      <ShowScreenSizeMessageOverlay />
       {/* <Header siteTitle={data.site.siteMetadata.title} /> */}
       <main>{children}</main>
       {/* <footer>

@@ -90,6 +90,7 @@ const CreateTopicForm = ({
           notification: {
             message: "Topic successfully created!",
             type: "SUCCESS",
+            notifiedAt: Date.now(),
           },
         })
         setIsLoading(loading)
@@ -215,7 +216,6 @@ const TopicList = ({ notebookId, subCategoryId }) => {
 
     return (state, transition) => {
       if (permitted[state].indexOf(transition) !== -1) {
-        console.log(`setListFetchState(${transition})`)
         setListFetchState(transition)
       }
     }
@@ -242,14 +242,20 @@ const TopicList = ({ notebookId, subCategoryId }) => {
     if (topicListError) {
       return addNotification({
         key: "TOPIC_LIST_ERROR",
-        notification: { message: topicListError.message, type: "ERROR" },
+        notification: {
+          message: topicListError.message,
+          type: "ERROR",
+          notifiedAt: Date.now(),
+        },
       })
     } else if (createTopicError) {
-      console.log("the create topic errror....")
-      console.log(createTopicError)
       return addNotification({
         key: "CREATE_TOPIC_ERROR",
-        notification: { message: createTopicError.message, type: "ERROR" },
+        notification: {
+          message: createTopicError.message,
+          type: "ERROR",
+          notifiedAt: Date.now(),
+        },
       })
     }
 

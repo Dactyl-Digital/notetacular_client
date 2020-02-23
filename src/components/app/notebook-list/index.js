@@ -100,6 +100,7 @@ const CreateNotebookForm = ({
           notification: {
             message: "Notebook successfully created!",
             type: "SUCCESS",
+            notifiedAt: Date.now(),
           },
         })
         setIsLoading(loading)
@@ -182,12 +183,12 @@ const NotebookList = () => {
     if (notebookListError) {
       return addNotification({
         key: "NOTEBOOK_LIST_ERROR",
-        notification: { message: notebookListError.message, type: "ERROR" },
+        notification: { message: notebookListError.message, type: "ERROR", notifiedAt: Date.now() },
       })
     } else if (createNotebookError) {
       return addNotification({
         key: "CREATE_NOTEBOOK_ERROR",
-        notification: { message: createNotebookError.message, type: "ERROR" },
+        notification: { message: createNotebookError.message, type: "ERROR", notifiedAt: Date.now() },
       })
     }
   }, [fetchNotebooks, loading, notebookListError, createNotebookError])

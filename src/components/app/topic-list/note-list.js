@@ -54,6 +54,7 @@ const CreateNoteForm = ({
           notification: {
             message: "Note successfully created!",
             type: "SUCCESS",
+            notifiedAt: Date.now(),
           },
         })
         setIsLoading(loading)
@@ -146,7 +147,7 @@ const NoteList = ({ topics, topicId, subCategoryId, showNotes }) => {
     if (noteListError) {
       return addNotification({
         key: "NOTE_LIST_ERROR",
-        notification: { message: noteListError.message, type: "ERROR" },
+        notification: { message: noteListError.message, type: "ERROR", notifiedAt: Date.now() },
       })
     }
 
@@ -204,8 +205,6 @@ const NoteList = ({ topics, topicId, subCategoryId, showNotes }) => {
       sub_category_id: subCategoryId,
     })
   }
-  console.log("What is this id?")
-  console.log(`topic-${topicId}-note-list`)
   return (
     <Container data-testid="note-list" showNotes={showNotes}>
       <CreateResourceModal action="Create" resource="Note" buttonType="NORMAL">

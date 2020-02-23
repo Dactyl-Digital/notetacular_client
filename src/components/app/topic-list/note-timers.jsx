@@ -9,6 +9,8 @@ import Button from "../../shared/button"
 import TrashIcon from "../../shared/icons/trash-icon"
 import { formatTime } from "./helpers"
 
+// TODO: Add pagination beyond 20 note timers functionality...
+
 const Container = styled.div`
   display: flex;
   justify-content: space-between;

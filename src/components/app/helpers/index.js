@@ -42,7 +42,11 @@ export const checkFormSubmissionErrors = ({
   }
   addNotification({
     key: notificationKey,
-    notification: { message: error.message, type: "ERROR" },
+    notification: {
+      message: error.message,
+      type: "ERROR",
+      notifiedAt: Date.now(),
+    },
   })
   toggleShowModal(false)
 }
@@ -60,8 +64,6 @@ export const renderAuthFormError = ({ field, errors, addNotification }) => {
       }
       return acc
     }, [])
-    console.log("the result:")
-    console.log(result)
     return result
   }
 

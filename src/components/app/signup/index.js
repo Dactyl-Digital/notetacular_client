@@ -80,8 +80,7 @@ const Signup = () => {
     setSignupData({ ...signupData, [e.target.id]: e.target.value })
 
   if (signupError) {
-    console.log("the signupError:")
-    console.log(signupError)
+    // IMMEDIATE TODO: addNotification
   }
 
   if (signupSuccess) {

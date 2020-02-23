@@ -114,7 +114,6 @@ const Options = ({
         >
           {/* TODO: Create a separate component for this form. */}
           {toggleShowModal => {
-            console.log("returning timers modal content...")
             return (
               <TimersContainer>
                 {/* TODO: Fix all of this prop drilling with context.... About 4/5 levels deep now. */}

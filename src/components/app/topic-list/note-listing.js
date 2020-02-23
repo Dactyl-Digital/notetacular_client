@@ -10,17 +10,10 @@ import { useNotifications } from "../../shared/notification-snacks/notification-
 const extractNoteIdRegex = /\d+$/
 
 const Container = styled.div`
-  /* min-width: 14rem; */
-  /* max-width: 40rem; */
-  /* height: 100%; */
   width: 100%;
   padding: 0;
   margin: 0;
-  /* min-height: 5rem; */
-  /* margin-bottom: 2rem; */
   border-radius: 3px;
-  /* border: 2px solid #222; */
-  /* overflow: hidden; */
 
   transform: translateY(-100%);
   opacity: 0%;
@@ -77,6 +70,7 @@ const NoteListing = ({
       notification: {
         message,
         type,
+        notifiedAt: Date.now(),
       },
     })
   }

@@ -311,9 +311,10 @@ const makeRequest = (
 export const wrapApiMiddlewareWithCachedRequests = () => {
   const cachedRequests = []
   return ({ dispatch }) => next => action => {
-    console.log("cached requests in apiMiddleware", cachedRequests)
-    if (process.env.NODE_ENV === "development")
+    if (process.env.NODE_ENV === "development") {
+      console.log("cached requests in apiMiddleware", cachedRequests)
       console.log("Inside the middleware w/ action: ", action)
+    }
     if (action.type === API_REQUEST) {
       if (action.meta.method === "GET") {
         let request
@@ -324,7 +325,6 @@ export const wrapApiMiddlewareWithCachedRequests = () => {
         }
         // Then we've already made the request, so we return rather than making a request.
         if (cachedRequests.indexOf(request) >= 0) {
-          next(action)
           return
         } else {
           // We'll add it to the list to prevent it from being issued multiple times

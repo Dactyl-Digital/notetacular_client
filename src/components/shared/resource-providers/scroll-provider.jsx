@@ -17,8 +17,6 @@ export default function ScrollProvider({ children, listId, fn }) {
 
   let mainContent
   useEffect(() => {
-    console.log("WHAT IS listId")
-    console.log(listId)
     if (!mainContent) {
       mainContent = document.getElementById(listId)
     }
@@ -36,7 +34,6 @@ export default function ScrollProvider({ children, listId, fn }) {
   const handleScroll = mainContent => fn => e => {
     setScrollTop(mainContent.scrollTop)
     if (typeof fn !== "undefined") {
-      console.log("HOW MANY DAMN TIMES IS THIS FUNCTION BEING CALLED?!?!?")
       fn(e)
     }
   }

@@ -253,6 +253,11 @@ export default function topicReducer(
     delete topicState.parentSubCategoriesOfTopics[sub_category_id].topics[
       topic_id
     ]
+    const { topicIds } = topicState.parentSubCategoriesOfTopics[sub_category_id]
+    const position = topicIds.indexOf(topic_id)
+    const updatedIdList = topicIds
+      .slice(0, position)
+      .concat(topicIds.slice(position + 1))
     return {
       ...topicState,
       parentSubCategoriesOfTopics: {
@@ -262,6 +267,7 @@ export default function topicReducer(
           topics: {
             ...topicState.parentSubCategoriesOfTopics[sub_category_id].topics,
           },
+          topicIds: updatedIdList,
           listOffset:
             topicState.parentSubCategoriesOfTopics[sub_category_id].listOffset -
             1,

@@ -57,7 +57,11 @@ const Login = () => {
     if (loginError) {
       return addNotification({
         key: "LOGIN_ERROR",
-        notification: { message: loginError.message, type: "ERROR" },
+        notification: {
+          message: loginError.message,
+          type: "ERROR",
+          notifiedAt: Date.now(),
+        },
       })
     }
   }, [loginError])

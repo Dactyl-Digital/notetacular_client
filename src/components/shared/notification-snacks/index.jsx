@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React from "react"
 import styled from "styled-components"
 import { UPDATE_NOTE_CONTENT } from "../../../store/actions/ui"
 import { useUi } from "../../../hooks/queries/useUi"
@@ -8,6 +8,7 @@ const Container = styled.div`
   position: absolute;
   top: 2rem;
   left: 50%;
+  transform: ${props => props.authPageAlignment && "translateX(-50%)"};
   vertical-align: center;
   background: ${props => (props.type === "SUCCESS" ? "#11EEF6" : "#FF5555")};
   padding: 0.4rem 1.2rem;
@@ -30,7 +31,13 @@ const Container = styled.div`
 `
 
 const NotificationSnack = ({ message, type }) => (
-  <Container type={type}>
+  <Container
+    type={type}
+    authPageAlignment={
+      window.location.pathname === "/app/signup" ||
+      window.location.pathname === "/app/login"
+    }
+  >
     <p>{message}</p>
   </Container>
 )
@@ -38,11 +45,6 @@ const NotificationSnack = ({ message, type }) => (
 const NotificationSnacks = () => {
   const { loadingResource } = useUi()
   const { notifications } = useNotifications()
-
-  useEffect(() => {
-    console.log("The loading resource inside NotificationSnacks")
-    console.log(loadingResource)
-  }, loadingResource)
 
   if (loadingResource === UPDATE_NOTE_CONTENT) {
     return <NotificationSnack message={"Saving Note!"} type={"SUCCESS"} />
