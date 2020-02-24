@@ -34,12 +34,17 @@ const createNoteTimerError = dispatch => error => {
   dispatch(setCreateNoteTimerError(error))
 }
 
-export const listNoteTimers = dispatch => ({ offset, note_timer_id_list }) => {
+export const listNoteTimers = dispatch => ({
+  noteId,
+  offset,
+  note_timer_id_list,
+}) => {
   dispatch(
     apiRequest({
       method: "GET",
       url: `${LIST_NOTE_TIMERS_URL}${offset}`,
       payload: { note_timer_id_list },
+      parentResource: `note-${noteId}`,
       loadingResource: LIST_NOTE_TIMERS,
       onSuccess: listNoteTimersSuccess(dispatch),
       onError: listNoteTimersError(dispatch),

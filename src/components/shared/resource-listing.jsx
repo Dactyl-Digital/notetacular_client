@@ -274,7 +274,7 @@ const ResourceListing = ({
                   : () => setShowNotes(!showNotes)
               }
             >
-              <ArrowIcon showNotes={showNotes || showEditor} />
+              <ArrowIcon toggled={showNotes || showEditor} />
             </div>
           ) : null}
         </div>

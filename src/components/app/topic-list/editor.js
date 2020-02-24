@@ -88,7 +88,8 @@ const initializeQuillEditor = (editorId, readOnly) => {
     [{ header: "1" }, { header: "2" }, { color: [] }, { background: [] }],
     [{ list: "ordered" }, { list: "bullet" }],
     [{ align: [] }, { indent: "-1" }, { indent: "+1" }],
-    ["image", "video", "formula", "code-block", "link"],
+    // TODO: Implement S3 upload feature so you can add these to the array below => "image", "video",
+    ["formula", "code-block", "link"],
   ]
 
   const options = {

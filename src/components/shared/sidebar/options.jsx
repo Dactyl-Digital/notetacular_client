@@ -83,6 +83,10 @@ const Options = () => {
   const [showOptions, setShowOptions] = useState(false)
 
   useEffect(() => {
+    // console.log("the window.location.pathname")
+    // console.log(window.location.pathname)
+    // TODO: Regex this up to provide links back to previous resources in the More Options links...
+    // when on topics: /app/notebook/115/sub-category/175/topics
     if (!authenticated) {
       if (typeof localStorage !== "undefined") {
         localStorage.removeItem("authenticated")

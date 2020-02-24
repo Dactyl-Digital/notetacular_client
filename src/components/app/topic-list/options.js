@@ -97,10 +97,10 @@ const Options = ({
   return (
     <Container>
       <div className="options-icons-container">
-        <div onClick={() => handleOptionClick("TOGGLE_READ_ONLY")}>
-          {/* {readOnly ? <img src={pencilIcon} /> : <img src={bookIcon} />} */}
+        {/* TODO: Figure out how to implement toggling of read/write mode */}
+        {/* <div onClick={() => handleOptionClick("TOGGLE_READ_ONLY")}>
           {readOnly ? <PencilIcon /> : <BookIcon />}
-        </div>
+        </div> */}
         <CreateResourceModal
           resource="Timers"
           buttonType="ICON"

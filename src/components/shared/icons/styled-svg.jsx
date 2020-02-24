@@ -12,21 +12,9 @@ const StyledSvg = styled.svg`
     position: relative;
     width: ${props => props.type === "CLOCK" && `4rem`};
     height: ${props => props.type === "CLOCK" && `4rem`};
-
-    &:after {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 2rem;
-      height: 2rem;
-      background: #656565;
-      /* opacity: 0.5; */
-    }
   }
 
   &:hover {
-    /* fill: #f78764; */
     cursor: pointer;
   }
 

@@ -108,6 +108,7 @@ const NoteTimers = ({ noteId, note_timer_id_list, toggleShowModal }) => {
       // Still more note timers available on the backend.
       if (!parentNotesOfNoteTimers[noteId].noteTimersPaginationEnd) {
         listNoteTimers({
+          noteId,
           offset: parentNotesOfNoteTimers[noteId].listOffset,
           note_timer_id_list: note_timer_id_list.map(({ id }) => id),
         })
@@ -115,6 +116,7 @@ const NoteTimers = ({ noteId, note_timer_id_list, toggleShowModal }) => {
     } else {
       if (note_timer_id_list.length > 0) {
         listNoteTimers({
+          noteId,
           offset: 0,
           note_timer_id_list: note_timer_id_list.map(({ id }) => id),
         })
