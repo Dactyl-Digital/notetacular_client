@@ -213,7 +213,7 @@ const Tags = ({ type, tags, topicId, noteId }) => {
   }
 
   return (
-    <Container tagList={tags.length > 0}>
+    <Container tagList={tags !== null && tags.length > 0}>
       <div className="tag-list" ref={tagListEl}>
         {tags !== null && tags.length > 0 ? (
           <>

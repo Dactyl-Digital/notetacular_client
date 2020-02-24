@@ -75,12 +75,13 @@ const deleteNoteError = dispatch => error => {
 
 // Listing notes requires this to be sent on the request body:
 // note_id_list
-export const listNotes = dispatch => ({ offset, note_id_list }) => {
+export const listNotes = dispatch => ({ topicId, offset, note_id_list }) => {
   dispatch(
     apiRequest({
       method: "GET",
       url: `${LIST_NOTES_URL}${offset}`,
       payload: { note_id_list },
+      parentResource: `topic-${topicId}`,
       loadingResource: LIST_NOTES,
       onSuccess: listNotesSuccess(dispatch),
       onError: listNotesError(dispatch),

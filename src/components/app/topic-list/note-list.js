@@ -153,6 +153,7 @@ const NoteList = ({ topics, topicId, subCategoryId, showNotes }) => {
     // The case where no notes have been fetched yet.
     if (noteIdList.length > 0 && !parentTopicsOfNotes.hasOwnProperty(topicId)) {
       listNotes({
+        topicId,
         offset: 0,
         note_id_list: noteIdList,
       })
@@ -167,6 +168,7 @@ const NoteList = ({ topics, topicId, subCategoryId, showNotes }) => {
       console.log("WTF IS NOTES PAGINATION END?!?!?")
       console.log(parentTopicsOfNotes[topicId].notesPaginationEnd)
       listNotes({
+        topicId,
         offset: parentTopicsOfNotes[topicId].listOffset,
         note_id_list: noteIdList,
       })

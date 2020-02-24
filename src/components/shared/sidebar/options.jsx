@@ -12,6 +12,7 @@ const Container = styled.div`
   overflow: hidden;
 
   #options-dropdown-container {
+    padding-right: 0.4rem;
     display: flex;
     &:hover {
       cursor: pointer;
@@ -25,7 +26,7 @@ const Container = styled.div`
   }
 
   #more-options {
-    font-size: 1.6rem;
+    font-size: 1.4rem;
     font-family: "Blinker", sans-serif;
     color: #fcfcfc;
     text-shadow: 0.13rem 0.13rem #1b7171;
