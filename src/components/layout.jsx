@@ -16,11 +16,19 @@ import { Provider } from "react-redux"
 import { store } from "../store"
 
 import styled from "styled-components"
-import Header from "./header"
+// import Header from "./header"
 import "./layout.css"
+
+const fetchCsrfToken = async () => {
+  const {
+    data: { csrf_token },
+  } = await axios.get(`${API_URL}/csrf`)
+  axios.defaults.headers.common["X-CSRF-TOKEN"] = csrf_token
+}
 
 axios.defaults.baseURL = API_URL
 axios.defaults.withCredentials = true
+fetchCsrfToken()
 
 // axios
 //   .get("/test")
