@@ -316,7 +316,9 @@ export const wrapApiMiddlewareWithCachedRequests = () => {
       console.log("Inside the middleware w/ action: ", action)
     }
     if (action.type === API_REQUEST) {
-      if (action.meta.method === "GET") {
+      // Searchbar functionality stopped working cause I didn't ensure the /note/search API request
+      // wasn't added to the cache...
+      if (action.meta.method === "GET" && action.meta.url !== "/note/search") {
         let request
         if (action.meta.parentResource) {
           request = `${action.meta.parentResource}-${action.meta.method}-${action.meta.url}`

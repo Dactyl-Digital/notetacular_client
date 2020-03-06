@@ -68,6 +68,10 @@ const listSubCategoriesSuccess = dispatch => response => {
 
 const listSubCategoriesError = dispatch => error => {
   dispatch(setSubCategoryListError(error))
+  setTimeout(
+    () => dispatch(setSubCategoryListError({ response: { data: null } })),
+    3000
+  )
 }
 
 // IMMEDIATE TODO: Finish implementing
@@ -112,6 +116,11 @@ export const listNotebooksSubCategoriesSuccess = dispatch => response => {
 
 export const listNotebooksSubCategoriesError = dispatch => error => {
   dispatch(setNotebooksSubCategoriesError(error))
+  setTimeout(
+    () =>
+      dispatch(setNotebooksSubCategoriesError({ response: { data: null } })),
+    3000
+  )
 }
 
 export const deleteSubCategory = dispatch => ({

@@ -71,6 +71,10 @@ const listTopicsSuccess = dispatch => response => {
 
 const listTopicsError = dispatch => error => {
   dispatch(setTopicListError(error))
+  setTimeout(
+    () => dispatch(setTopicListError({ response: { data: null } })),
+    3000
+  )
 }
 
 export const listSubCategoryTopics = dispatch => ({
@@ -104,6 +108,10 @@ export const listSubCategoryTopicsSuccess = dispatch => response => {
 
 export const listSubCategoryTopicsError = dispatch => error => {
   dispatch(setSubCategoryTopicsError(error))
+  setTimeout(
+    () => dispatch(setSubCategoryTopicsError({ response: { data: null } })),
+    3000
+  )
 }
 
 export const deleteTopic = dispatch => ({ sub_category_id, topic_id }) => {

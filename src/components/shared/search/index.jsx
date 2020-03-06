@@ -291,7 +291,9 @@ const Search = () => {
     setSearchVal(e.target.value)
     clearTimeout(timeoutFn)
     const val = e.target.value
-    setTimeoutFn(setTimeout(() => search({ search_text: val, offset }), 500))
+    setTimeoutFn(
+      setTimeout(() => search({ search_text: val, offset }), 500)
+    )
   }
 
   const handleBack = () => {

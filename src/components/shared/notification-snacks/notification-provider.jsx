@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react"
+import React, { useState, useCallback, useContext } from "react"
 
 const NotificationContext = React.createContext({
   notifications: {},
@@ -25,10 +25,22 @@ export default function NotificationProvider({
     }, 3000)
   }
 
-  const removeNotifications = () =>
-    setNotifications({ ...removeFromNotifications(notifications) })
+  const removeNotifications = useCallback(() =>
+    setNotifications(
+      notifications => {
+        console.log(
+          "The notications in the removeNots callback: ",
+          notifications
+        )
+        const result = removeTimeElapsedNotifications(notifications)
+        console.log("setting notifications: ", result)
+        return { ...result }
+      },
+      [setNotifications]
+    )
+  )
 
-  const removeFromNotifications = notifications =>
+  const removeTimeElapsedNotifications = notifications =>
     Object.keys(notifications).reduce((acc, key) => {
       if (Date.now() - notifications[key].notifiedAt < 3000) {
         acc[key] = notifications[key]

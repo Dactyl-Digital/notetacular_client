@@ -51,6 +51,7 @@ const listNotebooksSuccess = dispatch => response => {
 
 const listNotebooksError = dispatch => error => {
   dispatch(setNotebookListError(error))
+  setTimeout(setNotebookListError({ ...error, payload: null }), 3000)
 }
 
 export const deleteNotebook = dispatch => ({ notebook_id }) => {

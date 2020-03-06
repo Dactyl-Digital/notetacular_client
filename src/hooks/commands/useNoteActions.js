@@ -95,6 +95,10 @@ const listNotesSuccess = dispatch => response => {
 
 const listNotesError = dispatch => error => {
   dispatch(setNoteListError(error))
+  setTimeout(
+    () => dispatch(setNoteListError({ response: { data: null } })),
+    3000
+  )
 }
 
 export const updateNoteContent = dispatch => ({
